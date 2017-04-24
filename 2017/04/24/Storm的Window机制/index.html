@@ -94,7 +94,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/04/24/Storm的Window机制/index.html">
 <meta property="og:site_name" content="Gene's Home">
 <meta property="og:description" content="2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉">
-<meta property="og:updated_time" content="2017-04-24T03:02:18.829Z">
+<meta property="og:updated_time" content="2017-04-24T03:04:34.427Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Storm的Window机制">
 <meta name="twitter:description" content="2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉">
@@ -376,15 +376,14 @@
 
       
         <p><em>2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉</em><br><a id="more"></a></p>
-<p>###以下是原文：</p>
-<p>请先看官网对于Window机制的说明：<a href="http://storm.apache.org/releases/1.0.0/Windowing.html" target="_blank" rel="external">Storm Window</a></p>
-<p>##一. Window是什么<br>在流式处理框架中，   window的概念并非Storm独有，例如Flink中也有相同的概念，可以参考博文<a href="http://blog.csdn.net/lmalds/article/details/51604501" target="_blank" rel="external">流处理中的Window概念</a>来帮助理解，看完该博文前面图文部分应该可以理解Window的含义以及作用。本小白拙见：Window就像一个监视器，可以在满足某些条件时对流入Window中的tuple做出相应的处理。目前，Storm只支持两种触发Window进行操作的条件，即经过一个固定时间段触发和在tuple数量达到某个值时触发（据说以后会加入类似Flink的”自定义条件”，见<a href="https://community.hortonworks.com/articles/14171/windowing-and-state-checkpointing-in-apache-storm.html" target="_blank" rel="external">Future improvements</a>）</p>
-<p>##二. Sliding Window(滑动窗口) &amp;  Tumbling Window(滚动窗口)<br>先解释滑动窗口。滑动窗口有两个参数，长度windowLength和滑动间隔slidingInternal，长度限制了窗口能容纳tuple的量，滑动间隔则是指每次滑动的距离。滑动窗口会在（时间上或数量上）满足了滑动间隔的时候触发操作，然后产生新的滑动窗口<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">| e1 e2 | e3 e4 e5 e6 | e7 e8 e9 |...</div><div class="line">0       5             10         15    -&gt; time</div><div class="line"></div><div class="line">|&lt;------- w1 --------&gt;|</div><div class="line">        |------------ w2 -------&gt;|</div></pre></td></tr></table></figure></p>
+<h3 id="以下是原文："><a href="#以下是原文：" class="headerlink" title="以下是原文："></a>以下是原文：</h3><p>请先看官网对于Window机制的说明：<a href="http://storm.apache.org/releases/1.0.0/Windowing.html" target="_blank" rel="external">Storm Window</a></p>
+<h2 id="一-Window是什么"><a href="#一-Window是什么" class="headerlink" title="一. Window是什么"></a>一. Window是什么</h2><p>在流式处理框架中，   window的概念并非Storm独有，例如Flink中也有相同的概念，可以参考博文<a href="http://blog.csdn.net/lmalds/article/details/51604501" target="_blank" rel="external">流处理中的Window概念</a>来帮助理解，看完该博文前面图文部分应该可以理解Window的含义以及作用。本小白拙见：Window就像一个监视器，可以在满足某些条件时对流入Window中的tuple做出相应的处理。目前，Storm只支持两种触发Window进行操作的条件，即经过一个固定时间段触发和在tuple数量达到某个值时触发（据说以后会加入类似Flink的”自定义条件”，见<a href="https://community.hortonworks.com/articles/14171/windowing-and-state-checkpointing-in-apache-storm.html" target="_blank" rel="external">Future improvements</a>）</p>
+<h2 id="二-Sliding-Window-滑动窗口-amp-Tumbling-Window-滚动窗口"><a href="#二-Sliding-Window-滑动窗口-amp-Tumbling-Window-滚动窗口" class="headerlink" title="二. Sliding Window(滑动窗口) &amp;  Tumbling Window(滚动窗口)"></a>二. Sliding Window(滑动窗口) &amp;  Tumbling Window(滚动窗口)</h2><p>先解释滑动窗口。滑动窗口有两个参数，长度windowLength和滑动间隔slidingInternal，长度限制了窗口能容纳tuple的量，滑动间隔则是指每次滑动的距离。滑动窗口会在（时间上或数量上）满足了滑动间隔的时候触发操作，然后产生新的滑动窗口<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">| e1 e2 | e3 e4 e5 e6 | e7 e8 e9 |...</div><div class="line">0       5             10         15    -&gt; time</div><div class="line"></div><div class="line">|&lt;------- w1 --------&gt;|</div><div class="line">        |------------ w2 -------&gt;|</div></pre></td></tr></table></figure></p>
 <p>在官网的例子中，长度是10 <strong>s</strong>，滑动间隔是5 <strong>s</strong>，但是对于窗口的触发时机没有写的很清楚，实际上，假设程序从time轴的0点开始运行，运行到第5秒时就会产生第一个窗口，窗口内是e1和e2，有一半在-5s到0s，到了10会产生第二个窗口，即图中的w1，窗口内是e1到e6，以此类推。</p>
 <p>再来看滚动窗口。滚动窗口只有一个参数，即窗口的长度，在窗口（时间上或数量上）满了后，会水平“翻滚”一次，然后产生新的窗口，其实本质上和滑动窗口是一样的，只是滑动间隔就等于窗口长度而已<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">| e1 e2 | e3 e4 e5 e6 | e7 e8 e9 |...</div><div class="line">0       5             10         15    -&gt; time</div><div class="line">   w1         w2            w3</div></pre></td></tr></table></figure></p>
 <p>在官网的例子中，窗口长度是5s，假设程序在0s时开始运行，5s时就会产生第一个窗口（包括了e1和e2），10s时就会产生第二个窗口，以此类推</p>
 <p>在讨论窗口的滑动和翻滚时，需要注意单位问题，即要理解“滑动窗口满足滑动间隔”是什么意思，滚动的“窗口满了”又意味着什么，实际上，前面已经说到，触发条件可以是时间段或者tuple数量，所以单位有两种：时间和数量。对于上文中滑动窗口的图文例子，如果长度是10 <strong>个</strong>，滑动间隔是5 <strong>个</strong>，那么程序将在e5到来时产生第一个滑动窗口，窗口内是e1~e5，同样，窗口有一半在负半轴，在e10（图中没画出）到来时产生第二个滑动窗口，窗口内是e1~e10；对于上文的滚动窗口的例子，如果窗口长度是5 <strong>个</strong>，那么程序将在e5到来时产生第一个窗口，窗口内是e1~e5，在e10（图中没画出）到来时产生第二个窗口，窗口内是e6到e10。</p>
-<p>##三. API以及代码层面的解释<br>如果对概念还有不清楚的地方，结合代码来理解可能好一点</p>
+<h2 id="三-API以及代码层面的解释"><a href="#三-API以及代码层面的解释" class="headerlink" title="三. API以及代码层面的解释"></a>三. API以及代码层面的解释</h2><p>如果对概念还有不清楚的地方，结合代码来理解可能好一点</p>
 <p>先看两个最简单的例子，功能都是在窗口产生时打印出窗口中的tuple的信息，第一个是Sliding Window的例子，第二个是 Tumbling Window的例子 (ps：例子中写了一些辅助获取信息的类方法，看名字就知道作用，就不贴上来了)</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">private class WatchSlidingWindowBolt extends BaseWindowedBolt &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void execute(TupleWindow inputWindow) &#123;</div><div class="line">        /*</div><div class="line">         * The inputWindow gives a view of</div><div class="line">         * (a) all the events in the window</div><div class="line">         * (b) events that expired since last activation of the window</div><div class="line">         * (c) events that newly arrived since last activation of the window</div><div class="line">         */</div><div class="line">        List&lt;Tuple&gt; tuplesInWindow = inputWindow.get();</div><div class="line">        List&lt;Tuple&gt; newTuples = inputWindow.getNew();</div><div class="line">        List&lt;Tuple&gt; expiredTuples = inputWindow.getExpired();</div><div class="line"></div><div class="line">        System.out.println(&quot;+++++++++++++++++++++++++++++++++++++++++++++++++&quot;);</div><div class="line">        System.out.println(&quot;Time: &quot; + relativeTime() + &quot;in WatchSlidingWindowBolt&quot;);</div><div class="line">        System.out.println(&quot;tuplesInWindow: &quot; + tuplesToString(tuplesInWindow));</div><div class="line">        System.out.println(&quot;newTuples: &quot; + tuplesToString(newTuples));</div><div class="line">        System.out.println(&quot;expiredTuples: &quot; + tuplesToString(expiredTuples));</div><div class="line">        System.out.println(&quot;+++++++++++++++++++++++++++++++++++++++++++++++++&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void declareOutputFields(OutputFieldsDeclarer declarer) &#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">private class WatchTumblingWindowBolt extends BaseWindowedBolt &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void execute(TupleWindow inputWindow) &#123;</div><div class="line">        List&lt;Tuple&gt; tuplesInWindow = inputWindow.get();</div><div class="line">        if (tuplesInWindow.size() &gt; 0) &#123;</div><div class="line">            System.out.println(&quot;+++++++++++++++++++++++++++++++++++++++++++++++++&quot;);</div><div class="line">            System.out.println(&quot;Time: &quot;+relativeTime()+&quot;in WatchTumblingWindowBolt&quot;);</div><div class="line">            for (Tuple tuple : tuplesInWindow) &#123;</div><div class="line">                System.out.println(&quot; values: &quot;+tuple.getValues());</div><div class="line">            &#125;</div><div class="line">            System.out.println(&quot;+++++++++++++++++++++++++++++++++++++++++++++++++&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void declareOutputFields(OutputFieldsDeclarer declarer) &#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
@@ -409,19 +408,19 @@
 <li><p>withTumblingWindow(BaseWindowedBolt.Duration duration)<br>Time duration based tumbling window that tumbles after the specified time duration.<br>长度用时间段衡量的滚动窗口，每经过duration时间段后触发一次</p>
 </li>
 </ul>
-<p>##四. Timestamp(时间戳)、Watermark(水印)和Lag(延迟)<br>对于以时间段作为滑动间隔来触发的滑动窗口和以时间段作为窗口长度的滚动窗口来说，还有一些细节问题。这些因素将会影响到窗口触发时机。</p>
+<h2 id="四-Timestamp-时间戳-、Watermark-水印-和Lag-延迟"><a href="#四-Timestamp-时间戳-、Watermark-水印-和Lag-延迟" class="headerlink" title="四. Timestamp(时间戳)、Watermark(水印)和Lag(延迟)"></a>四. Timestamp(时间戳)、Watermark(水印)和Lag(延迟)</h2><p>对于以时间段作为滑动间隔来触发的滑动窗口和以时间段作为窗口长度的滚动窗口来说，还有一些细节问题。这些因素将会影响到窗口触发时机。</p>
 <p><strong>时间戳</strong>： 默认情况下tuple的时间戳是他们被bolt处理的时机（到达窗口的时机），窗口的触发（滑动或滚动）是建立在这些时间戳的基础上的。Storm支持把tuple的原生时间戳作为时间衡量的标准来触发窗口。可以用withTimestampField()设置时间戳字段，注意该字段对应的值应为long类型的时间</p>
 <p><strong>水印和延迟</strong>：水印和延迟是为了解决“迟到的tuple”的问题。<br>设置Bolt时有个withWatermarkInterval()方法，用来设置产生水印的时间间隔，默认是1秒（经过测试我发现调用这个方法并不能达到目的，即还是1s，可能是我哪里理解错了或者测试用例不科学，有待验证）。延迟Lag可以在设置Bolt是调用withLag()方法设置。水印的计算方法是最新的tuple的时间戳减去延迟。每个tuple到来时，如果它的时间戳比水印还早，这个tuple将被认为是“迟到的”，它将不会被处理，而只是在worker的日记中以INFO的级别打印一条消息。</p>
 <p>现在可以分析程序在这些机制下的运行过程了。<br>1.产生一个新的水印：用旧水印对前一秒进入bolt的tuple进行筛选，比旧水印还要早的tuple即为“迟到的tuple”，将不予处理，剩下的tuple是真正进入窗口的。在窗口的tuple中选取时间戳最晚的tuple，用他的时间戳减去设置好的延迟Lag，即为新的水印<br>2.产生窗口：有个大前提，每个窗口的终点都不能超过新的水印。第一个窗口的终点怎么确定呢？先在窗口的tuple中取时间戳最早的tuple，将这个时间向下取整，然后加上滑动间隔的时间段长度（对于滚动窗口，则是加上窗口长度），即为第一个窗口的终点，而它的起点则是终点减去窗口长度。有了第一个窗口，接下来的窗口只需在第一个窗口的基础上滑动或者翻滚即可产生。窗口产生的时候就是execute方法被调用的时候。要注意的是，必须满足大前提——窗口的终点不超过最新的水印，如果计算出第一个窗口的终点就已经超过了当前水印，那么一个窗口都不会产生，只能等待下一个水印产生了。</p>
-<p>##五. 测试用例及其结果解释<br><a href="https://github.com/iamxpy/stormWindowDemo" target="_blank" rel="external">Github链接</a><br>注意要使用1.0.0版本以后的storm，之前的版本可能还没有Window机制或者没有时间戳等机制</p>
+<h2 id="五-测试用例及其结果解释"><a href="#五-测试用例及其结果解释" class="headerlink" title="五. 测试用例及其结果解释"></a>五. 测试用例及其结果解释</h2><p><a href="https://github.com/iamxpy/stormWindowDemo" target="_blank" rel="external">Github链接</a><br>注意要使用1.0.0版本以后的storm，之前的版本可能还没有Window机制或者没有时间戳等机制</p>
 <ol>
 <li><p>BaseWindowTopology是用来测试两种窗口的基本用法和常用API的，不涉及时间戳、水印和延迟，主要用来理解滑动和滚动的含义<br>BaseWindowTopology运行结果解释：由于示例中滑动窗口长度是30 <strong>个</strong>，滑动间距是10 <strong>个</strong>，故每10个tuple到来就会触发一次滑动窗口的bolt中的execute方法，计算出sum，而滚动窗口长度是3 <strong>个</strong>，在滑动窗口的下游，所以每接收到3个来自滑动窗口的sum就会触发一次execute方法，计算avg</p>
 </li>
 <li><p>TimestampWindowTopology则是用来验证第四点中所说的运行机制的，要注意窗口的单位改为了秒，即使用时间段来衡量窗口长度和滑动间距。<br>TimestampWindowTopology运行结果解释：由于每一秒产生一个水印，故从第二次开始每一次都会有worker的INFO消息打印在窗口，那个是筛选过程，然后按照上文中所说来计算好第一个窗口的终点起点，开始滑动，直到不能再滑动就为止(即再滑动就会遇到水印)，这几个窗口就是这次水印触发的窗口。</p>
 </li>
 </ol>
-<p>##六. Trident中的Window机制<br>在Trident中，Window中的tuple可以进行聚合，API方面需要了解WindowsStoreFactory，这个类作用是储存Window收到的tuple和聚合的结果。有两个实现可以参考和使用，一个是储存在内存中的 InMemoryWindowsStoreFactory和InMemoryWindowsStore，一个是储存在HBase中的HBaseWindowsStateFactory和HBaseWindowsStore。其他信息见<a href="http://storm.apache.org/releases/current/Trident-API-Overview.html" target="_blank" rel="external">官网相关介绍</a></p>
-<p>##七. 具有类似作用的Tick Tuple机制<br><a href="http://www.michael-noll.com/blog/2013/01/18/implementing-real-time-trending-topics-in-storm/#excursus-tick-tuples-in-storm-08" target="_blank" rel="external">传送门</a></p>
+<h2 id="六-Trident中的Window机制"><a href="#六-Trident中的Window机制" class="headerlink" title="六. Trident中的Window机制"></a>六. Trident中的Window机制</h2><p>在Trident中，Window中的tuple可以进行聚合，API方面需要了解WindowsStoreFactory，这个类作用是储存Window收到的tuple和聚合的结果。有两个实现可以参考和使用，一个是储存在内存中的 InMemoryWindowsStoreFactory和InMemoryWindowsStore，一个是储存在HBase中的HBaseWindowsStateFactory和HBaseWindowsStore。其他信息见<a href="http://storm.apache.org/releases/current/Trident-API-Overview.html" target="_blank" rel="external">官网相关介绍</a></p>
+<h2 id="七-具有类似作用的Tick-Tuple机制"><a href="#七-具有类似作用的Tick-Tuple机制" class="headerlink" title="七. 具有类似作用的Tick Tuple机制"></a>七. 具有类似作用的Tick Tuple机制</h2><p><a href="http://www.michael-noll.com/blog/2013/01/18/implementing-real-time-trending-topics-in-storm/#excursus-tick-tuples-in-storm-08" target="_blank" rel="external">传送门</a></p>
 
       
     </div>
@@ -523,8 +522,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/gene.png"
@@ -624,6 +632,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#以下是原文："><span class="nav-number">1.</span> <span class="nav-text">以下是原文：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一-Window是什么"><span class="nav-number"></span> <span class="nav-text">一. Window是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-Sliding-Window-滑动窗口-amp-Tumbling-Window-滚动窗口"><span class="nav-number"></span> <span class="nav-text">二. Sliding Window(滑动窗口) &  Tumbling Window(滚动窗口)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-API以及代码层面的解释"><span class="nav-number"></span> <span class="nav-text">三. API以及代码层面的解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-Timestamp-时间戳-、Watermark-水印-和Lag-延迟"><span class="nav-number"></span> <span class="nav-text">四. Timestamp(时间戳)、Watermark(水印)和Lag(延迟)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-测试用例及其结果解释"><span class="nav-number"></span> <span class="nav-text">五. 测试用例及其结果解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六-Trident中的Window机制"><span class="nav-number"></span> <span class="nav-text">六. Trident中的Window机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七-具有类似作用的Tick-Tuple机制"><span class="nav-number"></span> <span class="nav-text">七. 具有类似作用的Tick Tuple机制</span></a></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
