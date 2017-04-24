@@ -379,54 +379,14 @@
 
       
         
-          
-            <p><em>2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉</em></p>
-<p>###以下是原文：</p>
-<p>请先看官网对于Window机制的说明：<a href="http://storm.apache.org/releases/1.0.0/Windowing.html%20%E2%80%9CStorm%20Windowing%E2%80%9D" target="_blank" rel="external">Storm Window</a></p>
-<p>##一. Window是什么<br>在流式处理框架中，   window的概念并非Storm独有，例如Flink中也有相同的概念，可以参考博文<a href="http://blog.csdn.net/lmalds/article/details/51604501%20%E2%80%9C%E6%B5%81%E5%A4%84%E7%90%86%E4%B8%AD%E7%9A%84Window%E6%A6%82%E5%BF%B5%E2%80%9D" target="_blank" rel="external">流处理中的Window概念</a>来帮助理解，看完该博文前面图文部分应该可以理解Window的含义以及作用。本小白拙见：Window就像一个监视器，可以在满足某些条件时对流入Window中的tuple做出相应的处理。目前，Storm只支持两种触发Window进行操作的条件，即经过一个固定时间段触发和在tuple数量达到某个值时触发（据说以后会加入类似Flink的”自定义条件”，见<a href="https://community.hortonworks.com/articles/14171/windowing-and-state-checkpointing-in-apache-storm.html" target="_blank" rel="external">Future improvements</a>）</p>
-<p>##二. Sliding Window(滑动窗口) &amp;  Tumbling Window(滚动窗口)<br>先解释滑动窗口。滑动窗口有两个参数，长度windowLength和滑动间隔slidingInternal，长度限制了窗口能容纳tuple的量，滑动间隔则是指每次滑动的距离。滑动窗口会在（时间上或数量上）满足了滑动间隔的时候触发操作，然后产生新的滑动窗口<br><img src="http://img.blog.csdn.net/20170221131444326?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQveHB5ODcwNjYzMjY2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="官网示例图"><br>在官网的例子中，长度是10 <strong>s</strong>，滑动间隔是5 <strong>s</strong>，但是对于窗口的触发时机没有写的很清楚，实际上，假设程序从time轴的0点开始运行，运行到第5秒时就会产生第一个窗口，窗口内是e1和e2，有一半在-5s到0s，到了10会产生第二个窗口，即图中的w1，窗口内是e1到e6，以此类推。</p>
-<p>再来看滚动窗口。滚动窗口只有一个参数，即窗口的长度，在窗口（时间上或数量上）满了后，会水平“翻滚”一次，然后产生新的窗口，其实本质上和滑动窗口是一样的，只是滑动间隔就等于窗口长度而已<br><img src="http://img.blog.csdn.net/20170221132047954?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQveHB5ODcwNjYzMjY2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="官网示例图"><br>在官网的例子中，窗口长度是5s，假设程序在0s时开始运行，5s时就会产生第一个窗口（包括了e1和e2），10s时就会产生第二个窗口，以此类推</p>
-<p>在讨论窗口的滑动和翻滚时，需要注意单位问题，即要理解“滑动窗口满足滑动间隔”是什么意思，滚动的“窗口满了”又意味着什么，实际上，前面已经说到，触发条件可以是时间段或者tuple数量，所以单位有两种：时间和数量。对于上文中滑动窗口的图文例子，如果长度是10 <strong>个</strong>，滑动间隔是5 <strong>个</strong>，那么程序将在e5到来时产生第一个滑动窗口，窗口内是e1~e5，同样，窗口有一半在负半轴，在e10（图中没画出）到来时产生第二个滑动窗口，窗口内是e1~e10；对于上文的滚动窗口的例子，如果窗口长度是5 <strong>个</strong>，那么程序将在e5到来时产生第一个窗口，窗口内是e1~e5，在e10（图中没画出）到来时产生第二个窗口，窗口内是e6到e10。</p>
-<p>##三. API以及代码层面的解释<br>如果对概念还有不清楚的地方，结合代码来理解可能好一点</p>
-<p>先看两个最简单的例子，功能都是在窗口产生时打印出窗口中的tuple的信息，第一个是Sliding Window的例子，第二个是 Tumbling Window的例子 (ps：例子中写了一些辅助获取信息的类方法，看名字就知道作用，就不贴上来了)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">private class WatchSlidingWindowBolt extends BaseWindowedBolt &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void execute(TupleWindow inputWindow) &#123;</div><div class="line">        /*</div><div class="line">         * The inputWindow gives a view of</div><div class="line">         * (a) all the events in the window</div><div class="line">         * (b) events that expired since last activation of the window</div><div class="line">         * (c) events that newly arrived since last activation of the window</div><div class="line">         */</div><div class="line">        List&lt;Tuple&gt; tuplesInWindow = inputWindow.get();</div><div class="line">        List&lt;Tuple&gt; newTuples = inputWindow.getNew();</div><div class="line">        List&lt;Tuple&gt; expiredTuples = inputWindow.getExpired();</div><div class="line"></div><div class="line">        System.out.println(&quot;+++++++++++++++++++++++++++++++++++++++++++++++++&quot;);</div><div class="line">        System.out.println(&quot;Time: &quot; + relativeTime() + &quot;in WatchSlidingWindowBolt&quot;);</div><div class="line">        System.out.println(&quot;tuplesInWindow: &quot; + tuplesToString(tuplesInWindow));</div><div class="line">        System.out.println(&quot;newTuples: &quot; + tuplesToString(newTuples));</div><div class="line">        System.out.println(&quot;expiredTuples: &quot; + tuplesToString(expiredTuples));</div><div class="line">        System.out.println(&quot;+++++++++++++++++++++++++++++++++++++++++++++++++&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void declareOutputFields(OutputFieldsDeclarer declarer) &#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">private class WatchTumblingWindowBolt extends BaseWindowedBolt &#123;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void execute(TupleWindow inputWindow) &#123;</div><div class="line">        List&lt;Tuple&gt; tuplesInWindow = inputWindow.get();</div><div class="line">        if (tuplesInWindow.size() &gt; 0) &#123;</div><div class="line">            System.out.println(&quot;+++++++++++++++++++++++++++++++++++++++++++++++++&quot;);</div><div class="line">            System.out.println(&quot;Time: &quot;+relativeTime()+&quot;in WatchTumblingWindowBolt&quot;);</div><div class="line">            for (Tuple tuple : tuplesInWindow) &#123;</div><div class="line">                System.out.println(&quot; values: &quot;+tuple.getValues());</div><div class="line">            &#125;</div><div class="line">            System.out.println(&quot;+++++++++++++++++++++++++++++++++++++++++++++++++&quot;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void declareOutputFields(OutputFieldsDeclarer declarer) &#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>两种窗口的Bolt编写都是继承BaseWindowedBolt，然后重写execute等方法即可。 <strong>每个窗口的产生对应一次BaseWindowedBolt中execute方法的调用。</strong>不同的是，Tumbling Window只有get()方法有意义，Sliding Window还有getNew()和getExpired()。两个地方的get()都是返回当前窗口内的tuple，而滑动窗口还有两个概念：“新来的”和“过期的”tuple，用上文中滑动窗口的图文例子来解释（长度10s，滑动间隔5s），对于w1，get()返回的是e1~e6，getNew()返回的是e3~e6，getExpired()返回空集，对于w2，get()返回的是e3~e9，getNew()返回的是e7~e9，getExpired()返回的是e1~e2。</p>
-<p>可以这样理解，窗口只有一个，w1和w2都是这个窗口，只是滑动前和滑动后的区别，而滑动后(成了所谓的w2)，“新来的”就是e7~e9，考虑到窗口长度为10s，e3~e9就占了10s，再往前的e1~e2自然就会被“挤出”窗口，即“过期”了。</p>
-<p>给Topology设置BasedWindowedBlot和设置普通的Bolt没有区别，注意Sliding Window要调用withWindow方法设置好 windowLength和slidingInternal ，Tumbling Window要调用withTumblingWindow()设置好长度。前面说过，这些参数的单位很关键，将影响到execute方法调用的时机，来看一下支持的配置 :</p>
-<ul>
-<li><p>withWindow(Count windowLength, Count slidingInterval)<br>Tuple count based sliding window that slides after <code>slidingInterval</code> number of tuples.<br>长度用tuple数量衡量的滑动窗口，每当有slidingInternal个tuple到来后触发一次</p>
-</li>
-<li><p>withWindow(Count windowLength)<br>Tuple count based window that slides with every incoming tuple.<br>长度用tuple数量衡量的滑动窗口，每个tuple到来都会触发一次</p>
-</li>
-<li><p>withWindow(Count windowLength, Duration slidingInterval)<br>Tuple count based sliding window that slides after <code>slidingInterval</code> time duration.<br>长度用tuple数量衡量的滑动窗口，每经过slidingInternal时间段后触发一次</p>
-</li>
-<li><p>withWindow(Duration windowLength, Duration slidingInterval)<br>Time duration based sliding window that slides after <code>slidingInterval</code> time duration.<br>长度用时间段衡量的滑动窗口，每经过slidingInternal时间段后触发一次</p>
-</li>
-<li><p>withWindow(Duration windowLength)<br>Time duration based window that slides with every incoming tuple.<br>长度用时间段衡量的滑动窗口，每个tuple到来都会触发一次</p>
-</li>
-<li><p>withWindow(Duration windowLength, Count slidingInterval)<br>Time duration based sliding window that slides after <code>slidingInterval</code> number of tuples.<br>长度用时间段衡量的滑动窗口，每当有slidingInternal个tuple到来后触发一次</p>
-</li>
-<li><p>withTumblingWindow(BaseWindowedBolt.Count count)<br>Count based tumbling window that tumbles after the specified count of tuples.<br>长度用tuple数量衡量的滚动窗口，每当有count个tuple到来触发一次</p>
-</li>
-<li><p>withTumblingWindow(BaseWindowedBolt.Duration duration)<br>Time duration based tumbling window that tumbles after the specified time duration.<br>长度用时间段衡量的滚动窗口，每经过duration时间段后触发一次</p>
-</li>
-</ul>
-<p>##四. Timestamp(时间戳)、Watermark(水印)和Lag(延迟)<br>对于以时间段作为滑动间隔来触发的滑动窗口和以时间段作为窗口长度的滚动窗口来说，还有一些细节问题。这些因素将会影响到窗口触发时机。</p>
-<p><strong>时间戳</strong>： 默认情况下tuple的时间戳是他们被bolt处理的时机（到达窗口的时机），窗口的触发（滑动或滚动）是建立在这些时间戳的基础上的。Storm支持把tuple的原生时间戳作为时间衡量的标准来触发窗口。可以用withTimestampField()设置时间戳字段，注意该字段对应的值应为long类型的时间</p>
-<p><strong>水印和延迟</strong>：水印和延迟是为了解决“迟到的tuple”的问题。<br>设置Bolt时有个withWatermarkInterval()方法，用来设置产生水印的时间间隔，默认是1秒（经过测试我发现调用这个方法并不能达到目的，即还是1s，可能是我哪里理解错了或者测试用例不科学，有待验证）。延迟Lag可以在设置Bolt是调用withLag()方法设置。水印的计算方法是最新的tuple的时间戳减去延迟。每个tuple到来时，如果它的时间戳比水印还早，这个tuple将被认为是“迟到的”，它将不会被处理，而只是在worker的日记中以INFO的级别打印一条消息。</p>
-<p>现在可以分析程序在这些机制下的运行过程了。<br>1.产生一个新的水印：用旧水印对前一秒进入bolt的tuple进行筛选，比旧水印还要早的tuple即为“迟到的tuple”，将不予处理，剩下的tuple是真正进入窗口的。在窗口的tuple中选取时间戳最晚的tuple，用他的时间戳减去设置好的延迟Lag，即为新的水印<br>2.产生窗口：有个大前提，每个窗口的终点都不能超过新的水印。第一个窗口的终点怎么确定呢？先在窗口的tuple中取时间戳最早的tuple，将这个时间向下取整，然后加上滑动间隔的时间段长度（对于滚动窗口，则是加上窗口长度），即为第一个窗口的终点，而它的起点则是终点减去窗口长度。有了第一个窗口，接下来的窗口只需在第一个窗口的基础上滑动或者翻滚即可产生。窗口产生的时候就是execute方法被调用的时候。要注意的是，必须满足大前提——窗口的终点不超过最新的水印，如果计算出第一个窗口的终点就已经超过了当前水印，那么一个窗口都不会产生，只能等待下一个水印产生了。</p>
-<p>##五. 测试用例及其结果解释<br><a href="https://github.com/iamxpy/stormWindowDemo" target="_blank" rel="external">Github链接</a><br>注意要使用1.0.0版本以后的storm，之前的版本可能还没有Window机制或者没有时间戳等机制</p>
-<ol>
-<li><p>BaseWindowTopology是用来测试两种窗口的基本用法和常用API的，不涉及时间戳、水印和延迟，主要用来理解滑动和滚动的含义<br>BaseWindowTopology运行结果解释：由于示例中滑动窗口长度是30 <strong>个</strong>，滑动间距是10 <strong>个</strong>，故每10个tuple到来就会触发一次滑动窗口的bolt中的execute方法，计算出sum，而滚动窗口长度是3 <strong>个</strong>，在滑动窗口的下游，所以每接收到3个来自滑动窗口的sum就会触发一次execute方法，计算avg</p>
-</li>
-<li><p>TimestampWindowTopology则是用来验证第四点中所说的运行机制的，要注意窗口的单位改为了秒，即使用时间段来衡量窗口长度和滑动间距。<br>TimestampWindowTopology运行结果解释：由于每一秒产生一个水印，故从第二次开始每一次都会有worker的INFO消息打印在窗口，那个是筛选过程，然后按照上文中所说来计算好第一个窗口的终点起点，开始滑动，直到不能再滑动就为止(即再滑动就会遇到水印)，这几个窗口就是这次水印触发的窗口。</p>
-</li>
-</ol>
-<p>##六. Trident中的Window机制<br>在Trident中，Window中的tuple可以进行聚合，API方面需要了解WindowsStoreFactory，这个类作用是储存Window收到的tuple和聚合的结果。有两个实现可以参考和使用，一个是储存在内存中的 InMemoryWindowsStoreFactory和InMemoryWindowsStore，一个是储存在HBase中的HBaseWindowsStateFactory和HBaseWindowsStore。其他信息见<a href="http://storm.apache.org/releases/current/Trident-API-Overview.html" target="_blank" rel="external">官网相关介绍</a></p>
-<p>##七. 具有类似作用的Tick Tuple机制<br><a href="http://www.michael-noll.com/blog/2013/01/18/implementing-real-time-trending-topics-in-storm/#excursus-tick-tuples-in-storm-08" target="_blank" rel="external">传送门</a></p>
-
-          
+          <p><em>2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉</em><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/04/24/Storm的Window机制/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -555,47 +515,14 @@
 
       
         
-          
-            <p>Java知识点繁多，如果不多加以实践会很容易忘记，这篇文章记录的是我遗忘了然后查了或者我根本不知道的知识点，会不定期更新</p>
-<h1 id="17-04-23-更"><a href="#17-04-23-更" class="headerlink" title="17.04.23 更"></a>17.04.23 更</h1><p>##重读《疯狂java讲义》发现的遗忘点</p>
-<ol>
-<li><p>Lambda表达式和匿名内部类的区别：<br>匿名内部类可以为所有接口，抽象类甚至普通类创建对象，而Lambda表达式只能为函数式接口创建对象；<br>匿名内部类在方法实现的代码部分允许调用接口中的默认方法，而Lambda表达式不允许</p>
-</li>
-<li><p>方法引用和构造器引用，从形式上来说满足以下情况可用：当Lambda表达式只含有一句语句,且该语句是在调用方法。此时Lambda表达式可改为“调用者::调用方法”的形式，一般是”类名::类方法”（包括了”类名::new”，构造方法可以理解为通过类来调用）或”实例对象::实例方法”，例外是当方法调用者本身也是形参列表的一员时（例如那句语句可以是(a,b,c)-&gt;a.substring(b,c)），如果其是第一个参数，那么可改为“类名::实例方法”</p>
-</li>
-<li><p>枚举值实质上是所属枚举类（或其匿名子类）的实例，理解这点就可理解各种枚举类的写法，如含有构造器的枚举类，实现接口的并给不同枚举值重写不同方法的枚举类等等</p>
-</li>
-<li><p>StringBuffer线程安全，StringBuilder线程不安全（更高效）</p>
-</li>
-<li><p>ThreadLocalRandom是Random类在多线程环境下的线程安全版本</p>
-</li>
-<li><p>遍历Collection时，如果对每个元素操作只有一句可以考虑用Lambda表达式实现，调用Collection的forEach方法传入一个Consumer（一个函数式接口）实例即可</p>
-</li>
-<li><p>在遍历集合过程不可以调用Collection的改变集合内容的方法，否则抛出ConcurrentModificationException,如果要在遍历Collection的同时删除该Collection中元素，可以考虑用Iterator,调用其remove方法（删除上一个next()返回的元素）而不是调用集合的remove()方法</p>
-</li>
-<li><p>常用集合类型：HashSet基于哈希表储存，LinkedHashSet也一样，他们随机访问速度很快，但用链表来维护加入的顺序，由于有链表，遍历速度也更快，TreeSet使用红黑树维护顺序，性能比HashSet低一点；List推荐用ArrayList； Queue子接口Deque，其实现类ArrayDeque即可当栈使用也可当队列使用；而LinkedList实现了List和Deque，所以可以当List使用，也可当栈和队列使用；Map常用实现类：HashMap，LinkedHashMap，TreeMap，Properties，</p>
-</li>
-<li><p>不同实现的集合性能分析：基于数组的集合：随机访问性能较好，对于他们使用随机访问方法（get）来遍历较好；基于链表：插入删除操作速度较快，由于是基于链表实现，对于他们使用迭代器来遍历较好</p>
-</li>
-<li><p>使用Collections的synchronizedCollection，synchronizedSet，synchronizedList，synchronizedMap来获得线程安全的集合</p>
-</li>
-<li><p>创建对象的方式：new，反射(获得Class或者进一步获得Constructor后调用clazz.newInstance()或者constructor.newInstance())，反序列化，clone</p>
-</li>
-<li><p>反射操作：先获得Class对象,再clazz.getDeclaredXXX()获得无视权限的成员变量，方法或构造器，再调用setAccessible(true)，进而可进行访问，成员变量可以getXXX()和SetXXX()，方法可以invoke()，构造器可以newInstance()</p>
-</li>
-<li><p>获得Class对象的方法，Class.forName()，类名.class，对象.getClass()</p>
-</li>
-<li><p>方法的重写要遵循“两同两小一大”规则。方法名和形参列表相同，子类抛出的异常和返回值类型应更更小或相等，访问权限应该更大</p>
-</li>
-</ol>
-<h2 id="synchronize关键字细节"><a href="#synchronize关键字细节" class="headerlink" title="synchronize关键字细节"></a>synchronize关键字细节</h2><p>当它用来修饰一个方法或者一个代码块的时候，能够保证在同一时刻最多只有一个线程执行该段代码。<br>一、当两个并发线程访问同一个对象object中的这个synchronized(this)同步代码块时，一个时间内只能有一个线程得到执行。另一个线程必须等待当前线程执行完这个代码块以后才能执行该代码块。</p>
-<p>二、然而，当一个线程访问object的一个synchronized(this)同步代码块时，另一个线程仍然可以访问该object中的非synchronized(this)同步代码块。</p>
-<p>三、尤其关键的是，当一个线程访问object的一个synchronized(this)同步代码块时，其他线程对object中所有其它synchronized(this)同步代码块的访问将被阻塞。</p>
-<p>四、第三个例子同样适用其它同步代码块。也就是说，当一个线程访问object的一个synchronized(this)同步代码块时，它就获得了这个object的对象锁。结果，其它线程对该object对象所有同步代码部分的访问都被暂时阻塞。</p>
-<p>五、以上规则对其它对象锁同样适用.</p>
-<p>–摘录于<a href="http://www.cnblogs.com/GnagWang/archive/2011/02/27/1966606.html" target="_blank" rel="external">原文</a>,代码示例见原文</p>
-
-          
+          <p>Java知识点繁多，如果不多加以实践会很容易忘记，这篇文章记录的是我遗忘了然后查了或者我根本不知道的知识点，会不定期更新<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/04/23/Java拾遗/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>

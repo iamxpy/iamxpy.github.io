@@ -87,19 +87,19 @@
 
 
 
-<meta name="description" content="2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉 ###以下是原文： 请先看官网对于Window机制的说明：Storm Window">
+<meta name="description" content="2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉">
 <meta name="keywords" content="大数据,storm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Storm的Window机制">
 <meta property="og:url" content="http://yoursite.com/2017/04/24/Storm的Window机制/index.html">
 <meta property="og:site_name" content="Gene's Home">
-<meta property="og:description" content="2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉 ###以下是原文： 请先看官网对于Window机制的说明：Storm Window">
+<meta property="og:description" content="2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉">
 <meta property="og:image" content="http://img.blog.csdn.net/20170221131444326?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQveHB5ODcwNjYzMjY2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
 <meta property="og:image" content="http://img.blog.csdn.net/20170221132047954?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQveHB5ODcwNjYzMjY2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
-<meta property="og:updated_time" content="2017-04-24T02:04:59.821Z">
+<meta property="og:updated_time" content="2017-04-24T02:07:18.130Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Storm的Window机制">
-<meta name="twitter:description" content="2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉 ###以下是原文： 请先看官网对于Window机制的说明：Storm Window">
+<meta name="twitter:description" content="2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉">
 <meta name="twitter:image" content="http://img.blog.csdn.net/20170221131444326?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQveHB5ODcwNjYzMjY2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
 
 
@@ -378,7 +378,7 @@
       
 
       
-        <p><em>2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉</em></p>
+        <p><em>2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉</em><br><a id="more"></a></p>
 <p>###以下是原文：</p>
 <p>请先看官网对于Window机制的说明：<a href="http://storm.apache.org/releases/1.0.0/Windowing.html%20%E2%80%9CStorm%20Windowing%E2%80%9D" target="_blank" rel="external">Storm Window</a></p>
 <p>##一. Window是什么<br>在流式处理框架中，   window的概念并非Storm独有，例如Flink中也有相同的概念，可以参考博文<a href="http://blog.csdn.net/lmalds/article/details/51604501%20%E2%80%9C%E6%B5%81%E5%A4%84%E7%90%86%E4%B8%AD%E7%9A%84Window%E6%A6%82%E5%BF%B5%E2%80%9D" target="_blank" rel="external">流处理中的Window概念</a>来帮助理解，看完该博文前面图文部分应该可以理解Window的含义以及作用。本小白拙见：Window就像一个监视器，可以在满足某些条件时对流入Window中的tuple做出相应的处理。目前，Storm只支持两种触发Window进行操作的条件，即经过一个固定时间段触发和在tuple数量达到某个值时触发（据说以后会加入类似Flink的”自定义条件”，见<a href="https://community.hortonworks.com/articles/14171/windowing-and-state-checkpointing-in-apache-storm.html" target="_blank" rel="external">Future improvements</a>）</p>
