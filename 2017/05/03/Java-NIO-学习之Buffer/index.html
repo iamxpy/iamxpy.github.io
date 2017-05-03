@@ -1,0 +1,953 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="javase," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="概述Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：每个基本类型（除了布尔值）都对应着一种Buffer，如ByteBuff，LongBuffer等，最常用的是ByteBuffer。">
+<meta name="keywords" content="javase">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java NIO 学习之Buffer">
+<meta property="og:url" content="http://yoursite.com/2017/05/03/Java-NIO-学习之Buffer/index.html">
+<meta property="og:site_name" content="Gene's Home">
+<meta property="og:description" content="概述Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：每个基本类型（除了布尔值）都对应着一种Buffer，如ByteBuff，LongBuffer等，最常用的是ByteBuffer。">
+<meta property="og:image" content="http://yoursite.com/images/buffer-channel.png">
+<meta property="og:image" content="http://yoursite.com/images/new-channel.png">
+<meta property="og:image" content="http://yoursite.com/images/relative-put.png">
+<meta property="og:image" content="http://yoursite.com/images/absolute-put.png">
+<meta property="og:image" content="http://yoursite.com/images/flip.png">
+<meta property="og:image" content="http://yoursite.com/images/partially-drained.png">
+<meta property="og:image" content="http://yoursite.com/images/after-compact.png">
+<meta property="og:image" content="http://yoursite.com/images/equal-buffer.png">
+<meta property="og:image" content="http://yoursite.com/images/bigend.png">
+<meta property="og:image" content="http://yoursite.com/images/littleend.png">
+<meta property="og:updated_time" content="2017-05-03T14:47:58.672Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java NIO 学习之Buffer">
+<meta name="twitter:description" content="概述Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：每个基本类型（除了布尔值）都对应着一种Buffer，如ByteBuff，LongBuffer等，最常用的是ByteBuffer。">
+<meta name="twitter:image" content="http://yoursite.com/images/buffer-channel.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/03/Java-NIO-学习之Buffer/"/>
+
+
+
+
+
+  <title> Java NIO 学习之Buffer | Gene's Home </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Gene's Home</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/03/Java-NIO-学习之Buffer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Gene">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/gene.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gene's Home">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java NIO 学习之Buffer
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-03T16:45:58+09:00">
+                2017-05-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/programming/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/05/03/Java-NIO-学习之Buffer/" class="leancloud_visitors" data-flag-title="Java NIO 学习之Buffer">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：<br><img src="/images/buffer-channel.png" alt="Buffer示意图"><br>每个基本类型（除了布尔值）都对应着一种Buffer，如ByteBuff，LongBuffer等，最常用的是ByteBuffer。</p>
+<a id="more"></a>
+<h2 id="概念与原理"><a href="#概念与原理" class="headerlink" title="概念与原理"></a>概念与原理</h2><h3 id="Buffer的属性"><a href="#Buffer的属性" class="headerlink" title="Buffer的属性"></a>Buffer的属性</h3><p>Capacity：Buffer能够容纳元素的最大数量。在Buffer创建时指定，不可改变。</p>
+<p>Limit：对Buffer执行读或写操作的上界。等于Buffer中第一个不能被读或写的元素的索引</p>
+<p>Position：下一个要被读或写的元素的索引</p>
+<p>Mark：用于备忘的位置</p>
+<p>这四个属性的关系总满足：0&lt;=mark&lt;=position&lt;=limit&lt;=capacity<br>示意图：<br><img src="/images/new-channel.png" alt="新建Channel属性示意图"><br>更多对于这几个属性的示意图见API详解</p>
+<h2 id="API详解"><a href="#API详解" class="headerlink" title="API详解"></a>API详解</h2><h3 id="isReadOnly"><a href="#isReadOnly" class="headerlink" title="isReadOnly()"></a>isReadOnly()</h3><p>用于判断该Buffer是否只读。所有Buffer都可读，但并非所有都可写</p>
+<h3 id="get"><a href="#get" class="headerlink" title="get()"></a>get()</h3><p>获取当前position索引处的元素，调用后position加一</p>
+<h3 id="get-int-index"><a href="#get-int-index" class="headerlink" title="get(int index)"></a>get(int index)</h3><p>获取index索引处的元素，调用后不影响position值</p>
+<h3 id="put-byte-b"><a href="#put-byte-b" class="headerlink" title="put(byte b)"></a>put(byte b)</h3><p>在当前position索引处放入元素，调用后position加一</p>
+<h3 id="put-int-index-byte-b"><a href="#put-int-index-byte-b" class="headerlink" title="put(int index, byte b)"></a>put(int index, byte b)</h3><p>在index索引处放入元素，调用后不影响position<br><em>ps:put()函数的元素类型因不同Buffer而异，这里以ByteBuffer为例</em><br>下面是<code>put(byte b)</code>操作对Buffer的影响示意图：<br>执行代码<code>buffer.put((byte)&#39;H&#39;).put((byte)&#39;e&#39;).put((byte)&#39;l&#39;).put((byte)&#39;l&#39;).put((byte)&#39;o&#39;);</code>后，一个新建的buffer的状态如下图；<br><img src="/images/relative-put.png" alt="相对put后Channel示意图"><br>然后执行代码<code>buffer.put(0, (byte)&#39;M&#39;).put((byte)&#39;w&#39;);</code>后的状态：<br><img src="/images/absolute-put.png" alt="绝对put后Channel示意图"></p>
+<h3 id="flip"><a href="#flip" class="headerlink" title="flip()"></a>flip()</h3><p>将buffer由写入状态“翻转”(flip)为读取就绪的状态<br>实质上是将limit设置为当前position的值，然后将position设置为0<br>例如上一个图中的buffer执行<code>flip()</code>后，状态如下：<br><img src="/images/flip.png" alt="flip后Channel示意图"></p>
+<h3 id="rewind"><a href="#rewind" class="headerlink" title="rewind()"></a>rewind()</h3><p>已经读取过的buffer需要重读时执行的操作<br>实质上是不改变limit，而将position设置为0</p>
+<h3 id="clear"><a href="#clear" class="headerlink" title="clear()"></a>clear()</h3><p>将buffer中所有元素“清除”，使buffer转到写入就绪的状态<br>实质上是将limit设置为当前capacity的值，然后将position设置为0，因此，buffer中元素并未被真正清除</p>
+<h3 id="compact"><a href="#compact" class="headerlink" title="compact()"></a>compact()</h3><p>将buffer中已经读取的元素“清除”，保留未读取的元素<br>实质上执行了以下几步：</p>
+<ol>
+<li>将未读取的元素复制到buffer的最前端，即将position到limit的元素复制到从0索引开始的位置</li>
+<li>将position设置为(limit-position)的值</li>
+<li>将limit设置为capacity的值<br>下面的示意图展示了buffer在<code>compact()</code>前后的状态：<br><img src="/images/partially-drained.png" alt="compact前"><br><img src="/images/after-compact.png" alt="compact后"><h3 id="mark"><a href="#mark" class="headerlink" title="mark()"></a>mark()</h3>标记当前位置，即将mark设置为当前position值<br><em><code>rewind()</code>, <code>clear()</code>, <code>flip()</code> 操作会清除当前的mark值，limit(int limit)和position(int position)如果传入比当前mark值小的值，也会导致当前mark值被清除</em><h3 id="reset"><a href="#reset" class="headerlink" title="reset()"></a>reset()</h3>跳转上一次标记的位置，即将position设置为当前mark值<h3 id="limit-int-limit"><a href="#limit-int-limit" class="headerlink" title="limit(int limit)"></a>limit(int limit)</h3>设置limit值<h3 id="position-int-position"><a href="#position-int-position" class="headerlink" title="position(int position)"></a>position(int position)</h3>设置position值<h3 id="equals"><a href="#equals" class="headerlink" title="equals()"></a>equals()</h3>对于buffer来说，equals返回<code>true</code>的充要条件是：</li>
+<li>两个对象类型相同</li>
+<li>两个对象剩余同样数量的元素</li>
+<li>在每个buffer中应被get()返回的剩余元素的序列要一致<br>下面的一个示意图展示了一对“相等”的buffer：<br><img src="/images/equal-buffer.png" alt="equal-buffer"><h3 id="get-char-dst-int-offset-int-length"><a href="#get-char-dst-int-offset-int-length" class="headerlink" title="get(char[] dst, int offset, int length)"></a>get(char[] dst, int offset, int length)</h3>将buffer的数据释放到dst数组的[offset,length]的子数组中<h3 id="get-char-dst"><a href="#get-char-dst" class="headerlink" title="get(char[] dst)"></a>get(char[] dst)</h3>相当于get(dst, 0, dst.length())，因此需要注意的是，调用该方法意味着你要求整个数组被填充，如果buffer中的数据不够，你将得到一个异常<br>将一个buffer的数据释放到一个更大的数组中可以使用如下代码：<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span> [] bigArray = <span class="keyword">new</span> <span class="keyword">char</span> [<span class="number">1000</span>];<span class="comment">//一个比buffer要大的数组</span></div><div class="line"><span class="keyword">int</span> length = buffer.remaining( );<span class="comment">//获得buffer剩余的元素个数</span></div><div class="line">buffer.get (bigArrray, <span class="number">0</span>, length);<span class="comment">//准确告知buffer要将元素释放到bigArray的哪些位置</span></div><div class="line">processData (bigArray, length);<span class="comment">//处理数据</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果用来容纳数据的数组比buffer要小，或者不明确两者大小关系，可以用如下代码将buffer数据读取并处理：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span> [] smallArray = <span class="keyword">new</span> <span class="keyword">char</span> [<span class="number">10</span>];</div><div class="line"><span class="keyword">while</span> (buffer.hasRemaining( )) &#123;</div><div class="line"><span class="keyword">int</span> length = Math.min (buffer.remaining( ), smallArray.length);</div><div class="line">buffer.get (smallArray, <span class="number">0</span>, length);</div><div class="line">processData (smallArray, length);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="put-char-src-int-offset-int-length-与put-char-src"><a href="#put-char-src-int-offset-int-length-与put-char-src" class="headerlink" title="put(char[] src, int offset, int length)与put(char[] src)"></a>put(char[] src, int offset, int length)与put(char[] src)</h3><p>与上面两个get()的工作方式相同，但移动数据的方向相反，将src数组的数据复制到buffer中，同理，<code>buffer.put(myArray)</code>等价于<code>buffer.put(myArray, 0, myArray.length)</code>，而如果此时buffer没有足够空间容纳myArray的全部数据，你将会得到一个异常</p>
+<h3 id="put-CharBuffer-src"><a href="#put-CharBuffer-src" class="headerlink" title="put(CharBuffer src)"></a>put(CharBuffer src)</h3><p>将buffer的数据转移到另一个buffer中，当然前提是buffer有足够的空间容纳来自src的所有数据，如果容纳不下，你也会得到一个异常</p>
+<h3 id="allocate-int-capacity"><a href="#allocate-int-capacity" class="headerlink" title="allocate(int capacity)"></a>allocate(int capacity)</h3><p>静态方法，用于创建buffer，capacity指定了buffer的值</p>
+<h3 id="allocateDirect-int-capacity"><a href="#allocateDirect-int-capacity" class="headerlink" title="allocateDirect(int capacity)"></a>allocateDirect(int capacity)</h3><p>同上，但创建的是直接缓冲区</p>
+<h3 id="isDirect"><a href="#isDirect" class="headerlink" title="isDirect()"></a>isDirect()</h3><p>判断该buffer是否为直接缓冲区</p>
+<h3 id="wrap-char-array"><a href="#wrap-char-array" class="headerlink" title="wrap(char [] array)"></a>wrap(char [] array)</h3><p>静态方法，用于创建buffer，新建的buffer将会用传入的array作为备份存储器，capacity等于array的长度</p>
+<h3 id="wrap-char-array-int-offset-int-length"><a href="#wrap-char-array-int-offset-int-length" class="headerlink" title="wrap(char [] array, int offset, int length)"></a>wrap(char [] array, int offset, int length)</h3><p>作用同上，区别在于创建后position被设置为offset，limit被设置为offset+length<br><em>ps:这个wrap函数创建的buffer仍然使用了整个array，另外两个参数只是用于设置buffer的初始值</em></p>
+<h3 id="wrap-CharSequence-csq"><a href="#wrap-CharSequence-csq" class="headerlink" title="wrap(CharSequence csq)"></a>wrap(CharSequence csq)</h3><p>作用与上面两个wrap类似，用来包装一个CharSequence（例如String）</p>
+<h3 id="wrap-CharSequence-csq-int-start-int-end"><a href="#wrap-CharSequence-csq-int-start-int-end" class="headerlink" title="wrap(CharSequence csq, int start, int end)"></a>wrap(CharSequence csq, int start, int end)</h3><p>作用同上，区别在于创建后position被设置为start，limit被设置为end</p>
+<p><em>ps: 以上几个批量转移数据的方法以及创建buffer的方法是以CharBuffer为例的，最后两个wrap方法是CharBuffer独有的，其他的方法在另外一些Buffer中有相同方法名、不同参数类型的实现</em></p>
+<h3 id="duplicate"><a href="#duplicate" class="headerlink" title="duplicate()"></a>duplicate()</h3><p>创建了一个与原始缓冲区相似的新缓冲区。两个缓冲区共享数据元素，拥有同样的容量，但每个缓冲区拥有各自的位置，上界和标记属性。对一个缓冲区内的数据元素所做的改变会反映在另外一个缓冲区上。这一副本缓冲区具有与原始缓冲区同样的数据视图。如果原始的缓冲区为只读，或者为直接缓冲区，新的缓冲区将继承这些属性</p>
+<h3 id="asReadOnlyBuffer"><a href="#asReadOnlyBuffer" class="headerlink" title="asReadOnlyBuffer()"></a>asReadOnlyBuffer()</h3><p>作用与duplicate()相同，但返回的视图是只读的。虽然是只读的，但其内容是会改变的，因为在原来的buffer上做的修改会反映在只读的缓冲区上</p>
+<h3 id="slice"><a href="#slice" class="headerlink" title="slice()"></a>slice()</h3><p>作用与duplicate()类似，但slice()创建一个从原始缓冲区的当前位置开始的新缓冲<br>区，并且其容量是原始缓冲区的剩余元素数量(limit-position)</p>
+<h2 id="其他知识点"><a href="#其他知识点" class="headerlink" title="其他知识点"></a>其他知识点</h2><h3 id="字节顺序"><a href="#字节顺序" class="headerlink" title="字节顺序"></a>字节顺序</h3><p>多字节数值被存储在内存中的方式一般被称为 endian-ness（字节顺序）。如果数字数<br>值的最高字节——big end（大端），位于低位地址，那么系统就是大端字节顺序（如图 2-<br>14 所示）。如果最低字节最先保存在内存中，那么小端字节顺序（如图 2-15 所示）。IP协议规定了使用大端的网络字节顺序<br>大端：<img src="/images/bigend.png" alt="bigend"><br>小端：<img src="/images/littleend.png" alt="littleend"><br>在NIO中，ByteOrder类封装了字节顺序</p>
+<h3 id="直接缓冲区"><a href="#直接缓冲区" class="headerlink" title="直接缓冲区"></a>直接缓冲区</h3><p>在JVM中，字节数组可能不会在内存中连续存储，或者垃圾回收机制可能随时对其进行移动。在Java中，数组是对象，而数据存储在对象中的方式在不同的JVM实现中都各有不同，因此引入了直接缓冲区的概念。直接缓冲区通过使用固有代码来告知操作系统直接释放或填充内存区域，因此绕过了标准JVM堆栈，创建和销毁的代价比较高，也不受垃圾回收机制的影响。</p>
+<h3 id="视图缓冲区"><a href="#视图缓冲区" class="headerlink" title="视图缓冲区"></a>视图缓冲区</h3><p>ByteBuffer允许创建视图来讲Byte型缓冲区直接数据映射为其他基本数据类型</p>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ol>
+<li>buffer对象不是线程安全的，如果要在多线程环境中存取buffer，要做好同步工作</li>
+<li></li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javase/" rel="tag"># javase</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/03/Java-NIO-学习之Selector/" rel="next" title="Java NIO 学习之Selector">
+                <i class="fa fa-chevron-left"></i> Java NIO 学习之Selector
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/26/Java-NIO-学习之Channel/" rel="prev" title="Java NIO 学习之Channel">
+                Java NIO 学习之Channel <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODI2OC80ODQw"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/gene.png"
+               alt="Gene" />
+          <p class="site-author-name" itemprop="name">Gene</p>
+           
+              <p class="site-description motion-element" itemprop="description">A student majoring in Software Engineering</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/iamxpy" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/luo-mu-xue-lan" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-cube"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.csdn.net/xpy870663266" target="_blank" title="CSDN">
+                  
+                    <i class="fa fa-fw fa-coffee"></i>
+                  
+                  CSDN
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/1631634e1130/timeline" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-book"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概念与原理"><span class="nav-number">2.</span> <span class="nav-text">概念与原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Buffer的属性"><span class="nav-number">2.1.</span> <span class="nav-text">Buffer的属性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API详解"><span class="nav-number">3.</span> <span class="nav-text">API详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#isReadOnly"><span class="nav-number">3.1.</span> <span class="nav-text">isReadOnly()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get"><span class="nav-number">3.2.</span> <span class="nav-text">get()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get-int-index"><span class="nav-number">3.3.</span> <span class="nav-text">get(int index)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#put-byte-b"><span class="nav-number">3.4.</span> <span class="nav-text">put(byte b)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#put-int-index-byte-b"><span class="nav-number">3.5.</span> <span class="nav-text">put(int index, byte b)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flip"><span class="nav-number">3.6.</span> <span class="nav-text">flip()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rewind"><span class="nav-number">3.7.</span> <span class="nav-text">rewind()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clear"><span class="nav-number">3.8.</span> <span class="nav-text">clear()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#compact"><span class="nav-number">3.9.</span> <span class="nav-text">compact()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mark"><span class="nav-number">3.10.</span> <span class="nav-text">mark()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reset"><span class="nav-number">3.11.</span> <span class="nav-text">reset()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#limit-int-limit"><span class="nav-number">3.12.</span> <span class="nav-text">limit(int limit)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#position-int-position"><span class="nav-number">3.13.</span> <span class="nav-text">position(int position)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#equals"><span class="nav-number">3.14.</span> <span class="nav-text">equals()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get-char-dst-int-offset-int-length"><span class="nav-number">3.15.</span> <span class="nav-text">get(char[] dst, int offset, int length)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get-char-dst"><span class="nav-number">3.16.</span> <span class="nav-text">get(char[] dst)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#put-char-src-int-offset-int-length-与put-char-src"><span class="nav-number">3.17.</span> <span class="nav-text">put(char[] src, int offset, int length)与put(char[] src)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#put-CharBuffer-src"><span class="nav-number">3.18.</span> <span class="nav-text">put(CharBuffer src)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#allocate-int-capacity"><span class="nav-number">3.19.</span> <span class="nav-text">allocate(int capacity)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#allocateDirect-int-capacity"><span class="nav-number">3.20.</span> <span class="nav-text">allocateDirect(int capacity)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#isDirect"><span class="nav-number">3.21.</span> <span class="nav-text">isDirect()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wrap-char-array"><span class="nav-number">3.22.</span> <span class="nav-text">wrap(char [] array)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wrap-char-array-int-offset-int-length"><span class="nav-number">3.23.</span> <span class="nav-text">wrap(char [] array, int offset, int length)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wrap-CharSequence-csq"><span class="nav-number">3.24.</span> <span class="nav-text">wrap(CharSequence csq)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wrap-CharSequence-csq-int-start-int-end"><span class="nav-number">3.25.</span> <span class="nav-text">wrap(CharSequence csq, int start, int end)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#duplicate"><span class="nav-number">3.26.</span> <span class="nav-text">duplicate()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#asReadOnlyBuffer"><span class="nav-number">3.27.</span> <span class="nav-text">asReadOnlyBuffer()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#slice"><span class="nav-number">3.28.</span> <span class="nav-text">slice()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他知识点"><span class="nav-number">4.</span> <span class="nav-text">其他知识点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字节顺序"><span class="nav-number">4.1.</span> <span class="nav-text">字节顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#直接缓冲区"><span class="nav-number">4.2.</span> <span class="nav-text">直接缓冲区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#视图缓冲区"><span class="nav-number">4.3.</span> <span class="nav-text">视图缓冲区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注意事项"><span class="nav-number">5.</span> <span class="nav-text">注意事项</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Gene</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("kqHYy2W6o1QD5K0EKWE0zdPy-gzGzoHsz", "lLFeuDQsMSkp011HnWxTfaH1");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
