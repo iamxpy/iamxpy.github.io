@@ -87,13 +87,13 @@
 
 
 
-<meta name="description" content="概述Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：每个基本类型（除了布尔值）都对应着一种Buffer，如ByteBuff，LongBuffer等，最常用的是ByteBuffer。">
+<meta name="description" content="概述Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：">
 <meta name="keywords" content="javase">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java NIO 学习之Buffer">
 <meta property="og:url" content="http://yoursite.com/2017/05/03/Java-NIO-学习之Buffer/index.html">
 <meta property="og:site_name" content="Gene's Home">
-<meta property="og:description" content="概述Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：每个基本类型（除了布尔值）都对应着一种Buffer，如ByteBuff，LongBuffer等，最常用的是ByteBuffer。">
+<meta property="og:description" content="概述Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：">
 <meta property="og:image" content="http://yoursite.com/images/buffer-channel.png">
 <meta property="og:image" content="http://yoursite.com/images/new-channel.png">
 <meta property="og:image" content="http://yoursite.com/images/relative-put.png">
@@ -104,10 +104,10 @@
 <meta property="og:image" content="http://yoursite.com/images/equal-buffer.png">
 <meta property="og:image" content="http://yoursite.com/images/bigend.png">
 <meta property="og:image" content="http://yoursite.com/images/littleend.png">
-<meta property="og:updated_time" content="2017-05-03T14:47:58.672Z">
+<meta property="og:updated_time" content="2017-05-03T14:52:30.117Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO 学习之Buffer">
-<meta name="twitter:description" content="概述Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：每个基本类型（除了布尔值）都对应着一种Buffer，如ByteBuff，LongBuffer等，最常用的是ByteBuffer。">
+<meta name="twitter:description" content="概述Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：">
 <meta name="twitter:image" content="http://yoursite.com/images/buffer-channel.png">
 
 
@@ -386,8 +386,7 @@
       
 
       
-        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：<br><img src="/images/buffer-channel.png" alt="Buffer示意图"><br>每个基本类型（除了布尔值）都对应着一种Buffer，如ByteBuff，LongBuffer等，最常用的是ByteBuffer。</p>
-<a id="more"></a>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：<br><a id="more"></a><br><img src="/images/buffer-channel.png" alt="Buffer示意图"><br>每个基本类型（除了布尔值）都对应着一种Buffer，如ByteBuff，LongBuffer等，最常用的是ByteBuffer。</p>
 <h2 id="概念与原理"><a href="#概念与原理" class="headerlink" title="概念与原理"></a>概念与原理</h2><h3 id="Buffer的属性"><a href="#Buffer的属性" class="headerlink" title="Buffer的属性"></a>Buffer的属性</h3><p>Capacity：Buffer能够容纳元素的最大数量。在Buffer创建时指定，不可改变。</p>
 <p>Limit：对Buffer执行读或写操作的上界。等于Buffer中第一个不能被读或写的元素的索引</p>
 <p>Position：下一个要被读或写的元素的索引</p>
