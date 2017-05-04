@@ -99,7 +99,7 @@
 <meta property="og:image" content="http://yoursite.com/images/four-gather.png">
 <meta property="og:image" content="http://yoursite.com/2017/04/26/Java-NIO-学习之Channel/four-scatter.png">
 <meta property="og:image" content="http://yoursite.com/2017/04/26/Java-NIO-学习之Channel/io-api-comparation.png">
-<meta property="og:updated_time" content="2017-05-04T14:53:38.280Z">
+<meta property="og:updated_time" content="2017-05-04T14:57:33.541Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO 学习之Channel">
 <meta name="twitter:description" content="概述Channel用于在字节缓冲区和位于通道另一侧的实体（通常是一个文件或套接字）之间有效地传输数据。多数情况下，Channel与操作系统的文件描述符(File Descriptor)和文件句柄(File Handle)有着一对一的关系。通道是一种途径，借助该途径，可以用最小的总开销来访问操作系统本身的I/O服务。缓冲区则是通道内部用来发送和接收数据的端点。下图中的箭头展示了channel在连接I">
@@ -381,7 +381,7 @@
       
 
       
-        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Channel用于在字节缓冲区和位于通道另一侧的实体（通常是一个文件或套接字）之间有效地传输数据。多数情况下，Channel与操作系统的文件描述符(File Descriptor)和文件句柄(File Handle)有着一对一的关系。通道是一种途径，借助该途径，可以用最小的总开销来访问操作系统本身的I/O服务。缓冲区则是通道内部用来发送和接收数据的端点。下图中的箭头展示了channel在连接IO服务的时充当的角色<br><img src="/images/channel-service.png" alt="channel-service-in-IO"><br>有两种类型的Channel：<br>文件通道，对应FileChannel类<br>套接字通道，对应SocketChannel、 ServerSocketChannel 和 DatagramChannel类</p>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Channel用于在字节缓冲区和位于通道另一侧的实体（通常是一个文件或套接字）之间有效地传输数据。多数情况下，Channel与操作系统的文件描述符(File Descriptor)和文件句柄(File Handle)有着一对一的关系。通道是一种途径，借助该途径，可以用最小的总开销来访问操作系统本身的I/O服务。缓冲区则是通道内部用来发送和接收数据的端点。下图中的箭头展示了channel在连接IO服务的时充当的角色<br><a id="more"></a><br><img src="/images/channel-service.png" alt="channel-service-in-IO"><br>有两种类型的Channel：<br>文件通道，对应FileChannel类<br>套接字通道，对应SocketChannel、 ServerSocketChannel 和 DatagramChannel类</p>
 <h2 id="概念与原理"><a href="#概念与原理" class="headerlink" title="概念与原理"></a>概念与原理</h2><h3 id="Scatter-Gather"><a href="#Scatter-Gather" class="headerlink" title="Scatter/Gather"></a>Scatter/Gather</h3><p>Scatter/Gather是一个简单却强大的概念，也成为矢量IO，大多数现代操作系统都支持本地矢量IO。当我们在一个通道上请求一个Scatter/Gather操作时，该请求会被翻译为适当的本地调用来直接填充或抽取缓冲区</p>
 <p><img src="/images/scatter-read.png" alt="scatter-read.png"></p>
 <blockquote>
