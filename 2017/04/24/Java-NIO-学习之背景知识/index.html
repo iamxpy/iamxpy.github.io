@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="javase," />
+  <meta name="keywords" content="javase,NIO," />
 
 
 
@@ -88,7 +88,7 @@
 
 
 <meta name="description" content="在学习《Java NIO》一书时，发现缺少了不少背景知识，因此在本文中记录下来，方便日后复习。">
-<meta name="keywords" content="javase">
+<meta name="keywords" content="javase,NIO">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java NIO 学习之背景知识">
 <meta property="og:url" content="http://yoursite.com/2017/04/24/Java-NIO-学习之背景知识/index.html">
@@ -97,7 +97,7 @@
 <meta property="og:image" content="http://yoursite.com/images/DMA.jpg">
 <meta property="og:image" content="http://yoursite.com/images/kernel-user-space.png">
 <meta property="og:image" content="http://yoursite.com/images/hardware-kernel-user-space.png">
-<meta property="og:updated_time" content="2017-05-03T14:48:03.759Z">
+<meta property="og:updated_time" content="2017-05-04T12:30:29.235Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO 学习之背景知识">
 <meta name="twitter:description" content="在学习《Java NIO》一书时，发现缺少了不少背景知识，因此在本文中记录下来，方便日后复习。">
@@ -385,6 +385,18 @@
 <h2 id="虚拟内存的基本概念与分页技术"><a href="#虚拟内存的基本概念与分页技术" class="headerlink" title="虚拟内存的基本概念与分页技术"></a>虚拟内存的基本概念与分页技术</h2><p><a href="http://218.5.241.24:8018/C35/Course/ZCYL-HB/WLKJ/jy/Chap03/3.6.1.htm" target="_blank" rel="external">虚拟内存的基本概念</a><br><a href="http://218.5.241.24:8018/C35/Course/ZCYL-HB/WLKJ/jy/Chap03/3.6.2.htm" target="_blank" rel="external">页式虚拟存储器</a></p>
 <h2 id="多工IO-就绪性选择"><a href="#多工IO-就绪性选择" class="headerlink" title="多工IO(就绪性选择)"></a>多工IO(就绪性选择)</h2><p>挖坑待填</p>
 <h2 id="内存映射文件"><a href="#内存映射文件" class="headerlink" title="内存映射文件"></a>内存映射文件</h2><p>挖坑待填</p>
+<h2 id="文件锁"><a href="#文件锁" class="headerlink" title="文件锁"></a>文件锁</h2><p>在 Linux 中，不论进程是在使用<strong>劝告锁</strong>还是<strong>强制锁</strong>，它都可以同时使用<strong>共享锁</strong>和<strong>排他锁</strong>（又称为<strong>读锁</strong>和<strong>写锁</strong>）。多个共享锁之间不会相互干扰，多个进程在同一时刻可以对同一个文件加共享锁。但是，如果一个进程对该文件加了排他锁，那么其他进程则无权再对该文件加共享锁或者排他锁，直到该排他锁被释放。所以，对于同一个文件来说，可以同时有很多进程对其进行读操作，但是在某一特定时刻，只能有一个进程对其进行写操作，两种锁的兼容关系如下表所示。</p>
+<table border="0" cellpadding="0" cellspacing="0"><tr><th style="vertical-align:top"></th><th colspan="2" style="text-align:center; vertical-align:top"><strong>是否满足请求</strong></th></tr><tbody><tr><td style="text-align:center; vertical-align:top"><strong>当前加上的锁</strong></td><td style="text-align:center; vertical-align:top"><br>共享锁<br></td><td style="text-align:center; vertical-align:top"><br>排他锁<br></td></tr><tr><td style="text-align:center; vertical-align:top"><br>无<br></td><td style="text-align:center; vertical-align:top"><br>是<br></td><td style="text-align:center; vertical-align:top"><br>是<br></td></tr><tr><td style="text-align:center; vertical-align:top"><br>共享锁<br></td><td style="text-align:center; vertical-align:top"><br>是<br></td><td style="text-align:center; vertical-align:top"><br>否<br></td></tr><tr><td style="text-align:center; vertical-align:top"><br>排他锁<br></td><td style="text-align:center; vertical-align:top"><br>否<br></td><td style="text-align:center; vertical-align:top"><br>否<br></td></tr></tbody></table>
+
+<h3 id="劝告锁"><a href="#劝告锁" class="headerlink" title="劝告锁"></a>劝告锁</h3><p>劝告锁是一种协同工作的锁。对于这一种锁来说，内核只提供加锁以及检测文件是否已经加锁的手段，但是内核并不参与锁的控制和协调。也就是说，如果有进程不遵守“游戏规则”，不检查目标文件是否已经由别的进程加了锁就往其中写入数据，那么内核是不会加以阻拦的。因此，劝告锁并不能阻止进程对文件的访问，而只能依靠各个进程在访问文件之前检查该文件是否已经被其他进程加锁来实现并发控制。进程需要事先对锁的状态做一个约定，并根据锁的当前状态和相互关系来确定其他进程是否能对文件执行指定的操作。从这点上来说，劝告锁的工作方式与使用信号量保护临界区的方式非常类似。</p>
+<p>劝告锁可以对文件的任意一个部分进行加锁，也可以对整个文件进行加锁，甚至可以对文件将来增大的部分也进行加锁。由于进程可以选择对文件的某个部分进行加锁，所以一个进程可以获得关于某个文件不同部分的多个锁。</p>
+<h3 id="强制锁"><a href="#强制锁" class="headerlink" title="强制锁"></a>强制锁</h3><p>与劝告锁不同，强制锁是一种内核强制采用的文件锁，它是从 System V Release 3 开始引入的。每当有系统调用 open()、read() 以及write() 发生的时候，内核都要检查并确保这些系统调用不会违反在所访问文件上加的强制锁约束。也就是说，如果有进程不遵守游戏规则，硬要往加了锁的文件中写入内容，内核就会加以阻拦：</p>
+<p>如果一个文件已经被加上了读锁或者共享锁，那么其他进程再对这个文件进行写操作就会被内核阻止；</p>
+<p>如果一个文件已经被加上了写锁或者排他锁，那么其他进程再对这个文件进行读取或者写操作就会被内核阻止。</p>
+<p>如果其他进程试图访问一个已经加有强制锁的文件，进程行为取决于所执行的操作模式和文件锁的类型，归纳如下表所示：</p>
+<table border="0" cellpadding="0" cellspacing="0"><tr><th style="text-align:center; vertical-align:top"><br>当前锁类型<br></th><th style="text-align:center; vertical-align:top"><br>阻塞读<br></th><th style="text-align:center; vertical-align:top"><br>阻塞写<br></th><th style="text-align:center; vertical-align:top"><br>非阻塞读<br></th><th style="text-align:center; vertical-align:top"><br>非阻塞写<br></th></tr><tbody><tr><td style="text-align:center; vertical-align:top"><br>读锁<br></td><td style="text-align:center; vertical-align:top"><br>正常读取数据<br></td><td style="text-align:center; vertical-align:top"><br>阻塞<br></td><td style="text-align:center; vertical-align:top"><br>正常读取数据<br></td><td style="text-align:center; vertical-align:top"><br>EAGAIN<br></td></tr><tr><td style="text-align:center; vertical-align:top"><br>写锁<br></td><td style="text-align:center; vertical-align:top"><br>阻塞<br></td><td style="text-align:center; vertical-align:top"><br>阻塞<br></td><td style="text-align:center; vertical-align:top"><br>EAGAIN<br></td><td style="text-align:center; vertical-align:top"><br>EAGAIN<br></td></tr></tbody></table>
+
+<p>需要注意的是，如果要访问的文件的锁类型与要执行的操作存在冲突，那么采用阻塞读/写操作的进程会被阻塞，而采用非阻塞读/写操作的进程则不会阻塞，而是立即返回 EAGAIN。</p>
 
       
     </div>
@@ -415,6 +427,8 @@
         <div class="post-tags">
           
             <a href="/tags/javase/" rel="tag"># javase</a>
+          
+            <a href="/tags/NIO/" rel="tag"># NIO</a>
           
         </div>
       
@@ -608,7 +622,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#硬件直接存储器-DMA"><span class="nav-number">1.</span> <span class="nav-text">硬件直接存储器 (DMA)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户空间与内核空间"><span class="nav-number">2.</span> <span class="nav-text">用户空间与内核空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟内存的基本概念与分页技术"><span class="nav-number">3.</span> <span class="nav-text">虚拟内存的基本概念与分页技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多工IO-就绪性选择"><span class="nav-number">4.</span> <span class="nav-text">多工IO(就绪性选择)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存映射文件"><span class="nav-number">5.</span> <span class="nav-text">内存映射文件</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#硬件直接存储器-DMA"><span class="nav-number">1.</span> <span class="nav-text">硬件直接存储器 (DMA)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户空间与内核空间"><span class="nav-number">2.</span> <span class="nav-text">用户空间与内核空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟内存的基本概念与分页技术"><span class="nav-number">3.</span> <span class="nav-text">虚拟内存的基本概念与分页技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多工IO-就绪性选择"><span class="nav-number">4.</span> <span class="nav-text">多工IO(就绪性选择)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存映射文件"><span class="nav-number">5.</span> <span class="nav-text">内存映射文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件锁"><span class="nav-number">6.</span> <span class="nav-text">文件锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#劝告锁"><span class="nav-number">6.1.</span> <span class="nav-text">劝告锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#强制锁"><span class="nav-number">6.2.</span> <span class="nav-text">强制锁</span></a></li></ol></li></ol></div>
             
 
           </div>

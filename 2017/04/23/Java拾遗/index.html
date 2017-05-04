@@ -94,7 +94,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/04/23/Java拾遗/index.html">
 <meta property="og:site_name" content="Gene's Home">
 <meta property="og:description" content="Java知识点繁多，如果不多加以实践会很容易忘记，这篇文章记录的是我遗忘了然后查了或者我根本不知道的知识点，会不定期更新">
-<meta property="og:updated_time" content="2017-04-24T02:09:20.250Z">
+<meta property="og:updated_time" content="2017-05-04T03:36:06.979Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java拾遗">
 <meta name="twitter:description" content="Java知识点繁多，如果不多加以实践会很容易忘记，这篇文章记录的是我遗忘了然后查了或者我根本不知道的知识点，会不定期更新">
@@ -376,8 +376,7 @@
 
       
         <p>Java知识点繁多，如果不多加以实践会很容易忘记，这篇文章记录的是我遗忘了然后查了或者我根本不知道的知识点，会不定期更新<br><a id="more"></a></p>
-<h1 id="17-04-23-更"><a href="#17-04-23-更" class="headerlink" title="17.04.23 更"></a>17.04.23 更</h1><p>##重读《疯狂java讲义》发现的遗忘点</p>
-<ol>
+<h1 id="17-04-23-更"><a href="#17-04-23-更" class="headerlink" title="17.04.23 更"></a>17.04.23 更</h1><h2 id="重读《疯狂java讲义》发现的遗忘点"><a href="#重读《疯狂java讲义》发现的遗忘点" class="headerlink" title="重读《疯狂java讲义》发现的遗忘点"></a>重读《疯狂java讲义》发现的遗忘点</h2><ol>
 <li><p>Lambda表达式和匿名内部类的区别：<br>匿名内部类可以为所有接口，抽象类甚至普通类创建对象，而Lambda表达式只能为函数式接口创建对象；<br>匿名内部类在方法实现的代码部分允许调用接口中的默认方法，而Lambda表达式不允许</p>
 </li>
 <li><p>方法引用和构造器引用，从形式上来说满足以下情况可用：当Lambda表达式只含有一句语句,且该语句是在调用方法。此时Lambda表达式可改为“调用者::调用方法”的形式，一般是”类名::类方法”（包括了”类名::new”，构造方法可以理解为通过类来调用）或”实例对象::实例方法”，例外是当方法调用者本身也是形参列表的一员时（例如那句语句可以是(a,b,c)-&gt;a.substring(b,c)），如果其是第一个参数，那么可改为“类名::实例方法”</p>
@@ -636,7 +635,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#17-04-23-更"><span class="nav-number">1.</span> <span class="nav-text">17.04.23 更</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronize关键字细节"><span class="nav-number">1.1.</span> <span class="nav-text">synchronize关键字细节</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#17-04-23-更"><span class="nav-number">1.</span> <span class="nav-text">17.04.23 更</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#重读《疯狂java讲义》发现的遗忘点"><span class="nav-number">1.1.</span> <span class="nav-text">重读《疯狂java讲义》发现的遗忘点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronize关键字细节"><span class="nav-number">1.2.</span> <span class="nav-text">synchronize关键字细节</span></a></li></ol></li></ol></div>
             
 
           </div>

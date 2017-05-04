@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="javase," />
+  <meta name="keywords" content="javase,NIO," />
 
 
 
@@ -87,17 +87,23 @@
 
 
 
-<meta name="description" content="A student majoring in Software Engineering">
-<meta name="keywords" content="javase">
+<meta name="description" content="概述Channel用于在字节缓冲区和位于通道另一侧的实体（通常是一个文件或套接字）之间有效地传输数据。多数情况下，Channel与操作系统的文件描述符(File Descriptor)和文件句柄(File Handle)有着一对一的关系。通道是一种途径，借助该途径，可以用最小的总开销来访问操作系统本身的I/O服务。缓冲区则是通道内部用来发送和接收数据的端点。下图中的箭头展示了channel在连接I">
+<meta name="keywords" content="javase,NIO">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java NIO 学习之Channel">
 <meta property="og:url" content="http://yoursite.com/2017/04/26/Java-NIO-学习之Channel/index.html">
 <meta property="og:site_name" content="Gene's Home">
-<meta property="og:description" content="A student majoring in Software Engineering">
-<meta property="og:updated_time" content="2017-05-03T14:48:05.251Z">
+<meta property="og:description" content="概述Channel用于在字节缓冲区和位于通道另一侧的实体（通常是一个文件或套接字）之间有效地传输数据。多数情况下，Channel与操作系统的文件描述符(File Descriptor)和文件句柄(File Handle)有着一对一的关系。通道是一种途径，借助该途径，可以用最小的总开销来访问操作系统本身的I/O服务。缓冲区则是通道内部用来发送和接收数据的端点。下图中的箭头展示了channel在连接I">
+<meta property="og:image" content="http://yoursite.com/images/channel-service.png">
+<meta property="og:image" content="http://yoursite.com/images/scatter-read.png">
+<meta property="og:image" content="http://yoursite.com/images/four-gather.png">
+<meta property="og:image" content="http://yoursite.com/2017/04/26/Java-NIO-学习之Channel/four-scatter.png">
+<meta property="og:image" content="http://yoursite.com/2017/04/26/Java-NIO-学习之Channel/io-api-comparation.png">
+<meta property="og:updated_time" content="2017-05-04T14:53:38.280Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO 学习之Channel">
-<meta name="twitter:description" content="A student majoring in Software Engineering">
+<meta name="twitter:description" content="概述Channel用于在字节缓冲区和位于通道另一侧的实体（通常是一个文件或套接字）之间有效地传输数据。多数情况下，Channel与操作系统的文件描述符(File Descriptor)和文件句柄(File Handle)有着一对一的关系。通道是一种途径，借助该途径，可以用最小的总开销来访问操作系统本身的I/O服务。缓冲区则是通道内部用来发送和接收数据的端点。下图中的箭头展示了channel在连接I">
+<meta name="twitter:image" content="http://yoursite.com/images/channel-service.png">
 
 
 
@@ -375,7 +381,100 @@
       
 
       
-        
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Channel用于在字节缓冲区和位于通道另一侧的实体（通常是一个文件或套接字）之间有效地传输数据。多数情况下，Channel与操作系统的文件描述符(File Descriptor)和文件句柄(File Handle)有着一对一的关系。通道是一种途径，借助该途径，可以用最小的总开销来访问操作系统本身的I/O服务。缓冲区则是通道内部用来发送和接收数据的端点。下图中的箭头展示了channel在连接IO服务的时充当的角色<br><img src="/images/channel-service.png" alt="channel-service-in-IO"><br>有两种类型的Channel：<br>文件通道，对应FileChannel类<br>套接字通道，对应SocketChannel、 ServerSocketChannel 和 DatagramChannel类</p>
+<h2 id="概念与原理"><a href="#概念与原理" class="headerlink" title="概念与原理"></a>概念与原理</h2><h3 id="Scatter-Gather"><a href="#Scatter-Gather" class="headerlink" title="Scatter/Gather"></a>Scatter/Gather</h3><p>Scatter/Gather是一个简单却强大的概念，也成为矢量IO，大多数现代操作系统都支持本地矢量IO。当我们在一个通道上请求一个Scatter/Gather操作时，该请求会被翻译为适当的本地调用来直接填充或抽取缓冲区</p>
+<p><img src="/images/scatter-read.png" alt="scatter-read.png"></p>
+<blockquote>
+<p>关于图中DMA，用户空间，内核空间等概念，可以参考<a href="https://iamxpy.github.io/2017/04/24/Java-NIO-%E5%AD%A6%E4%B9%A0%E4%B9%8B%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86/" target="_blank" rel="external">Java NIO 学习之背景知识</a></p>
+</blockquote>
+<p>如上图所示，进程只需一个系统调用，就能把一连串缓冲区地址传递给操作系统。然后，内核就可以顺序填充或排干多个缓冲区，读的时候就把数据发散到多个用户空间缓冲区，写的时候再从多个缓冲区把数据汇聚起来。这样,用户进程就不必多次执行系统调用（那样做可能代价不菲），内核也可以优化数据的处理过程，因为它已掌握待传输数据的全部信息。如果系统配有多个CPU，甚至可以同时填充或排干多个缓冲区。</p>
+<p>在NIO中，Scatter/Gatter的相关API是channel的数组形式的read和write操作，如read(ByteBuffer[] dsts)和write(ByteBuffer[] srcs)等，下面分别用图示解释这两种操作的数据移动的结果：<br>下图描述了一个gather写操作。数据从缓冲区阵列引用的每个缓冲区中gather并被组合成沿着通道发送的字节流。</p>
+<p><img src="/images/four-gather.png" alt="four-gather.png"></p>
+<p>描述了一个 scatter 读操作。从通道传输来的数据被scatter到所列缓冲区，依次填充每个缓冲区（从缓冲区的position处开始到limit处结束）。这里显示的position和limit值是读操作开始之前的。</p>
+<p><img src="four-scatter.png" alt="four-scatter.png"></p>
+<h3 id="文件通道"><a href="#文件通道" class="headerlink" title="文件通道"></a>文件通道</h3><p>每个FileChannel对象都同一个文件描述符有一对一的关系，在FileChannel出现之前，底层的文件操作都是通过RandomAccessFile类的方法来实现的。FileChannel模拟同样的I/O服务，因此它们的API自然也是很相似的。为了便于比较，下图列出了FileChannel，RandomAccessFile和POSIX I/O系统调用在方法上的对应关系</p>
+<p><img src="io-api-comparation.png" alt="io-api-comparation.png"></p>
+<p>同底层的文件描述符一样，每个FileChannel都有一个叫position的概念。这个position值决定文件中哪一处的数据接下来将被读或者写。position是从底层的文件描述符获得的，该position同时被作为通道引用获取来源的文件对象共享，这也就意味着一个对象对该 position的更新可以被另一个对象看到。</p>
+<p>类似于缓冲区的get()和put()方法，当字节被read()或write()方法传输时，文件position会自动更新。如果position达到了文件大小的值（文件大小的值可以通过size()方法返回），read()方法会返回-1。可是，不同于缓冲区的是，如果使用write()方法时position前进到超过文件大小的值，该文件会扩展以容纳新写入的字节。</p>
+<h3 id="获取通道的几种方法"><a href="#获取通道的几种方法" class="headerlink" title="获取通道的几种方法"></a>获取通道的几种方法</h3><p>1.调用支持通道的类的getChannel()方法<br>本地IO：FileInputStream/FileOutputStream、RandomAccessFile<br>网络IO：Socket、ServerSocket 、DatagramSocket</p>
+<blockquote>
+<p>Socket的相关类调用getChannel()不会创建新的通道，只会返回与之对应的channel。意思是，如果先实例化来创建Socket，然后调用getCahnnel则会返回null，而先创建SocketChannel，调用其socket()方法得到socket后，在此socket上调用getChannel才会返回与之对应的channel</p>
+</blockquote>
+<p>2.调用各个通道的静态方法open()</p>
+<p>3.调用Files工具类的newByteChannel()</p>
+<p>4.调用Channels.newChannel(InputStream in)或Channels.newChannel(OutputStream out)</p>
+<blockquote>
+<p>Channels类的方法常见用于包装标准输入输出流，即System.in和System.out</p>
+</blockquote>
+<h3 id="文件锁定"><a href="#文件锁定" class="headerlink" title="文件锁定"></a>文件锁定</h3><p>在不同的操作系统上，甚至在同一个操作系统的不同文件系统上，文件锁定的语义都会有所差异。我们应该总是按照劝告锁的假定来管理文件锁，因为这是最安全的。文件锁类型的区别见<a href="https://iamxpy.github.io/2017/04/24/Java-NIO-%E5%AD%A6%E4%B9%A0%E4%B9%8B%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86/" target="_blank" rel="external">Java NIO 学习之背景知识</a></p>
+<p>如果一个线程在某个文件上获得了一个独占锁，然后第二个线程利用一个单独打开的通道来请求该文件的独占锁，那么第二个线程的请求会被批准。但如果这两个线程运行在不同的 Java 虚拟机上，那么第二个线程会阻塞，因为锁最终是由操作系统或文件系统来判优的并且几乎总是在进程级而非线程级上判优。锁都是与一个文件关联的，而不是与单个的文件句柄或通道关联</p>
+<p>FileLock推荐使用形式<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">FileLock lock = fileChannel.lock();</div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line"><span class="comment">//perform read/write/whatever on channel</span></div><div class="line">&#125; <span class="keyword">catch</span>(IOException e)&#123;</div><div class="line"><span class="comment">//handle unexpected exception</span></div><div class="line">&#125; <span class="keyword">finally</span> &#123;</div><div class="line">lock.release();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="Channel通用API"><a href="#Channel通用API" class="headerlink" title="Channel通用API"></a>Channel通用API</h2><h3 id="read-ByteBuffer-dst"><a href="#read-ByteBuffer-dst" class="headerlink" title="read(ByteBuffer dst)"></a>read(ByteBuffer dst)</h3><p>从channel中读取数据到dst中</p>
+<blockquote>
+<p>   来自ReadableByteChannel的注释<br>   *A read operation might not fill the buffer, and in fact it might not</p>
+<pre><code>* read any bytes at all.  Whether or not it does so depends upon the
+* nature and state of the channel.  A socket channel in non-blocking mode,
+* for example, cannot read any more bytes than are immediately available
+* from the socket&apos;s input buffer; similarly, a file channel cannot read
+* any more bytes than remain in the file.  It is guaranteed, however, that
+* if a channel is in blocking mode and there is at least one byte
+* remaining in the buffer then this method will block until at least one
+* byte is read.
+</code></pre></blockquote>
+<h3 id="read-ByteBuffer-dsts"><a href="#read-ByteBuffer-dsts" class="headerlink" title="read(ByteBuffer[] dsts)"></a>read(ByteBuffer[] dsts)</h3><p>对dsts中的所有ByteBuffer执行gather操作</p>
+<h3 id="read-ByteBuffer-dsts-int-offset-int-length"><a href="#read-ByteBuffer-dsts-int-offset-int-length" class="headerlink" title="read(ByteBuffer[] dsts, int offset, int length)"></a>read(ByteBuffer[] dsts, int offset, int length)</h3><p>对dsts中的部分ByteBuffer执行gather操作。offset参数是指哪个缓冲区将开始被使用，而不是指数据的 offset。length参数指示要使用的缓冲区数量。</p>
+<h3 id="write-ByteBuffer-src"><a href="#write-ByteBuffer-src" class="headerlink" title="write(ByteBuffer src)"></a>write(ByteBuffer src)</h3><p>将src中的数据写入到channel中</p>
+<blockquote>
+<p>   来自WritableByteChannel的注释<br>   *An attempt is made to write up to r bytes to the channel,</p>
+<pre><code>* where r is the number of bytes remaining in the buffer, that is,
+* src.remaining(), at the moment this method is invoked.
+* Unless otherwise specified, a write operation will return only after
+* writing all of the r requested bytes.  Some types of channels,
+* depending upon their state, may write only some of the bytes or possibly
+* none at all.  A socket channel in non-blocking mode, for example, cannot
+* write any more bytes than are free in the socket&apos;s output buffer.
+</code></pre></blockquote>
+<h3 id="write-ByteBuffer-srcs"><a href="#write-ByteBuffer-srcs" class="headerlink" title="write(ByteBuffer[] srcs)"></a>write(ByteBuffer[] srcs)</h3><p>对srcs中的所有ByteBuffer执行scatter操作</p>
+<blockquote>
+<p>使用<code>while (channel.write(bs) &gt; 0){}</code>来确保已经将srcs中所有buffer的有效数据都被写入channel</p>
+</blockquote>
+<h3 id="write-ByteBuffer-srcs-int-offset-int-length"><a href="#write-ByteBuffer-srcs-int-offset-int-length" class="headerlink" title="write(ByteBuffer[] srcs, int offset, int length)"></a>write(ByteBuffer[] srcs, int offset, int length)</h3><p>对srcs中的部分ByteBuffer执行scatter操作。offset参数是指哪个缓冲区将开始被使用，而不是指数据的 offset。length参数指示要使用的缓冲区数量。</p>
+<p><strong>下面是实现通道之间复制数据的代码，代码中的两个循环条件是经常被使用的</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">channelCopy2</span> <span class="params">(ReadableByteChannel src,</span></span></div><div class="line">WritableByteChannel dest)</div><div class="line"><span class="keyword">throws</span> IOException</div><div class="line">&#123;</div><div class="line">ByteBuffer buffer = ByteBuffer.allocateDirect (<span class="number">16</span> * <span class="number">1024</span>);</div><div class="line"><span class="keyword">while</span> (src.read (buffer) != -<span class="number">1</span>) &#123;</div><div class="line"><span class="comment">// Prepare the buffer to be drained</span></div><div class="line">buffer.flip( );</div><div class="line"><span class="comment">// Make sure that the buffer was fully drained</span></div><div class="line"><span class="keyword">while</span> (buffer.hasRemaining( )) &#123;</div><div class="line">dest.write (buffer);</div><div class="line">&#125;</div><div class="line"><span class="comment">// Make the buffer empty, ready for filling</span></div><div class="line">buffer.clear( );</div><div class="line">&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="文件通道独有API"><a href="#文件通道独有API" class="headerlink" title="文件通道独有API"></a>文件通道独有API</h2><h3 id="position"><a href="#position" class="headerlink" title="position()"></a>position()</h3><p>返回当前文件通道的position值</p>
+<h3 id="position-long-newPosition"><a href="#position-long-newPosition" class="headerlink" title="position(long newPosition)"></a>position(long newPosition)</h3><p>将文件通道的position设置为指定值</p>
+<h3 id="read-ByteBuffer-dst-long-position"><a href="#read-ByteBuffer-dst-long-position" class="headerlink" title="read(ByteBuffer dst, long position)"></a>read(ByteBuffer dst, long position)</h3><p>在文件通道的position处开始读取</p>
+<h3 id="write-ByteBuffer-src-long-position"><a href="#write-ByteBuffer-src-long-position" class="headerlink" title="write(ByteBuffer src, long position)"></a>write(ByteBuffer src, long position)</h3><p>在文件通道的position处开始写入</p>
+<h3 id="truncate-long-size"><a href="#truncate-long-size" class="headerlink" title="truncate(long size)"></a>truncate(long size)</h3><p>将文件截断至指定大小</p>
+<h3 id="force-boolean-metaData"><a href="#force-boolean-metaData" class="headerlink" title="force(boolean metaData)"></a>force(boolean metaData)</h3><p>告诉通道强制将全部待定的修改都应用到磁盘的文件上。布尔型参数metaData表示在方法返回值前，文件的元数据是否也要被同步更新到磁盘。<br>所有的现代文件系统都会缓存数据和延迟磁盘文件更新以提高性能。调用force()方法要求文件的所有待定修改立即同步到磁盘。如果文件位于一个本地文件系统，那么一旦方法返回，即可保证从通道被创建或上次调用 force()时起的对文件所做的全部修改已经被写入到磁盘。对于关键操作如事务处理来说，这一点是非常重要的，可以保证数据完整性和可靠的恢复。</p>
+<h3 id="lock-long-position-long-size-boolean-shared"><a href="#lock-long-position-long-size-boolean-shared" class="headerlink" title="lock(long position, long size, boolean shared)"></a>lock(long position, long size, boolean shared)</h3><p>指定文件内部锁定区域的开始position以及锁定区域的size。第三个参数 shared 表<br>示想获取的锁是共享的还是独占的<br>要获得一个共享锁，必须先以只读权限打开文件，而请求独占锁时则需要写权限。<br>锁定区域的范围不一定要限制在文件的size值以内，锁可以扩展从而超出文件尾。因此，我们可以提前把待写入数据的区域锁定，我们也可以锁定一个不包含任何文件内容的区域，比如文件最后一个字节以外的区域。如果之后文件增长到达那块区域，那么文件锁就可以保护该区域的文件内容了。相反地，如果锁定了文件的某一块区域，然后文件增长超出了那块区域，那么新增加的文件内容将不会受到文件锁的保护</p>
+<h3 id="lock"><a href="#lock" class="headerlink" title="lock()"></a>lock()</h3><p>等价于<code>fileChannel.lock (0L, Long.MAX_VALUE, false);</code>，这是在整个文件上请求独占锁的便捷方法，锁定区域等于它能达到的最大范围</p>
+<blockquote>
+<p>如果请求的锁定范围是有效的，那么lock()方法会阻塞，它必须等待前面的锁被释放</p>
+</blockquote>
+<h3 id="tryLock-与tryLock-long-position-long-size-boolean-shared"><a href="#tryLock-与tryLock-long-position-long-size-boolean-shared" class="headerlink" title="tryLock()与tryLock(long position, long size, boolean shared)"></a>tryLock()与tryLock(long position, long size, boolean shared)</h3><p>是lock()方法的非阻塞形式，如果请求的锁不能立即获得则会返回null</p>
+<h3 id="map-MapMode-mode-long-position-long-size"><a href="#map-MapMode-mode-long-position-long-size" class="headerlink" title="map(MapMode mode, long position, long size)"></a>map(MapMode mode, long position, long size)</h3><p>在一个打开的文件和一个MappedByteBuffer之间建立一个虚拟内存映射。position和size参数的含义与lock()中的参数含义相同，但size不应超过文件大小，否则会造成文件空洞。mode参数指定文件映射的模式，使用FileChannel类的内部类MapMode静态字段指定，共有三种模式：<code>READ_ONLY</code>，<code>READ_WRITE</code>，<code>PRIVATE</code>。</p>
+<p><code>MapMode.PRIVATE</code>表示一个写时拷贝(copy-on-write)的映射。这意味着通过 put()方法所做的任何修改都会导致产生一个私有的数据拷贝并且该拷贝中的数据只有MappedByteBuffer实例可以看到。该过程不会对底层文件做任何修改，而且一旦缓冲区被施以垃圾收集动作，那些修改都会丢失。选择使用 MapMode.PRIVATE模式并不会导致得到的缓冲区看不到通过其他方式对文件所做的修改，对文件某个区域的修改在使用MapMode.PRIVATE模式的缓冲区中都能反映出来，除非该缓冲区已经修改了文件上的同一个区域。内存和文件系统都被划分成了页。当在一个写时拷贝的缓冲区上调用 put()方法时，受影响的页会被拷贝，然后更改就会应用到该拷贝中。具体的页面大小取决于具体实现，不过通常都是和底层文件系统的页面大小时一样的。如果缓冲区还没对某个页做出修改，那么这个页就会反映被映射文件的相应位置上的内容。一旦某个页因为写操作而被拷贝，之后就将使用该拷贝页，并且不能被其他缓冲区或文件更新所修改</p>
+<blockquote>
+<p>虚拟内存映射的概念见<a href="https://iamxpy.github.io/2017/04/24/Java-NIO-%E5%AD%A6%E4%B9%A0%E4%B9%8B%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86/" target="_blank" rel="external">Java NIO 学习之背景知识</a></p>
+</blockquote>
+<h3 id="transferTo-和transferFrom"><a href="#transferTo-和transferFrom" class="headerlink" title="transferTo()和transferFrom()"></a>transferTo()和transferFrom()</h3><p>在Channel与Channel之间传递数据而不需要通过Buffer。直接的通道传输不会更新与某个 FileChannel关联的position 值。请求的数据传输将从position参数指定的位置开始，传输的字节数不超过count参数的值。实际传输的字节数会由方法返回，可能少于请求的字节数。socket通道没有该方法，意味着不能用该API在socket通道之间传递数据，不过socket通道实现了WritableByteChannel和ReadableByteChannel接口，因此文件的内容可以用transferTo()方法传输给一个socket通道，或者也可以用transferFrom()方法将数据从一个socket通道直接读取到一个文件中。</p>
+<h2 id="FileLock相关API"><a href="#FileLock相关API" class="headerlink" title="FileLock相关API"></a>FileLock相关API</h2><h3 id="channel"><a href="#channel" class="headerlink" title="channel()"></a>channel()</h3><p>返回创建这个文件锁的通道</p>
+<h3 id="release"><a href="#release" class="headerlink" title="release()"></a>release()</h3><p>释放一个文件锁</p>
+<blockquote>
+<p>建议在finally中调用</p>
+</blockquote>
+<h3 id="isValid"><a href="#isValid" class="headerlink" title="isValid()"></a>isValid()</h3><p>测试一个锁是否有效。一个锁在release()方法被调用或它所关联的通道被关闭或<br>Java虚拟机关闭时会失效</p>
+<h3 id="isShared"><a href="#isShared" class="headerlink" title="isShared()"></a>isShared()</h3><p>测试一个锁是共享的还是独占的</p>
+<blockquote>
+<p>如果底层的操作系统或文件系统不支持共享锁，那么该方法将总是返回false值，即使申请锁时传递的参数值是true</p>
+</blockquote>
+<h2 id="Socket通道独有API"><a href="#Socket通道独有API" class="headerlink" title="Socket通道独有API"></a>Socket通道独有API</h2><h3 id="configureBlocking-boolean-block"><a href="#configureBlocking-boolean-block" class="headerlink" title="configureBlocking(boolean block)"></a>configureBlocking(boolean block)</h3><p>设置通道是否阻塞</p>
+<h3 id="isBlocking"><a href="#isBlocking" class="headerlink" title="isBlocking()"></a>isBlocking()</h3><p>测试通道当前是否处于阻塞模式</p>
+<blockquote>
+<p>只有面向流的通道才可以设置非阻塞模式，例如socket通道，Pipe里面的通道</p>
+</blockquote>
+
       
     </div>
 
@@ -405,6 +504,8 @@
         <div class="post-tags">
           
             <a href="/tags/javase/" rel="tag"># javase</a>
+          
+            <a href="/tags/NIO/" rel="tag"># NIO</a>
           
         </div>
       
@@ -478,8 +579,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/gene.png"
@@ -579,6 +689,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概念与原理"><span class="nav-number">2.</span> <span class="nav-text">概念与原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Scatter-Gather"><span class="nav-number">2.1.</span> <span class="nav-text">Scatter/Gather</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件通道"><span class="nav-number">2.2.</span> <span class="nav-text">文件通道</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取通道的几种方法"><span class="nav-number">2.3.</span> <span class="nav-text">获取通道的几种方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件锁定"><span class="nav-number">2.4.</span> <span class="nav-text">文件锁定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Channel通用API"><span class="nav-number">3.</span> <span class="nav-text">Channel通用API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#read-ByteBuffer-dst"><span class="nav-number">3.1.</span> <span class="nav-text">read(ByteBuffer dst)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#read-ByteBuffer-dsts"><span class="nav-number">3.2.</span> <span class="nav-text">read(ByteBuffer[] dsts)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#read-ByteBuffer-dsts-int-offset-int-length"><span class="nav-number">3.3.</span> <span class="nav-text">read(ByteBuffer[] dsts, int offset, int length)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#write-ByteBuffer-src"><span class="nav-number">3.4.</span> <span class="nav-text">write(ByteBuffer src)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#write-ByteBuffer-srcs"><span class="nav-number">3.5.</span> <span class="nav-text">write(ByteBuffer[] srcs)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#write-ByteBuffer-srcs-int-offset-int-length"><span class="nav-number">3.6.</span> <span class="nav-text">write(ByteBuffer[] srcs, int offset, int length)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件通道独有API"><span class="nav-number">4.</span> <span class="nav-text">文件通道独有API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#position"><span class="nav-number">4.1.</span> <span class="nav-text">position()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#position-long-newPosition"><span class="nav-number">4.2.</span> <span class="nav-text">position(long newPosition)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#read-ByteBuffer-dst-long-position"><span class="nav-number">4.3.</span> <span class="nav-text">read(ByteBuffer dst, long position)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#write-ByteBuffer-src-long-position"><span class="nav-number">4.4.</span> <span class="nav-text">write(ByteBuffer src, long position)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#truncate-long-size"><span class="nav-number">4.5.</span> <span class="nav-text">truncate(long size)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#force-boolean-metaData"><span class="nav-number">4.6.</span> <span class="nav-text">force(boolean metaData)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lock-long-position-long-size-boolean-shared"><span class="nav-number">4.7.</span> <span class="nav-text">lock(long position, long size, boolean shared)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lock"><span class="nav-number">4.8.</span> <span class="nav-text">lock()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tryLock-与tryLock-long-position-long-size-boolean-shared"><span class="nav-number">4.9.</span> <span class="nav-text">tryLock()与tryLock(long position, long size, boolean shared)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#map-MapMode-mode-long-position-long-size"><span class="nav-number">4.10.</span> <span class="nav-text">map(MapMode mode, long position, long size)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#transferTo-和transferFrom"><span class="nav-number">4.11.</span> <span class="nav-text">transferTo()和transferFrom()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FileLock相关API"><span class="nav-number">5.</span> <span class="nav-text">FileLock相关API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#channel"><span class="nav-number">5.1.</span> <span class="nav-text">channel()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#release"><span class="nav-number">5.2.</span> <span class="nav-text">release()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#isValid"><span class="nav-number">5.3.</span> <span class="nav-text">isValid()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#isShared"><span class="nav-number">5.4.</span> <span class="nav-text">isShared()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Socket通道独有API"><span class="nav-number">6.</span> <span class="nav-text">Socket通道独有API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#configureBlocking-boolean-block"><span class="nav-number">6.1.</span> <span class="nav-text">configureBlocking(boolean block)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#isBlocking"><span class="nav-number">6.2.</span> <span class="nav-text">isBlocking()</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
