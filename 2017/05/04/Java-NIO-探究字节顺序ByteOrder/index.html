@@ -87,19 +87,19 @@
 
 
 
-<meta name="description" content="我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，(当然，这是假设保存后到读取前不执行改变buffer字节顺序的操作，即调用buffer.order(ByteOrder order))为了加深使用不同字节顺序的影响，对以下代码的结果进行探究">
+<meta name="description" content="概述我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，保存和读取使用的字节顺序总是相同的。">
 <meta name="keywords" content="javase">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java NIO 探究字节顺序ByteOrder">
 <meta property="og:url" content="http://yoursite.com/2017/05/04/Java-NIO-探究字节顺序ByteOrder/index.html">
 <meta property="og:site_name" content="Gene's Home">
-<meta property="og:description" content="我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，(当然，这是假设保存后到读取前不执行改变buffer字节顺序的操作，即调用buffer.order(ByteOrder order))为了加深使用不同字节顺序的影响，对以下代码的结果进行探究">
+<meta property="og:description" content="概述我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，保存和读取使用的字节顺序总是相同的。">
 <meta property="og:image" content="http://yoursite.com/images/big-end-read.png">
 <meta property="og:image" content="http://yoursite.com/images/little-end-read.png">
-<meta property="og:updated_time" content="2017-05-04T01:12:47.414Z">
+<meta property="og:updated_time" content="2017-05-04T01:26:49.300Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO 探究字节顺序ByteOrder">
-<meta name="twitter:description" content="我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，(当然，这是假设保存后到读取前不执行改变buffer字节顺序的操作，即调用buffer.order(ByteOrder order))为了加深使用不同字节顺序的影响，对以下代码的结果进行探究">
+<meta name="twitter:description" content="概述我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，保存和读取使用的字节顺序总是相同的。">
 <meta name="twitter:image" content="http://yoursite.com/images/big-end-read.png">
 
 
@@ -378,9 +378,12 @@
       
 
       
-        <p>我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，(当然，这是假设保存后到读取前不执行改变buffer字节顺序的操作，即调用<code>buffer.order(ByteOrder order)</code>)<br>为了加深使用不同字节顺序的影响，对以下代码的结果进行探究<br><a id="more"></a><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">ByteBuffer byteBuffer = ByteBuffer.allocate(<span class="number">7</span>).order(ByteOrder.BIG_ENDIAN);</div><div class="line">\\ByteBuffer byteBuffer = ByteBuffer.allocate(<span class="number">7</span>).order(ByteOrder.LITTLE_ENDIAN);</div><div class="line">CharBuffer charBuffer = byteBuffer.asCharBuffer();</div><div class="line">byteBuffer.put(<span class="number">0</span>, (<span class="keyword">byte</span>) <span class="string">'A'</span>);</div><div class="line">byteBuffer.put(<span class="number">1</span>, (<span class="keyword">byte</span>) <span class="string">'A'</span>);</div><div class="line">byteBuffer.put(<span class="number">2</span>, (<span class="keyword">byte</span>) <span class="number">0</span>);</div><div class="line">byteBuffer.put(<span class="number">3</span>, (<span class="keyword">byte</span>) <span class="string">'i'</span>);</div><div class="line">byteBuffer.put(<span class="number">4</span>, (<span class="keyword">byte</span>) <span class="number">0</span>);</div><div class="line">byteBuffer.put(<span class="number">5</span>, (<span class="keyword">byte</span>) <span class="string">'!'</span>);</div><div class="line">byteBuffer.put(<span class="number">6</span>, (<span class="keyword">byte</span>) <span class="number">0</span>);</div><div class="line">System.out.println(charBuffer);</div></pre></td></tr></table></figure></p>
-<p>先看大端字节的情况：<br>原始数据：<code>AA0i0!0</code><br>大端保存：<code>01000001 01000001 00000000 01101001 00000000 00100001 00000000</code><br>大端读取：䅁i!<br>“䅁”是”01000001 01000001”按大端读取(从左往右读，16进制的<code>4141H</code>)，并使用Unicode解码<code>\u4141</code>的结果，同理，”0069H”得到”i”，”0021H”得到”!”<br><img src="\images\big-end-read.png" alt="big-end-read.png"></p>
-<p>再看小端字节的情况:<br>原始数据：<code>AA0i0!0</code><br>小端保存：<code>10000010 10000010 00000000 10010110 00000000 10000100 00000000</code><br>小端读取：䅁椀\u2100(类似”a/c”的一个符号)<br><img src="\images\little-end-read.png" alt="little-end-read.png"><br>“䅁”是”10000010 10000010”按小端读取(从右往左读，16进制的<code>4141H</code>)，并使用Unicode解码<code>\u4141</code>的结果，同理，”00000000 10010110”按小端读取得到”6900H”，解码得”椀”，”00000000 10000100”读取得到”2100H”，解码得\u2100</p>
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，保存和读取使用的字节顺序总是相同的。<br><a id="more"></a><br>有人会想到，可以改变buffer的字节顺序呀，那么，如果在保存后执行改变buffer字节顺序的操作，即调用<code>buffer.order(ByteOrder order)</code>，然后再读取，还会是这样吗？其实，在调用<code>buffer.order(ByteOrder order)</code>时，buffer就调整了内部的比特位顺序，即用另一个字节顺序又“保存”了一次，读取时用的也是那个字节顺序，自然也符合“保存和读取使用的是相同的字节顺序”<br>为了加深使用不同字节顺序的影响，对以下代码的结果进行探究</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">ByteBuffer byteBuffer = ByteBuffer.allocate(<span class="number">7</span>).order(ByteOrder.BIG_ENDIAN);</div><div class="line">\\ByteBuffer byteBuffer = ByteBuffer.allocate(<span class="number">7</span>).order(ByteOrder.LITTLE_ENDIAN);</div><div class="line">CharBuffer charBuffer = byteBuffer.asCharBuffer();</div><div class="line">byteBuffer.put(<span class="number">0</span>, (<span class="keyword">byte</span>) <span class="string">'A'</span>);</div><div class="line">byteBuffer.put(<span class="number">1</span>, (<span class="keyword">byte</span>) <span class="string">'A'</span>);</div><div class="line">byteBuffer.put(<span class="number">2</span>, (<span class="keyword">byte</span>) <span class="number">0</span>);</div><div class="line">byteBuffer.put(<span class="number">3</span>, (<span class="keyword">byte</span>) <span class="string">'i'</span>);</div><div class="line">byteBuffer.put(<span class="number">4</span>, (<span class="keyword">byte</span>) <span class="number">0</span>);</div><div class="line">byteBuffer.put(<span class="number">5</span>, (<span class="keyword">byte</span>) <span class="string">'!'</span>);</div><div class="line">byteBuffer.put(<span class="number">6</span>, (<span class="keyword">byte</span>) <span class="number">0</span>);</div><div class="line">System.out.println(charBuffer);</div></pre></td></tr></table></figure>
+<h3 id="大端字节的情况"><a href="#大端字节的情况" class="headerlink" title="大端字节的情况"></a>大端字节的情况</h3><p>原始数据：<code>AA0i0!0</code><br>大端保存：<code>01000001 01000001 00000000 01101001 00000000 00100001 00000000</code><br>大端读取：䅁i!<br>输出截图：<img src="\images\big-end-read.png" alt="big-end-read.png"></p>
+<p>解释：”䅁”是”01000001 01000001”按大端读取(从左往右读，16进制的<code>4141H</code>)，并使用Unicode解码<code>\u4141</code>的结果，同理，”0069H”得到”i”，”0021H”得到”!”</p>
+<h3 id="小端字节的情况"><a href="#小端字节的情况" class="headerlink" title="小端字节的情况"></a>小端字节的情况</h3><p>原始数据：<code>AA0i0!0</code><br>小端保存：<code>10000010 10000010 00000000 10010110 00000000 10000100 00000000</code><br>小端读取：䅁椀\u2100(类似”a/c”的一个符号)<br>输出截图：<img src="\images\little-end-read.png" alt="little-end-read.png"></p>
+<p>解释：”䅁”是”10000010 10000010”按小端读取(从右往左读，16进制的<code>4141H</code>)，并使用Unicode解码<code>\u4141</code>的结果，同理，”00000000 10010110”按小端读取得到”6900H”，解码得”椀”，”00000000 10000100”读取得到”2100H”，解码得\u2100</p>
 <p>总结：</p>
 <blockquote>
 <p>字节顺序对于一个字节的内部比特位顺序并没有影响</p>
@@ -489,8 +492,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/gene.png"
@@ -527,7 +539,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">7</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -590,6 +602,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#大端字节的情况"><span class="nav-number">2.</span> <span class="nav-text">大端字节的情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小端字节的情况"><span class="nav-number">3.</span> <span class="nav-text">小端字节的情况</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
