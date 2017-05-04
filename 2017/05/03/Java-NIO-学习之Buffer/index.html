@@ -105,7 +105,7 @@
 <meta property="og:image" content="http://yoursite.com/images/partially-drained.png">
 <meta property="og:image" content="http://yoursite.com/images/after-compact.png">
 <meta property="og:image" content="http://yoursite.com/images/equal-buffer.png">
-<meta property="og:updated_time" content="2017-05-04T03:23:48.032Z">
+<meta property="og:updated_time" content="2017-05-04T03:26:06.447Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO 学习之Buffer">
 <meta name="twitter:description" content="概述Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：">
@@ -415,12 +415,9 @@
 <h3 id="flip"><a href="#flip" class="headerlink" title="flip()"></a>flip()</h3><p>将buffer由写入状态“翻转”(flip)为读取就绪的状态<br>实质上是将limit设置为当前position的值，然后将position设置为0<br>例如上一个图中的buffer执行<code>flip()</code>后，状态如下：<br><img src="/images/flip.png" alt="flip后Channel示意图"></p>
 <h3 id="rewind"><a href="#rewind" class="headerlink" title="rewind()"></a>rewind()</h3><p>已经读取过的buffer需要重读时执行的操作<br>实质上是不改变limit，而将position设置为0</p>
 <h3 id="clear"><a href="#clear" class="headerlink" title="clear()"></a>clear()</h3><p>将buffer中所有元素“清除”，使buffer转到写入就绪的状态<br>实质上是将limit设置为当前capacity的值，然后将position设置为0，因此，buffer中元素并未被真正清除</p>
-<h3 id="compact"><a href="#compact" class="headerlink" title="compact()"></a>compact()</h3><p>将buffer中已经读取的元素“清除”，保留未读取的元素<br>实质上执行了以下几步：</p>
-<ol>
-<li>将未读取的元素复制到buffer的最前端，即将position到limit的元素复制到从0索引开始的位置</li>
-<li>将position设置为(limit-position)的值</li>
-<li>将limit设置为capacity的值<br><br><br>下面的示意图展示了buffer在<code>compact()</code>前后的状态：<br><img src="/images/partially-drained.png" alt="compact前"><br><img src="/images/after-compact.png" alt="compact后"></li>
-</ol>
+<h3 id="compact"><a href="#compact" class="headerlink" title="compact()"></a>compact()</h3><p>将buffer中已经读取的元素“清除”，保留未读取的元素<br>实质上执行了以下几步：<br>1.将未读取的元素复制到buffer的最前端，即将position到limit的元素复制到从0索引开始的位置<br>2.将position设置为(limit-position)的值<br>3.将limit设置为capacity的值</p>
+<p>下面的示意图展示了buffer在<code>compact()</code>前后的状态：</p>
+<p><img src="/images/partially-drained.png" alt="compact前"><br><img src="/images/after-compact.png" alt="compact后"></p>
 <h3 id="mark"><a href="#mark" class="headerlink" title="mark()"></a>mark()</h3><p>标记当前位置，即将mark设置为当前position值</p>
 <blockquote>
 <p><code>rewind()</code>, <code>clear()</code>, <code>flip()</code> 操作会清除当前的mark值，limit(int limit)和position(int position)如果传入比当前mark值小的值，也会导致当前mark值被清除</p>
@@ -428,12 +425,7 @@
 <h3 id="reset"><a href="#reset" class="headerlink" title="reset()"></a>reset()</h3><p>跳转上一次标记的位置，即将position设置为当前mark值</p>
 <h3 id="limit-int-limit"><a href="#limit-int-limit" class="headerlink" title="limit(int limit)"></a>limit(int limit)</h3><p>设置limit值</p>
 <h3 id="position-int-position"><a href="#position-int-position" class="headerlink" title="position(int position)"></a>position(int position)</h3><p>设置position值</p>
-<h3 id="equals"><a href="#equals" class="headerlink" title="equals()"></a>equals()</h3><p>对于buffer来说，equals返回<code>true</code>的充要条件是：</p>
-<ol>
-<li>两个对象类型相同</li>
-<li>两个对象剩余同样数量的元素</li>
-<li>在每个buffer中应被get()返回的剩余元素的序列要一致</li>
-</ol>
+<h3 id="equals"><a href="#equals" class="headerlink" title="equals()"></a>equals()</h3><p>对于buffer来说，equals返回<code>true</code>的充要条件是：<br>1.两个对象类型相同<br>2.两个对象剩余同样数量的元素<br>3.在每个buffer中应被get()返回的剩余元素的序列要一致</p>
 <p>下面的一个示意图展示了一对“相等”的buffer：<br><img src="/images/equal-buffer.png" alt="equal-buffer"></p>
 <h3 id="get-char-dst-int-offset-int-length"><a href="#get-char-dst-int-offset-int-length" class="headerlink" title="get(char[] dst, int offset, int length)"></a>get(char[] dst, int offset, int length)</h3><p>将buffer的数据释放到dst数组的[offset,length]的子数组中</p>
 <h3 id="get-char-dst"><a href="#get-char-dst" class="headerlink" title="get(char[] dst)"></a>get(char[] dst)</h3><p>相当于get(dst, 0, dst.length())，因此需要注意的是，调用该方法意味着你要求整个数组被填充，如果buffer中的数据不够，你将得到一个异常<br>将一个buffer的数据释放到一个更大的数组中可以使用如下代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span> [] bigArray = <span class="keyword">new</span> <span class="keyword">char</span> [<span class="number">1000</span>];<span class="comment">//一个比buffer要大的数组</span></div><div class="line"><span class="keyword">int</span> length = buffer.remaining( );<span class="comment">//获得buffer剩余的元素个数</span></div><div class="line">buffer.get (bigArrray, <span class="number">0</span>, length);<span class="comment">//准确告知buffer要将元素释放到bigArray的哪些位置</span></div><div class="line">processData (bigArray, length);<span class="comment">//处理数据</span></div></pre></td></tr></table></figure></p>
