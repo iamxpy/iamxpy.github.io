@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Blog, Gene, github, hadoop, hbase, storm, spark, BigData" />
+  <meta name="keywords" content="javase," />
 
 
 
@@ -87,16 +87,17 @@
 
 
 
-<meta name="description" content="A student majoring in Software Engineering">
-<meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="http://yoursite.com/categories/index.html">
+<meta name="description" content="我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，(当然，这是假设保存后到读取前不执行改变buffer字节顺序的操作，即调用buffer.order(ByteOrder order))为了加深使用不同字节顺序的影响，对以下代码的结果进行探究">
+<meta name="keywords" content="javase">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java NIO 探究字节顺序ByteOrder">
+<meta property="og:url" content="http://yoursite.com/2017/05/04/Java-NIO-探究字节顺序ByteOrder/index.html">
 <meta property="og:site_name" content="Gene's Home">
-<meta property="og:description" content="A student majoring in Software Engineering">
-<meta property="og:updated_time" content="2017-04-17T13:09:32.779Z">
+<meta property="og:description" content="我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，(当然，这是假设保存后到读取前不执行改变buffer字节顺序的操作，即调用buffer.order(ByteOrder order))为了加深使用不同字节顺序的影响，对以下代码的结果进行探究">
+<meta property="og:updated_time" content="2017-05-04T01:03:27.515Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="categories">
-<meta name="twitter:description" content="A student majoring in Software Engineering">
+<meta name="twitter:title" content="Java NIO 探究字节顺序ByteOrder">
+<meta name="twitter:description" content="我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，(当然，这是假设保存后到读取前不执行改变buffer字节顺序的操作，即调用buffer.order(ByteOrder order))为了加深使用不同字节顺序的影响，对以下代码的结果进行探究">
 
 
 
@@ -124,19 +125,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/05/04/Java-NIO-探究字节顺序ByteOrder/"/>
 
 
 
 
 
-  <title>
-  
-
-  
-    categories | Gene's Home
-  
-</title>
+  <title> Java NIO 探究字节顺序ByteOrder | Gene's Home </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -161,7 +156,7 @@
     
   
 
-  <div class="container sidebar-position-left  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -266,25 +261,198 @@
             
 
   <div id="posts" class="posts-expand">
-  <header class="post-header">
+    
 
-	<h1 class="post-title" itemprop="name headline">categories</h1>
+  
 
+  
+  
+  
 
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/04/Java-NIO-探究字节顺序ByteOrder/">
 
-</header>
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Gene">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/gene.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gene's Home">
+    </span>
 
     
-    
-      <div class="category-all-page">
-        <div class="category-all-title">
-            目前共计 1 个分类
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java NIO 探究字节顺序ByteOrder
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-04T09:52:15+09:00">
+                2017-05-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/programming/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/05/04/Java-NIO-探究字节顺序ByteOrder/" class="leancloud_visitors" data-flag-title="Java NIO 探究字节顺序ByteOrder">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
         </div>
-        <div class="category-all">
-          <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/programming/">编程</a><span class="category-list-count">8</span></li></ul>
-        </div>
-      </div>
+      </header>
     
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，(当然，这是假设保存后到读取前不执行改变buffer字节顺序的操作，即调用<code>buffer.order(ByteOrder order)</code>)<br>为了加深使用不同字节顺序的影响，对以下代码的结果进行探究<br><a id="more"></a><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">ByteBuffer byteBuffer = ByteBuffer.allocate(<span class="number">7</span>).order(ByteOrder.BIG_ENDIAN);</div><div class="line">\\ByteBuffer byteBuffer = ByteBuffer.allocate(<span class="number">7</span>).order(ByteOrder.LITTLE_ENDIAN);</div><div class="line">CharBuffer charBuffer = byteBuffer.asCharBuffer();</div><div class="line">byteBuffer.put(<span class="number">0</span>, (<span class="keyword">byte</span>) <span class="string">'A'</span>);</div><div class="line">byteBuffer.put(<span class="number">1</span>, (<span class="keyword">byte</span>) <span class="string">'A'</span>);</div><div class="line">byteBuffer.put(<span class="number">2</span>, (<span class="keyword">byte</span>) <span class="number">0</span>);</div><div class="line">byteBuffer.put(<span class="number">3</span>, (<span class="keyword">byte</span>) <span class="string">'i'</span>);</div><div class="line">byteBuffer.put(<span class="number">4</span>, (<span class="keyword">byte</span>) <span class="number">0</span>);</div><div class="line">byteBuffer.put(<span class="number">5</span>, (<span class="keyword">byte</span>) <span class="string">'!'</span>);</div><div class="line">byteBuffer.put(<span class="number">6</span>, (<span class="keyword">byte</span>) <span class="number">0</span>);</div><div class="line">System.out.println(charBuffer);</div></pre></td></tr></table></figure></p>
+<p>先看大端字节的情况：<br>原始数据：<code>AA0i0!0</code><br>大端保存：<code>01000001 01000001 00000000 01101001 00000000 00100001 00000000</code><br>大端读取：䅁i!<br>“䅁”是”01000001 01000001”按大端读取(从左往右读，16进制的<code>4141H</code>)，并使用Unicode解码<code>\u4141</code>的结果，同理，”0069H”得到”i”，”0021H”得到”!”</p>
+<p>再看小端字节的情况:<br>原始数据：<code>AA0i0!0</code><br>小端保存：<code>10000010 10000010 00000000 10010110 00000000 10000100 00000000</code><br>小端读取：䅁椀\u2100<br>“䅁”是”10000010 10000010”按小端读取(从右往左读，16进制的<code>4141H</code>)，并使用Unicode解码<code>\u4141</code>的结果，同理，”00000000 10010110”按小端读取得到”6900H”，解码得”椀”，”00000000 10000100”读取得到”2100H”，解码得\u2100</p>
+<p>总结：</p>
+<blockquote>
+<p>字节顺序对于一个字节的内部比特位顺序并没有影响</p>
+</blockquote>
+<p>即写入是什么字节，读取就是什么字节，因为保存和读取使用的是相同的字节顺序。例如字符”i”的字节(使用Unicode编码并取后8位)为”69H”，那么使用不同字节顺序并不会影响其顺序，不会读取到”96H”，因此，字节顺序对于平时一般的写入和读取没有影响。</p>
+<blockquote>
+<p>字节顺序会影响字节间的顺序，会对视图映射等操作后读取的结果带来影响</p>
+</blockquote>
+<p>例如，原始的”0i”使用大端字节时，读取时解码的是”0069H”，使用小端字节时，读取时解码的是”6900H”，因此解码出来的结果自然也就不一样</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javase/" rel="tag"># javase</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/03/Java-NIO-学习之Selector/" rel="prev" title="Java NIO 学习之Selector">
+                Java NIO 学习之Selector <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -293,6 +461,12 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODI2OC80ODQw"></div>
+    
+  </div>
+
 
         </div>
         
@@ -522,6 +696,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
 
   
 
