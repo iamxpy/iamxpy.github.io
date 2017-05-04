@@ -105,7 +105,7 @@
 <meta property="og:image" content="http://yoursite.com/images/partially-drained.png">
 <meta property="og:image" content="http://yoursite.com/images/after-compact.png">
 <meta property="og:image" content="http://yoursite.com/images/equal-buffer.png">
-<meta property="og:updated_time" content="2017-05-04T01:45:39.961Z">
+<meta property="og:updated_time" content="2017-05-04T03:23:48.032Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO 学习之Buffer">
 <meta name="twitter:description" content="概述Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：">
@@ -419,11 +419,12 @@
 <ol>
 <li>将未读取的元素复制到buffer的最前端，即将position到limit的元素复制到从0索引开始的位置</li>
 <li>将position设置为(limit-position)的值</li>
-<li>将limit设置为capacity的值<br>下面的示意图展示了buffer在<code>compact()</code>前后的状态：<br><img src="/images/partially-drained.png" alt="compact前"><br><img src="/images/after-compact.png" alt="compact后"><h3 id="mark"><a href="#mark" class="headerlink" title="mark()"></a>mark()</h3>标记当前位置，即将mark设置为当前position值<blockquote>
+<li>将limit设置为capacity的值<br><br><br>下面的示意图展示了buffer在<code>compact()</code>前后的状态：<br><img src="/images/partially-drained.png" alt="compact前"><br><img src="/images/after-compact.png" alt="compact后"></li>
+</ol>
+<h3 id="mark"><a href="#mark" class="headerlink" title="mark()"></a>mark()</h3><p>标记当前位置，即将mark设置为当前position值</p>
+<blockquote>
 <p><code>rewind()</code>, <code>clear()</code>, <code>flip()</code> 操作会清除当前的mark值，limit(int limit)和position(int position)如果传入比当前mark值小的值，也会导致当前mark值被清除</p>
 </blockquote>
-</li>
-</ol>
 <h3 id="reset"><a href="#reset" class="headerlink" title="reset()"></a>reset()</h3><p>跳转上一次标记的位置，即将position设置为当前mark值</p>
 <h3 id="limit-int-limit"><a href="#limit-int-limit" class="headerlink" title="limit(int limit)"></a>limit(int limit)</h3><p>设置limit值</p>
 <h3 id="position-int-position"><a href="#position-int-position" class="headerlink" title="position(int position)"></a>position(int position)</h3><p>设置position值</p>
@@ -431,9 +432,11 @@
 <ol>
 <li>两个对象类型相同</li>
 <li>两个对象剩余同样数量的元素</li>
-<li>在每个buffer中应被get()返回的剩余元素的序列要一致<br>下面的一个示意图展示了一对“相等”的buffer：<br><img src="/images/equal-buffer.png" alt="equal-buffer"><h3 id="get-char-dst-int-offset-int-length"><a href="#get-char-dst-int-offset-int-length" class="headerlink" title="get(char[] dst, int offset, int length)"></a>get(char[] dst, int offset, int length)</h3>将buffer的数据释放到dst数组的[offset,length]的子数组中<h3 id="get-char-dst"><a href="#get-char-dst" class="headerlink" title="get(char[] dst)"></a>get(char[] dst)</h3>相当于get(dst, 0, dst.length())，因此需要注意的是，调用该方法意味着你要求整个数组被填充，如果buffer中的数据不够，你将得到一个异常<br>将一个buffer的数据释放到一个更大的数组中可以使用如下代码：<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span> [] bigArray = <span class="keyword">new</span> <span class="keyword">char</span> [<span class="number">1000</span>];<span class="comment">//一个比buffer要大的数组</span></div><div class="line"><span class="keyword">int</span> length = buffer.remaining( );<span class="comment">//获得buffer剩余的元素个数</span></div><div class="line">buffer.get (bigArrray, <span class="number">0</span>, length);<span class="comment">//准确告知buffer要将元素释放到bigArray的哪些位置</span></div><div class="line">processData (bigArray, length);<span class="comment">//处理数据</span></div></pre></td></tr></table></figure>
-</li>
+<li>在每个buffer中应被get()返回的剩余元素的序列要一致</li>
 </ol>
+<p>下面的一个示意图展示了一对“相等”的buffer：<br><img src="/images/equal-buffer.png" alt="equal-buffer"></p>
+<h3 id="get-char-dst-int-offset-int-length"><a href="#get-char-dst-int-offset-int-length" class="headerlink" title="get(char[] dst, int offset, int length)"></a>get(char[] dst, int offset, int length)</h3><p>将buffer的数据释放到dst数组的[offset,length]的子数组中</p>
+<h3 id="get-char-dst"><a href="#get-char-dst" class="headerlink" title="get(char[] dst)"></a>get(char[] dst)</h3><p>相当于get(dst, 0, dst.length())，因此需要注意的是，调用该方法意味着你要求整个数组被填充，如果buffer中的数据不够，你将得到一个异常<br>将一个buffer的数据释放到一个更大的数组中可以使用如下代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span> [] bigArray = <span class="keyword">new</span> <span class="keyword">char</span> [<span class="number">1000</span>];<span class="comment">//一个比buffer要大的数组</span></div><div class="line"><span class="keyword">int</span> length = buffer.remaining( );<span class="comment">//获得buffer剩余的元素个数</span></div><div class="line">buffer.get (bigArrray, <span class="number">0</span>, length);<span class="comment">//准确告知buffer要将元素释放到bigArray的哪些位置</span></div><div class="line">processData (bigArray, length);<span class="comment">//处理数据</span></div></pre></td></tr></table></figure></p>
 <p>如果用来容纳数据的数组比buffer要小，或者不明确两者大小关系，可以用如下代码将buffer数据读取并处理：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span> [] smallArray = <span class="keyword">new</span> <span class="keyword">char</span> [<span class="number">10</span>];</div><div class="line"><span class="keyword">while</span> (buffer.hasRemaining( )) &#123;</div><div class="line"><span class="keyword">int</span> length = Math.min (buffer.remaining( ), smallArray.length);</div><div class="line">buffer.get (smallArray, <span class="number">0</span>, length);</div><div class="line">processData (smallArray, length);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h3 id="put-char-src-int-offset-int-length-与put-char-src"><a href="#put-char-src-int-offset-int-length-与put-char-src" class="headerlink" title="put(char[] src, int offset, int length)与put(char[] src)"></a>put(char[] src, int offset, int length)与put(char[] src)</h3><p>与上面两个get()的工作方式相同，但移动数据的方向相反，将src数组的数据复制到buffer中，同理，<code>buffer.put(myArray)</code>等价于<code>buffer.put(myArray, 0, myArray.length)</code>，而如果此时buffer没有足够空间容纳myArray的全部数据，你将会得到一个异常</p>
 <h3 id="put-CharBuffer-src"><a href="#put-CharBuffer-src" class="headerlink" title="put(CharBuffer src)"></a>put(CharBuffer src)</h3><p>将buffer的数据转移到另一个buffer中，当然前提是buffer有足够的空间容纳来自src的所有数据，如果容纳不下，你也会得到一个异常</p>
