@@ -105,7 +105,7 @@
 <meta property="og:image" content="http://yoursite.com/images/partially-drained.png">
 <meta property="og:image" content="http://yoursite.com/images/after-compact.png">
 <meta property="og:image" content="http://yoursite.com/images/equal-buffer.png">
-<meta property="og:updated_time" content="2017-05-04T03:26:06.447Z">
+<meta property="og:updated_time" content="2017-05-04T03:27:10.151Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO 学习之Buffer">
 <meta name="twitter:description" content="概述Buffer是一个数据的缓冲区，与Channel联系紧密，Channel是IO传输数据的入口与出口，而Buffer是这些传输数据的缓冲区。示意图如下（箭头表示数据流方向）：">
@@ -425,7 +425,12 @@
 <h3 id="reset"><a href="#reset" class="headerlink" title="reset()"></a>reset()</h3><p>跳转上一次标记的位置，即将position设置为当前mark值</p>
 <h3 id="limit-int-limit"><a href="#limit-int-limit" class="headerlink" title="limit(int limit)"></a>limit(int limit)</h3><p>设置limit值</p>
 <h3 id="position-int-position"><a href="#position-int-position" class="headerlink" title="position(int position)"></a>position(int position)</h3><p>设置position值</p>
-<h3 id="equals"><a href="#equals" class="headerlink" title="equals()"></a>equals()</h3><p>对于buffer来说，equals返回<code>true</code>的充要条件是：<br>1.两个对象类型相同<br>2.两个对象剩余同样数量的元素<br>3.在每个buffer中应被get()返回的剩余元素的序列要一致</p>
+<h3 id="equals"><a href="#equals" class="headerlink" title="equals()"></a>equals()</h3><p>对于buffer来说，equals返回<code>true</code>的充要条件是：</p>
+<ul>
+<li>两个对象类型相同</li>
+<li>两个对象剩余同样数量的元素</li>
+<li>在每个buffer中应被get()返回的剩余元素的序列要一致</li>
+</ul>
 <p>下面的一个示意图展示了一对“相等”的buffer：<br><img src="/images/equal-buffer.png" alt="equal-buffer"></p>
 <h3 id="get-char-dst-int-offset-int-length"><a href="#get-char-dst-int-offset-int-length" class="headerlink" title="get(char[] dst, int offset, int length)"></a>get(char[] dst, int offset, int length)</h3><p>将buffer的数据释放到dst数组的[offset,length]的子数组中</p>
 <h3 id="get-char-dst"><a href="#get-char-dst" class="headerlink" title="get(char[] dst)"></a>get(char[] dst)</h3><p>相当于get(dst, 0, dst.length())，因此需要注意的是，调用该方法意味着你要求整个数组被填充，如果buffer中的数据不够，你将得到一个异常<br>将一个buffer的数据释放到一个更大的数组中可以使用如下代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">char</span> [] bigArray = <span class="keyword">new</span> <span class="keyword">char</span> [<span class="number">1000</span>];<span class="comment">//一个比buffer要大的数组</span></div><div class="line"><span class="keyword">int</span> length = buffer.remaining( );<span class="comment">//获得buffer剩余的元素个数</span></div><div class="line">buffer.get (bigArrray, <span class="number">0</span>, length);<span class="comment">//准确告知buffer要将元素释放到bigArray的哪些位置</span></div><div class="line">processData (bigArray, length);<span class="comment">//处理数据</span></div></pre></td></tr></table></figure></p>
