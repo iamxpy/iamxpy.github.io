@@ -94,10 +94,13 @@
 <meta property="og:url" content="http://yoursite.com/2017/05/04/Java-NIO-探究字节顺序ByteOrder/index.html">
 <meta property="og:site_name" content="Gene's Home">
 <meta property="og:description" content="我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，(当然，这是假设保存后到读取前不执行改变buffer字节顺序的操作，即调用buffer.order(ByteOrder order))为了加深使用不同字节顺序的影响，对以下代码的结果进行探究">
-<meta property="og:updated_time" content="2017-05-04T01:03:27.515Z">
+<meta property="og:image" content="http://yoursite.com/images/big-end-read.png">
+<meta property="og:image" content="http://yoursite.com/images/little-end-read.png">
+<meta property="og:updated_time" content="2017-05-04T01:12:47.414Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO 探究字节顺序ByteOrder">
 <meta name="twitter:description" content="我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，(当然，这是假设保存后到读取前不执行改变buffer字节顺序的操作，即调用buffer.order(ByteOrder order))为了加深使用不同字节顺序的影响，对以下代码的结果进行探究">
+<meta name="twitter:image" content="http://yoursite.com/images/big-end-read.png">
 
 
 
@@ -376,8 +379,8 @@
 
       
         <p>我们知道，使用BIG_ENDIAN，则会在buffer保存和读取数据时都使用大端字节，如果使用LITTLE_ENDIAN，则会在保存和读取时都使用小端字节，(当然，这是假设保存后到读取前不执行改变buffer字节顺序的操作，即调用<code>buffer.order(ByteOrder order)</code>)<br>为了加深使用不同字节顺序的影响，对以下代码的结果进行探究<br><a id="more"></a><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">ByteBuffer byteBuffer = ByteBuffer.allocate(<span class="number">7</span>).order(ByteOrder.BIG_ENDIAN);</div><div class="line">\\ByteBuffer byteBuffer = ByteBuffer.allocate(<span class="number">7</span>).order(ByteOrder.LITTLE_ENDIAN);</div><div class="line">CharBuffer charBuffer = byteBuffer.asCharBuffer();</div><div class="line">byteBuffer.put(<span class="number">0</span>, (<span class="keyword">byte</span>) <span class="string">'A'</span>);</div><div class="line">byteBuffer.put(<span class="number">1</span>, (<span class="keyword">byte</span>) <span class="string">'A'</span>);</div><div class="line">byteBuffer.put(<span class="number">2</span>, (<span class="keyword">byte</span>) <span class="number">0</span>);</div><div class="line">byteBuffer.put(<span class="number">3</span>, (<span class="keyword">byte</span>) <span class="string">'i'</span>);</div><div class="line">byteBuffer.put(<span class="number">4</span>, (<span class="keyword">byte</span>) <span class="number">0</span>);</div><div class="line">byteBuffer.put(<span class="number">5</span>, (<span class="keyword">byte</span>) <span class="string">'!'</span>);</div><div class="line">byteBuffer.put(<span class="number">6</span>, (<span class="keyword">byte</span>) <span class="number">0</span>);</div><div class="line">System.out.println(charBuffer);</div></pre></td></tr></table></figure></p>
-<p>先看大端字节的情况：<br>原始数据：<code>AA0i0!0</code><br>大端保存：<code>01000001 01000001 00000000 01101001 00000000 00100001 00000000</code><br>大端读取：䅁i!<br>“䅁”是”01000001 01000001”按大端读取(从左往右读，16进制的<code>4141H</code>)，并使用Unicode解码<code>\u4141</code>的结果，同理，”0069H”得到”i”，”0021H”得到”!”</p>
-<p>再看小端字节的情况:<br>原始数据：<code>AA0i0!0</code><br>小端保存：<code>10000010 10000010 00000000 10010110 00000000 10000100 00000000</code><br>小端读取：䅁椀\u2100<br>“䅁”是”10000010 10000010”按小端读取(从右往左读，16进制的<code>4141H</code>)，并使用Unicode解码<code>\u4141</code>的结果，同理，”00000000 10010110”按小端读取得到”6900H”，解码得”椀”，”00000000 10000100”读取得到”2100H”，解码得\u2100</p>
+<p>先看大端字节的情况：<br>原始数据：<code>AA0i0!0</code><br>大端保存：<code>01000001 01000001 00000000 01101001 00000000 00100001 00000000</code><br>大端读取：䅁i!<br>“䅁”是”01000001 01000001”按大端读取(从左往右读，16进制的<code>4141H</code>)，并使用Unicode解码<code>\u4141</code>的结果，同理，”0069H”得到”i”，”0021H”得到”!”<br><img src="\images\big-end-read.png" alt="big-end-read.png"></p>
+<p>再看小端字节的情况:<br>原始数据：<code>AA0i0!0</code><br>小端保存：<code>10000010 10000010 00000000 10010110 00000000 10000100 00000000</code><br>小端读取：䅁椀\u2100(类似”a/c”的一个符号)<br><img src="\images\little-end-read.png" alt="little-end-read.png"><br>“䅁”是”10000010 10000010”按小端读取(从右往左读，16进制的<code>4141H</code>)，并使用Unicode解码<code>\u4141</code>的结果，同理，”00000000 10010110”按小端读取得到”6900H”，解码得”椀”，”00000000 10000100”读取得到”2100H”，解码得\u2100</p>
 <p>总结：</p>
 <blockquote>
 <p>字节顺序对于一个字节的内部比特位顺序并没有影响</p>
