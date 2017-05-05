@@ -97,7 +97,7 @@
 <meta property="og:image" content="http://yoursite.com/images/DMA.jpg">
 <meta property="og:image" content="http://yoursite.com/images/kernel-user-space.png">
 <meta property="og:image" content="http://yoursite.com/images/hardware-kernel-user-space.png">
-<meta property="og:updated_time" content="2017-05-04T12:30:29.235Z">
+<meta property="og:updated_time" content="2017-05-05T11:42:07.193Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO 学习之背景知识">
 <meta name="twitter:description" content="在学习《Java NIO》一书时，发现缺少了不少背景知识，因此在本文中记录下来，方便日后复习。">
@@ -397,6 +397,7 @@
 <table border="0" cellpadding="0" cellspacing="0"><tr><th style="text-align:center; vertical-align:top"><br>当前锁类型<br></th><th style="text-align:center; vertical-align:top"><br>阻塞读<br></th><th style="text-align:center; vertical-align:top"><br>阻塞写<br></th><th style="text-align:center; vertical-align:top"><br>非阻塞读<br></th><th style="text-align:center; vertical-align:top"><br>非阻塞写<br></th></tr><tbody><tr><td style="text-align:center; vertical-align:top"><br>读锁<br></td><td style="text-align:center; vertical-align:top"><br>正常读取数据<br></td><td style="text-align:center; vertical-align:top"><br>阻塞<br></td><td style="text-align:center; vertical-align:top"><br>正常读取数据<br></td><td style="text-align:center; vertical-align:top"><br>EAGAIN<br></td></tr><tr><td style="text-align:center; vertical-align:top"><br>写锁<br></td><td style="text-align:center; vertical-align:top"><br>阻塞<br></td><td style="text-align:center; vertical-align:top"><br>阻塞<br></td><td style="text-align:center; vertical-align:top"><br>EAGAIN<br></td><td style="text-align:center; vertical-align:top"><br>EAGAIN<br></td></tr></tbody></table>
 
 <p>需要注意的是，如果要访问的文件的锁类型与要执行的操作存在冲突，那么采用阻塞读/写操作的进程会被阻塞，而采用非阻塞读/写操作的进程则不会阻塞，而是立即返回 EAGAIN。</p>
+<h2 id="select-poll-epoll-函数"><a href="#select-poll-epoll-函数" class="headerlink" title="select(), poll(), epoll()函数"></a>select(), poll(), epoll()函数</h2><p>挖坑待填</p>
 
       
     </div>
@@ -622,7 +623,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#硬件直接存储器-DMA"><span class="nav-number">1.</span> <span class="nav-text">硬件直接存储器 (DMA)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户空间与内核空间"><span class="nav-number">2.</span> <span class="nav-text">用户空间与内核空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟内存的基本概念与分页技术"><span class="nav-number">3.</span> <span class="nav-text">虚拟内存的基本概念与分页技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多工IO-就绪性选择"><span class="nav-number">4.</span> <span class="nav-text">多工IO(就绪性选择)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存映射文件"><span class="nav-number">5.</span> <span class="nav-text">内存映射文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件锁"><span class="nav-number">6.</span> <span class="nav-text">文件锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#劝告锁"><span class="nav-number">6.1.</span> <span class="nav-text">劝告锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#强制锁"><span class="nav-number">6.2.</span> <span class="nav-text">强制锁</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#硬件直接存储器-DMA"><span class="nav-number">1.</span> <span class="nav-text">硬件直接存储器 (DMA)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户空间与内核空间"><span class="nav-number">2.</span> <span class="nav-text">用户空间与内核空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟内存的基本概念与分页技术"><span class="nav-number">3.</span> <span class="nav-text">虚拟内存的基本概念与分页技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多工IO-就绪性选择"><span class="nav-number">4.</span> <span class="nav-text">多工IO(就绪性选择)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存映射文件"><span class="nav-number">5.</span> <span class="nav-text">内存映射文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件锁"><span class="nav-number">6.</span> <span class="nav-text">文件锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#劝告锁"><span class="nav-number">6.1.</span> <span class="nav-text">劝告锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#强制锁"><span class="nav-number">6.2.</span> <span class="nav-text">强制锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#select-poll-epoll-函数"><span class="nav-number">7.</span> <span class="nav-text">select(), poll(), epoll()函数</span></a></li></ol></div>
             
 
           </div>
