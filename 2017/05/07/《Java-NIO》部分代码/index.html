@@ -1,0 +1,880 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="javase,NIO," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Example 4-1. Using select( ) to service multiple channels 使用 select( )来为多个通道提供服务  123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263">
+<meta name="keywords" content="javase,NIO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Java NIO》部分代码">
+<meta property="og:url" content="http://yoursite.com/2017/05/07/《Java-NIO》部分代码/index.html">
+<meta property="og:site_name" content="Gene's Home">
+<meta property="og:description" content="Example 4-1. Using select( ) to service multiple channels 使用 select( )来为多个通道提供服务  123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263">
+<meta property="og:updated_time" content="2017-05-07T01:00:21.361Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《Java NIO》部分代码">
+<meta name="twitter:description" content="Example 4-1. Using select( ) to service multiple channels 使用 select( )来为多个通道提供服务  123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/07/《Java-NIO》部分代码/"/>
+
+
+
+
+
+  <title> 《Java NIO》部分代码 | Gene's Home </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Gene's Home</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/07/《Java-NIO》部分代码/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Gene">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/gene.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gene's Home">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                《Java NIO》部分代码
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-07T09:43:46+09:00">
+                2017-05-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/programming/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/05/07/《Java-NIO》部分代码/" class="leancloud_visitors" data-flag-title="《Java NIO》部分代码">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>Example 4-1. Using select( ) to service multiple channels 使用 select( )<br>来为多个通道提供服务</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ronsoft.books.nio.channels;</div><div class="line"><span class="keyword">import</span> java.nio.ByteBuffer;</div><div class="line"><span class="keyword">import</span> java.nio.channels.ServerSocketChannel;</div><div class="line"><span class="keyword">import</span> java.nio.channels.SocketChannel;</div><div class="line"><span class="keyword">import</span> java.nio.channels.Selector;</div><div class="line"><span class="keyword">import</span> java.nio.channels.SelectionKey;</div><div class="line"><span class="keyword">import</span> java.nio.channels.SelectableChannel;</div><div class="line"><span class="keyword">import</span> java.net.Socket;</div><div class="line"><span class="keyword">import</span> java.net.ServerSocket;</div><div class="line"><span class="keyword">import</span> java.net.InetSocketAddress;</div><div class="line"><span class="keyword">import</span> java.util.Iterator;</div><div class="line"><span class="keyword">package</span> HadoopInAction;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.net.InetSocketAddress;</div><div class="line"><span class="keyword">import</span> java.net.ServerSocket;</div><div class="line"><span class="keyword">import</span> java.nio.ByteBuffer;</div><div class="line"><span class="keyword">import</span> java.nio.channels.*;</div><div class="line"><span class="keyword">import</span> java.util.Iterator;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Simple echo-back server which listens for incoming stream connections</div><div class="line"> * and echoes back whatever it reads. A single Selector object is used to</div><div class="line"> * listen to the server socket (to accept new connections) and all the</div><div class="line"> * active socket channels.</div><div class="line"> *</div><div class="line"> * <span class="doctag">@author</span> Ron Hitchens (ron@ronsoft.com)</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SelectSockets</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> PORT_NUMBER = <span class="number">1234</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] argv)</span></span></div><div class="line">            <span class="keyword">throws</span> Exception &#123;</div><div class="line">        <span class="keyword">new</span> SelectSockets().go(argv);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">go</span><span class="params">(String[] argv)</span></span></div><div class="line">            <span class="keyword">throws</span> Exception &#123;</div><div class="line">        <span class="keyword">int</span> port = PORT_NUMBER;</div><div class="line">        <span class="keyword">if</span> (argv.length &gt; <span class="number">0</span>) &#123; <span class="comment">// Override default listen port</span></div><div class="line">            port = Integer.parseInt(argv[<span class="number">0</span>]);</div><div class="line">        &#125;</div><div class="line">        System.out.println(<span class="string">"Listening on port "</span> + port);</div><div class="line">        <span class="comment">// Allocate an unbound server socket channel</span></div><div class="line">        ServerSocketChannel serverChannel = ServerSocketChannel.open();</div><div class="line">        <span class="comment">// Get the associated ServerSocket to bind it with</span></div><div class="line">        ServerSocket serverSocket = serverChannel.socket();</div><div class="line">        <span class="comment">// Create a new Selector for use below</span></div><div class="line">        Selector selector = Selector.open();</div><div class="line">        <span class="comment">// Set the port the server channel will listen to</span></div><div class="line">        serverSocket.bind(<span class="keyword">new</span> InetSocketAddress(port));</div><div class="line">        <span class="comment">// Set nonblocking mode for the listening socket</span></div><div class="line">        serverChannel.configureBlocking(<span class="keyword">false</span>);</div><div class="line">        <span class="comment">// Register the ServerSocketChannel with the Selector</span></div><div class="line">        serverChannel.register(selector, SelectionKey.OP_ACCEPT);</div><div class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">            <span class="comment">// This may block for a long time. Upon returning, the</span></div><div class="line">            <span class="comment">// selected set contains keys of the ready channels.</span></div><div class="line">            <span class="keyword">int</span> n = selector.select();</div><div class="line">            <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</div><div class="line">                <span class="keyword">continue</span>; <span class="comment">// nothing to do</span></div><div class="line">            &#125;</div><div class="line">            <span class="comment">// Get an iterator over the set of selected keys</span></div><div class="line">            Iterator it = selector.selectedKeys().iterator();</div><div class="line">            <span class="comment">// Look at each key in the selected set</span></div><div class="line">            <span class="keyword">while</span> (it.hasNext()) &#123;</div><div class="line">                SelectionKey key = (SelectionKey) it.next();</div><div class="line">                <span class="comment">// Is a new connection coming in?</span></div><div class="line">                <span class="keyword">if</span> (key.isAcceptable()) &#123;</div><div class="line">                    ServerSocketChannel server =</div><div class="line">                            (ServerSocketChannel) key.channel();</div><div class="line">                    SocketChannel channel = server.accept();</div><div class="line">                    registerChannel(selector, channel,</div><div class="line">                            SelectionKey.OP_READ);</div><div class="line">                    sayHello(channel);</div><div class="line">                &#125;</div><div class="line">                <span class="comment">// Is there data to read on this channel?</span></div><div class="line">                <span class="keyword">if</span> (key.isReadable()) &#123;</div><div class="line">                    readDataFromSocket(key);</div><div class="line">                &#125;</div><div class="line">                <span class="comment">// Remove key from selected set; it's been handled</span></div><div class="line">                it.remove();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"><span class="comment">// ----------------------------------------------------------</span></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Register the given channel with the given selector for</div><div class="line">     * the given operations of interest</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">registerChannel</span><span class="params">(Selector selector,</span></span></div><div class="line">                                   SelectableChannel channel, <span class="keyword">int</span> ops)</div><div class="line">            <span class="keyword">throws</span> Exception &#123;</div><div class="line">        <span class="keyword">if</span> (channel == <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">return</span>; <span class="comment">// could happen</span></div><div class="line">        &#125;</div><div class="line">        <span class="comment">// Set the new channel nonblocking</span></div><div class="line">        channel.configureBlocking(<span class="keyword">false</span>);</div><div class="line">        <span class="comment">// Register it with the selector</span></div><div class="line">        channel.register(selector, ops);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// ----------------------------------------------------------</span></div><div class="line">    <span class="comment">// Use the same byte buffer for all channels. A single thread is</span></div><div class="line">    <span class="comment">// servicing all the channels, so no danger of concurrent acccess.</span></div><div class="line">    <span class="keyword">private</span> ByteBuffer buffer = ByteBuffer.allocateDirect(<span class="number">1024</span>);</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Sample data handler method for a channel with data ready to read.</div><div class="line">     *</div><div class="line">     * <span class="doctag">@param</span> key A SelectionKey object associated with a channel</div><div class="line">     *            determined by the selector to be ready for reading. If the</div><div class="line">     *            channel returns an EOF condition, it is closed here, which</div><div class="line">     *            automatically invalidates the associated key. The selector</div><div class="line">     *            will then de-register the channel on the next select call.</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">readDataFromSocket</span><span class="params">(SelectionKey key)</span></span></div><div class="line">            <span class="keyword">throws</span> Exception &#123;</div><div class="line">        SocketChannel socketChannel = (SocketChannel) key.channel();</div><div class="line">        <span class="keyword">int</span> count;</div><div class="line">        buffer.clear(); <span class="comment">// Empty buffer</span></div><div class="line">        <span class="comment">// Loop while data is available; channel is nonblocking</span></div><div class="line">        <span class="keyword">while</span> ((count = socketChannel.read(buffer)) &gt; <span class="number">0</span>) &#123;</div><div class="line">            buffer.flip(); <span class="comment">// Make buffer readable</span></div><div class="line">            <span class="comment">// Send the data; don't assume it goes all at once</span></div><div class="line">            <span class="keyword">while</span> (buffer.hasRemaining()) &#123;</div><div class="line">                socketChannel.write(buffer);</div><div class="line">            &#125;</div><div class="line">            <span class="comment">// WARNING: the above loop is evil. Because</span></div><div class="line">            <span class="comment">// it's writing back to the same nonblocking</span></div><div class="line">            <span class="comment">// channel it read the data from, this code can</span></div><div class="line">            <span class="comment">// potentially spin in a busy loop. In real life</span></div><div class="line">            <span class="comment">// you'd do something more useful than this.</span></div><div class="line">            buffer.clear(); <span class="comment">// Empty buffer</span></div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> (count &lt; <span class="number">0</span>) &#123;</div><div class="line">            <span class="comment">// Close channel on EOF, invalidates the key</span></div><div class="line">            socketChannel.close();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"><span class="comment">// ----------------------------------------------------------</span></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Spew a greeting to the incoming client connection.</div><div class="line">     *</div><div class="line">     * <span class="doctag">@param</span> channel The newly connected SocketChannel to say hello to.</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(SocketChannel channel)</span></span></div><div class="line">            <span class="keyword">throws</span> Exception &#123;</div><div class="line">        buffer.clear();</div><div class="line">        buffer.put(<span class="string">"Hi there!\r\n"</span>.getBytes());</div><div class="line">        buffer.flip();</div><div class="line">        channel.write(buffer);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>Example 4-2. Servicing channels with a thread pool 使用线程池来为通道提供服务</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.ronsoft.books.nio.channels;</div><div class="line"><span class="keyword">import</span> java.nio.ByteBuffer;</div><div class="line"><span class="keyword">import</span> java.nio.channels.SocketChannel;</div><div class="line"><span class="keyword">import</span> java.nio.channels.SelectionKey;</div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"><span class="keyword">import</span> java.util.LinkedList;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Specialization of the SelectSockets class which uses a thread pool</div><div class="line"> * to service channels. The thread pool is an ad-hoc implementation</div><div class="line"> * quickly lashed together in a few hours for demonstration purposes.</div><div class="line"> * It's definitely not production quality.</div><div class="line"> *</div><div class="line"> * <span class="doctag">@author</span> Ron Hitchens (ron@ronsoft.com)</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SelectSocketsThreadPool</span> <span class="keyword">extends</span> <span class="title">SelectSockets</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_THREADS = <span class="number">5</span>;</div><div class="line">    <span class="keyword">private</span> ThreadPool pool = <span class="keyword">new</span> ThreadPool (MAX_THREADS);</div><div class="line">    <span class="comment">// -------------------------------------------------------------</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span> <span class="params">(String [] argv)</span></span></div><div class="line">            <span class="keyword">throws</span> Exception</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">new</span> SelectSocketsThreadPool( ).go (argv);</div><div class="line">    &#125;</div><div class="line"><span class="comment">// -------------------------------------------------------------</span></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Sample data handler method for a channel with data ready to read.</div><div class="line">     * This method is invoked from the go( ) method in the parent class.</div><div class="line">     * This handler delegates to a worker thread in a thread pool to</div><div class="line">     * service the channel, then returns immediately.</div><div class="line">     * <span class="doctag">@param</span> key A SelectionKey object representing a channel</div><div class="line">     * determined by the selector to be ready for reading. If the</div><div class="line">     * channel returns an EOF condition, it is closed here, which</div><div class="line">     * automatically invalidates the associated key. The selector</div><div class="line">     * will then de-register the channel on the next select call.</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">readDataFromSocket</span> <span class="params">(SelectionKey key)</span></span></div><div class="line">            <span class="keyword">throws</span> Exception</div><div class="line">    &#123;</div><div class="line">        WorkerThread worker = pool.getWorker( );</div><div class="line">        <span class="keyword">if</span> (worker == <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="comment">// No threads available. Do nothing. The selection</span></div><div class="line">            <span class="comment">// loop will keep calling this method until a</span></div><div class="line">            <span class="comment">// thread becomes available. This design could</span></div><div class="line">            <span class="comment">// be improved.</span></div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// Invoking this wakes up the worker thread, then returns</span></div><div class="line">        worker.serviceChannel (key);</div><div class="line">    &#125;</div><div class="line"><span class="comment">// ---------------------------------------------------------------</span></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * A very simple thread pool class. The pool size is set at</div><div class="line">     * construction time and remains fixed. Threads are cycled</div><div class="line">     * through a FIFO idle queue.</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadPool</span></span></div><div class="line">    &#123;</div><div class="line">        List idle = <span class="keyword">new</span> LinkedList( );</div><div class="line">        ThreadPool (<span class="keyword">int</span> poolSize)</div><div class="line">        &#123;</div><div class="line">            <span class="comment">// Fill up the pool with worker threads</span></div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; poolSize; i++) &#123;</div><div class="line">                WorkerThread thread = <span class="keyword">new</span> WorkerThread (<span class="keyword">this</span>);</div><div class="line">                <span class="comment">// Set thread name for debugging. Start it.</span></div><div class="line">                thread.setName (<span class="string">"Worker"</span> + (i + <span class="number">1</span>));</div><div class="line">                thread.start( );</div><div class="line">                idle.add (thread);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">/**</span></div><div class="line">         * Find an idle worker thread, if any. Could return null.</div><div class="line">         */</div><div class="line">        <span class="function">WorkerThread <span class="title">getWorker</span><span class="params">( )</span></span></div><div class="line">        &#123;</div><div class="line">            WorkerThread worker = <span class="keyword">null</span>;</div><div class="line">            <span class="keyword">synchronized</span> (idle) &#123;</div><div class="line">                <span class="keyword">if</span> (idle.size( ) &gt; <span class="number">0</span>) &#123;</div><div class="line">                    worker = (WorkerThread) idle.remove (<span class="number">0</span>);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">return</span> (worker);</div><div class="line">        &#125;</div><div class="line">        <span class="comment">/**</span></div><div class="line">         * Called by the worker thread to return itself to the</div><div class="line">         * idle pool.</div><div class="line">         */</div><div class="line">        <span class="function"><span class="keyword">void</span> <span class="title">returnWorker</span> <span class="params">(WorkerThread worker)</span></span></div><div class="line">        &#123;</div><div class="line">            <span class="keyword">synchronized</span> (idle) &#123;</div><div class="line">                idle.add (worker);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * A worker thread class which can drain channels and echo-back</div><div class="line">     * the input. Each instance is constructed with a reference to</div><div class="line">     * the owning thread pool object. When started, the thread loops</div><div class="line">     * forever waiting to be awakened to service the channel associated</div><div class="line">     * with a SelectionKey object.</div><div class="line">     * The worker is tasked by calling its serviceChannel( ) method</div><div class="line">     * with a SelectionKey object. The serviceChannel( ) method stores</div><div class="line">     * the key reference in the thread object then calls notify( )</div><div class="line">     * to wake it up. When the channel has been drained, the worker</div><div class="line">     * thread returns itself to its parent pool.</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">WorkerThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span></div><div class="line">    &#123;</div><div class="line">        <span class="keyword">private</span> ByteBuffer buffer = ByteBuffer.allocate (<span class="number">1024</span>);</div><div class="line">        <span class="keyword">private</span> ThreadPool pool;</div><div class="line">        <span class="keyword">private</span> SelectionKey key;</div><div class="line">        WorkerThread (ThreadPool pool)</div><div class="line">        &#123;</div><div class="line">            <span class="keyword">this</span>.pool = pool;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// Loop forever waiting for work to do</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">( )</span></span></div><div class="line">        &#123;</div><div class="line">            System.out.println (<span class="keyword">this</span>.getName( ) + <span class="string">" is ready"</span>);</div><div class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    <span class="comment">// Sleep and release object lock</span></div><div class="line">                    <span class="keyword">this</span>.wait( );</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace( );</div><div class="line">                    <span class="comment">// Clear interrupt status</span></div><div class="line">                    <span class="keyword">this</span>.interrupted( );</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">if</span> (key == <span class="keyword">null</span>) &#123;</div><div class="line">                    <span class="keyword">continue</span>; <span class="comment">// just in case</span></div><div class="line">                &#125;</div><div class="line">                System.out.println (<span class="keyword">this</span>.getName( )</div><div class="line">                        + <span class="string">" has been awakened"</span>);</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    drainChannel (key);</div><div class="line">                &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">                    System.out.println (<span class="string">"Caught '"</span></div><div class="line">                            + e + <span class="string">"' closing channel"</span>);</div><div class="line">                    <span class="comment">// Close channel and nudge selector</span></div><div class="line">                    <span class="keyword">try</span> &#123;</div><div class="line">                        key.channel().close( );</div><div class="line">                    &#125; <span class="keyword">catch</span> (IOException ex) &#123;</div><div class="line">                        ex.printStackTrace( );</div><div class="line">                    &#125;</div><div class="line">                    key.selector().wakeup( );</div><div class="line">                &#125;</div><div class="line">                key = <span class="keyword">null</span>;</div><div class="line">                <span class="comment">// Done. Ready for more. Return to pool</span></div><div class="line">                <span class="keyword">this</span>.pool.returnWorker (<span class="keyword">this</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">/**</span></div><div class="line">         * Called to initiate a unit of work by this worker thread</div><div class="line">         * on the provided SelectionKey object. This method is</div><div class="line">         * synchronized, as is the run( ) method, so only one key</div><div class="line">         * can be serviced at a given time.</div><div class="line">         * Before waking the worker thread, and before returning</div><div class="line">         * to the main selection loop, this key's interest set is</div><div class="line">         * updated to remove OP_READ. This will cause the selector</div><div class="line">         * to ignore read-readiness for this channel while the</div><div class="line">         * worker thread is servicing it.</div><div class="line">         */</div><div class="line">        <span class="function"><span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">serviceChannel</span> <span class="params">(SelectionKey key)</span></span></div><div class="line">        &#123;</div><div class="line">            <span class="keyword">this</span>.key = key;</div><div class="line">            key.interestOps(key.interestOps() &amp; (~SelectionKey.OP_READ));</div><div class="line">            <span class="keyword">this</span>.notify( ); <span class="comment">// Awaken the thread</span></div><div class="line">        &#125;</div><div class="line">        <span class="comment">/**</span></div><div class="line">         * The actual code which drains the channel associated with</div><div class="line">         * the given key. This method assumes the key has been</div><div class="line">         * modified prior to invocation to turn off selection</div><div class="line">         * interest in OP_READ. When this method completes it</div><div class="line">         * re-enables OP_READ and calls wakeup( ) on the selector</div><div class="line">         * so the selector will resume watching this channel.</div><div class="line">         */</div><div class="line">        <span class="function"><span class="keyword">void</span> <span class="title">drainChannel</span> <span class="params">(SelectionKey key)</span></span></div><div class="line">                <span class="keyword">throws</span> Exception</div><div class="line">        &#123;</div><div class="line">            SocketChannel channel = (SocketChannel) key.channel( );</div><div class="line">            <span class="keyword">int</span> count;</div><div class="line">            buffer.clear( ); <span class="comment">// Empty buffer</span></div><div class="line">            <span class="comment">// Loop while data is available; channel is nonblocking</span></div><div class="line">            <span class="keyword">while</span> ((count = channel.read (buffer)) &gt; <span class="number">0</span>) &#123;</div><div class="line">                buffer.flip( ); <span class="comment">// make buffer readable</span></div><div class="line">                <span class="comment">// Send the data; may not go all at once</span></div><div class="line">                <span class="keyword">while</span> (buffer.hasRemaining( )) &#123;</div><div class="line">                    channel.write (buffer);</div><div class="line">                &#125;</div><div class="line">                <span class="comment">// WARNING: the above loop is evil.</span></div><div class="line">                <span class="comment">// See comments in superclass.</span></div><div class="line">                buffer.clear( ); <span class="comment">// Empty buffer</span></div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span> (count &lt; <span class="number">0</span>) &#123;</div><div class="line">                <span class="comment">// Close channel on EOF; invalidates the key</span></div><div class="line">                channel.close( );</div><div class="line">                <span class="keyword">return</span>;</div><div class="line">            &#125;</div><div class="line">            <span class="comment">// Resume interest in OP_READ</span></div><div class="line">            key.interestOps (key.interestOps( ) | SelectionKey.OP_READ);</div><div class="line">            <span class="comment">// Cycle the selector so this key is active again</span></div><div class="line">            key.selector().wakeup( );</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>Because the thread doing the selection will loop back and call select( )<br>again almost immediately, the interest set in the key is modified to remove<br>interest in read-readiness. This prevents the selector from repeatedly<br>invoking readDataFromSocket( ) (because the channel will remain ready to read<br>until the worker thread can drain the data from it). When a worker thread has<br>finished servicing the channel, it will again update the key’s interest set<br>to reassert an interest in read-readiness. It also does an explicit wakeup( )<br>on the selector. If the main thread is blocked in select( ), this causes it<br>to resume. The selection loop will then cycle (possibly doing nothing) and<br>reenter select( ) with the updated key.</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javase/" rel="tag"># javase</a>
+          
+            <a href="/tags/NIO/" rel="tag"># NIO</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/04/Java-NIO-探究字节顺序ByteOrder/" rel="prev" title="Java NIO 探究字节顺序ByteOrder">
+                Java NIO 探究字节顺序ByteOrder <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODI2OC80ODQw"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/gene.png"
+               alt="Gene" />
+          <p class="site-author-name" itemprop="name">Gene</p>
+           
+              <p class="site-description motion-element" itemprop="description">A student majoring in Software Engineering</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/iamxpy" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/luo-mu-xue-lan" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-cube"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.csdn.net/xpy870663266" target="_blank" title="CSDN">
+                  
+                    <i class="fa fa-fw fa-coffee"></i>
+                  
+                  CSDN
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/1631634e1130/timeline" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-book"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Gene</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("kqHYy2W6o1QD5K0EKWE0zdPy-gzGzoHsz", "lLFeuDQsMSkp011HnWxTfaH1");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
