@@ -94,7 +94,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/04/23/Java拾遗/index.html">
 <meta property="og:site_name" content="Gene's Home">
 <meta property="og:description" content="Java知识点繁多，如果不多加以实践会很容易忘记，这篇文章记录的是我遗忘了然后查了或者我根本不知道的知识点，会不定期更新">
-<meta property="og:updated_time" content="2017-05-04T03:36:06.979Z">
+<meta property="og:updated_time" content="2017-05-08T14:26:12.157Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java拾遗">
 <meta name="twitter:description" content="Java知识点繁多，如果不多加以实践会很容易忘记，这篇文章记录的是我遗忘了然后查了或者我根本不知道的知识点，会不定期更新">
@@ -412,6 +412,19 @@
 <p>四、第三个例子同样适用其它同步代码块。也就是说，当一个线程访问object的一个synchronized(this)同步代码块时，它就获得了这个object的对象锁。结果，其它线程对该object对象所有同步代码部分的访问都被暂时阻塞。</p>
 <p>五、以上规则对其它对象锁同样适用.</p>
 <p>–摘录于<a href="http://www.cnblogs.com/GnagWang/archive/2011/02/27/1966606.html" target="_blank" rel="external">原文</a>,代码示例见原文</p>
+<h2 id="序列化机制与RMI"><a href="#序列化机制与RMI" class="headerlink" title="序列化机制与RMI"></a>序列化机制与RMI</h2><p>网上有一些很好的总结，链接如下：（如果链接失效可以到笔记中查看）</p>
+<p>1.<a href="http://www.blogjava.net/jiangshachina/archive/2012/02/13/369898.html" target="_blank" rel="external">理解Java对象序列化</a><br>全方面覆盖序列化的基础知识</p>
+<p>2.<a href="https://www.ibm.com/developerworks/cn/java/j-lo-serial/" target="_blank" rel="external">Java序列化的高级认识</a><br>对序列化的各个特点讲的很清晰</p>
+<p>3.<a href="http://www.hollischuang.com/archives/1140" target="_blank" rel="external">深入分析Java的序列化与反序列化</a>介绍了部分机制的源码实现原理</p>
+<p>4.<a href="http://www.infoq.com/cn/articles/cf-java-object-serialization-rmi" target="_blank" rel="external">对象序列化与RMI</a><br>介绍了RMI的原理与基本使用</p>
+<p>5.<a href="http://blog.csdn.net/a19881029/article/details/9465663" target="_blank" rel="external">Java RMI详解</a><br>RMI详解</p>
+<p>6.<a href="http://haolloyin.blog.51cto.com/1177454/332426" target="_blank" rel="external">Java RMI 框架（远程方法调用）</a><br>RMI详解</p>
+<h2 id="集合框架"><a href="#集合框架" class="headerlink" title="集合框架"></a>集合框架</h2><p>基础；重新系统看一次《疯狂Java讲义》集合一章</p>
+<p>网上的经验总结：</p>
+<p><a href="https://www.ibm.com/developerworks/cn/java/j-lo-set-operation/index.html" target="_blank" rel="external">集合类操作优化经验总结</a></p>
+<h2 id="Java8时间日期处理"><a href="#Java8时间日期处理" class="headerlink" title="Java8时间日期处理"></a>Java8时间日期处理</h2><p>1.<a href="http://www.importnew.com/15637.html" target="_blank" rel="external">Java8使时间和日期API20例</a><br>文中错误：<br>示例3，<code>LocalDate.of(2010, 01, 14);</code>的01实际上为八进制，应该是作者笔误，直接用1就好，事实上文中其他地方就改正了这个错误。<br>示例6，打印出的时间16:33:33.369，369是毫秒，即10^-3秒，并非纳秒“nano seconds”<br>示例12，“在Java 8以前，一定要牢牢记住时区的名称”的“在Java 8以前”改为“在Java 8中，”</p>
+<p>还有一些其他错误没有大碍，例如System.currentTimeInMillis()看得懂虽然错了但看得懂</p>
+<p>2.<a href="https://nkcoder.github.io/2016/01/31/java-8-date-time-api/" target="_blank" rel="external">Java 8新的日期和时间API</a></p>
 
       
     </div>
@@ -562,7 +575,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -635,7 +648,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#17-04-23-更"><span class="nav-number">1.</span> <span class="nav-text">17.04.23 更</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#重读《疯狂java讲义》发现的遗忘点"><span class="nav-number">1.1.</span> <span class="nav-text">重读《疯狂java讲义》发现的遗忘点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronize关键字细节"><span class="nav-number">1.2.</span> <span class="nav-text">synchronize关键字细节</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#17-04-23-更"><span class="nav-number">1.</span> <span class="nav-text">17.04.23 更</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#重读《疯狂java讲义》发现的遗忘点"><span class="nav-number">1.1.</span> <span class="nav-text">重读《疯狂java讲义》发现的遗忘点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronize关键字细节"><span class="nav-number">1.2.</span> <span class="nav-text">synchronize关键字细节</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#序列化机制与RMI"><span class="nav-number">1.3.</span> <span class="nav-text">序列化机制与RMI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#集合框架"><span class="nav-number">1.4.</span> <span class="nav-text">集合框架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java8时间日期处理"><span class="nav-number">1.5.</span> <span class="nav-text">Java8时间日期处理</span></a></li></ol></li></ol></div>
             
 
           </div>
