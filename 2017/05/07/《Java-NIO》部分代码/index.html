@@ -94,7 +94,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/05/07/《Java-NIO》部分代码/index.html">
 <meta property="og:site_name" content="Gene's Home">
 <meta property="og:description" content="Example 4-1. Using select( ) to service multiple channels 使用 select()来为多个通道提供服务">
-<meta property="og:updated_time" content="2017-05-07T23:26:41.026Z">
+<meta property="og:updated_time" content="2017-05-08T00:17:13.462Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《Java NIO》部分代码">
 <meta name="twitter:description" content="Example 4-1. Using select( ) to service multiple channels 使用 select()来为多个通道提供服务">
@@ -388,8 +388,9 @@
 </blockquote>
 <p>个人觉得这个译文没有完全表达原文意思，导致很难理解，摘录原文如下，</p>
 <blockquote>
-<p>Because the thread doing the selection will loop back and call select( ) again almost immediately, the interest set in the key is modified to remove interest in read-readiness. This prevents the selector from repeatedly invoking readDataFromSocket( ) (because the channel will remain ready to read until the worker thread can drain the data from it). When a worker thread has finished servicing the channel, it will again update the key’s interest set to reassert an interest in read-readiness. It also does an explicit wakeup( ) on the selector. If the main thread is blocked in select( ), this causes it to resume. The selection loop will then cycle (possibly doing nothing) and reenter select( ) with the updated key.<br>个人理解：首先要清楚drainChannel的过程需要一定时间，并且由于选择线程和响应socket的线程分开，选择线程并不会在处理socket这个步骤阻塞而是又进入了下一次选择，这就导致有可能下一次select操作时上一次响应socket的处理还未结束。在不将Read从interest集合移除的情况下：假如drainChannel还未完成，未将对应的Channel从已选择的集合中移除，那么在下一次select操作后这个Channel对应的key还会被selectKeys()返回，接着readDataFromSocket()还会被调用，即又启动了一个新的线程来处理之前处理到中途的socketChannel</p>
+<p>Because the thread doing the selection will loop back and call select( ) again almost immediately, the interest set in the key is modified to remove interest in read-readiness. This prevents the selector from repeatedly invoking readDataFromSocket( ) (because the channel will remain ready to read until the worker thread can drain the data from it). When a worker thread has finished servicing the channel, it will again update the key’s interest set to reassert an interest in read-readiness. It also does an explicit wakeup( ) on the selector. If the main thread is blocked in select( ), this causes it to resume. The selection loop will then cycle (possibly doing nothing) and reenter select( ) with the updated key.</p>
 </blockquote>
+<p>个人理解：首先要清楚drainChannel的过程需要一定时间，并且由于选择线程和响应socket的线程分开，选择线程并不会在处理socket这个步骤阻塞而是又进入了下一次选择，这就导致有可能下一次select操作时上一次响应socket的处理还未结束。在不将Read从interest集合移除的情况下：假如drainChannel还未完成，未将对应的Channel从已选择的集合中移除，那么在下一次select操作后这个Channel对应的key还会被selectKeys()返回，接着readDataFromSocket()还会被调用，即又启动了一个新的线程来处理之前处理到中途的socketChannel</p>
 
       
     </div>
