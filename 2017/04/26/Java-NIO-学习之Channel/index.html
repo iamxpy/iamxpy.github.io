@@ -101,7 +101,7 @@
 <meta property="og:image" content="http://yoursite.com/images/io-api-comparation.png">
 <meta property="og:image" content="http://yoursite.com/images/channel-pipe.png">
 <meta property="og:image" content="http://yoursite.com/images/finishConnect.png">
-<meta property="og:updated_time" content="2017-05-07T01:18:38.362Z">
+<meta property="og:updated_time" content="2017-05-13T14:47:23.952Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java NIO 学习之Channel">
 <meta name="twitter:description" content="概述Channel用于在字节缓冲区和位于通道另一侧的实体（通常是一个文件或套接字）之间有效地传输数据。多数情况下，Channel与操作系统的文件描述符(File Descriptor)和文件句柄(File Handle)有着一对一的关系。通道是一种途径，借助该途径，可以用最小的总开销来访问操作系统本身的I/O服务。缓冲区则是通道内部用来发送和接收数据的端点。下图中的箭头展示了channel在连接I">
@@ -412,34 +412,11 @@
 <p><img src="/images/channel-pipe.png" alt="channel-pipe.png"></p>
 <p>这两个通道实例是在Pipe对象创建的同时被创建的，可以通过在Pipe对象上分别调用source( )和sink( )方法来取回。管道可以被用来仅在同一个Java虚拟机内部传输数据。虽然有更加有效率的方式来在线程之间传输数据，但是使用管道的好处在于封装性。生产者线程和用户线程都能被写道通用的Channel API中。根据给定的通道类型，相同的代码可以被用来写数据到一个文件、socket或管道。选择器可以被用来检查管道上的数据可用性，如同在socket通道上使用那样地简单。这样就可以允许单个用户线程使用一个Selector来从多个通道有效地收集数据，并可任意结合网络连接或本地工作线程使用。因此，这些对于可伸缩性、冗余度以及可复用性来说无疑都是意义重大的。</p>
 <h2 id="Channel通用API"><a href="#Channel通用API" class="headerlink" title="Channel通用API"></a>Channel通用API</h2><h3 id="read-ByteBuffer-dst"><a href="#read-ByteBuffer-dst" class="headerlink" title="read(ByteBuffer dst)"></a>read(ByteBuffer dst)</h3><p>从channel中读取数据到dst中</p>
-<blockquote>
-<p>来自ReadableByteChannel的注释<br>*A read operation might not fill the buffer, and in fact it might not</p>
-<ul>
-<li>read any bytes at all.  Whether or not it does so depends upon the</li>
-<li>nature and state of the channel.  A socket channel in non-blocking mode,</li>
-<li>for example, cannot read any more bytes than are immediately available</li>
-<li>from the socket’s input buffer; similarly, a file channel cannot read</li>
-<li>any more bytes than remain in the file.  It is guaranteed, however, that</li>
-<li>if a channel is in blocking mode and there is at least one byte</li>
-<li>remaining in the buffer then this method will block until at least one</li>
-<li>byte is read.</li>
-</ul>
-</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*来自ReadableByteChannel的注释</span></div><div class="line"> *A read operation might not fill the buffer, and in fact it might not</div><div class="line"> *read any bytes at all.  Whether or not it does so depends upon the</div><div class="line"> *nature and state of the channel.  A socket channel in non-blocking mode,</div><div class="line"> *for example, cannot read any more bytes than are immediately available</div><div class="line"> *from the socket's input buffer; similarly, a file channel cannot read</div><div class="line"> *any more bytes than remain in the file.  It is guaranteed, however, that</div><div class="line"> *if a channel is in blocking mode and there is at least one byte</div><div class="line"> *remaining in the buffer then this method will block until at least one</div><div class="line"> *byte is read.</div><div class="line"> */</div></pre></td></tr></table></figure>
 <h3 id="read-ByteBuffer-dsts"><a href="#read-ByteBuffer-dsts" class="headerlink" title="read(ByteBuffer[] dsts)"></a>read(ByteBuffer[] dsts)</h3><p>对dsts中的所有ByteBuffer执行gather操作</p>
 <h3 id="read-ByteBuffer-dsts-int-offset-int-length"><a href="#read-ByteBuffer-dsts-int-offset-int-length" class="headerlink" title="read(ByteBuffer[] dsts, int offset, int length)"></a>read(ByteBuffer[] dsts, int offset, int length)</h3><p>对dsts中的部分ByteBuffer执行gather操作。offset参数是指哪个缓冲区将开始被使用，而不是指数据的 offset。length参数指示要使用的缓冲区数量。</p>
 <h3 id="write-ByteBuffer-src"><a href="#write-ByteBuffer-src" class="headerlink" title="write(ByteBuffer src)"></a>write(ByteBuffer src)</h3><p>将src中的数据写入到channel中</p>
-<blockquote>
-<p>来自WritableByteChannel的注释<br>*An attempt is made to write up to r bytes to the channel,</p>
-<ul>
-<li>where r is the number of bytes remaining in the buffer, that is,</li>
-<li>src.remaining(), at the moment this method is invoked.</li>
-<li>Unless otherwise specified, a write operation will return only after</li>
-<li>writing all of the r requested bytes.  Some types of channels,</li>
-<li>depending upon their state, may write only some of the bytes or possibly</li>
-<li>none at all.  A socket channel in non-blocking mode, for example, cannot</li>
-<li>write any more bytes than are free in the socket’s output buffer.</li>
-</ul>
-</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*来自WritableByteChannel的注释</span></div><div class="line"> *An attempt is made to write up to r bytes to the channel,</div><div class="line"> *where r is the number of bytes remaining in the buffer, that is,</div><div class="line"> *src.remaining(), at the moment this method is invoked.</div><div class="line"> *Unless otherwise specified, a write operation will return only after</div><div class="line"> *writing all of the r requested bytes.  Some types of channels,</div><div class="line"> *depending upon their state, may write only some of the bytes or possibly</div><div class="line"> *none at all.  A socket channel in non-blocking mode, for example, cannot</div><div class="line"> *write any more bytes than are free in the socket's output buffer.</div><div class="line"> */</div></pre></td></tr></table></figure>
 <h3 id="write-ByteBuffer-srcs"><a href="#write-ByteBuffer-srcs" class="headerlink" title="write(ByteBuffer[] srcs)"></a>write(ByteBuffer[] srcs)</h3><p>对srcs中的所有ByteBuffer执行scatter操作</p>
 <blockquote>
 <p>使用<code>while (channel.write(bs) &gt; 0){}</code>来确保已经将srcs中所有buffer的有效数据都被写入channel</p>
