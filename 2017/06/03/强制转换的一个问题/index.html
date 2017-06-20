@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="javase,NIO," />
+  <meta name="keywords" content="javase," />
 
 
 
@@ -87,21 +87,17 @@
 
 
 
-<meta name="description" content="在学习《Java NIO》一书时，发现缺少了不少背景知识，因此在本文中记录下来，方便日后复习。">
-<meta name="keywords" content="javase,NIO">
+<meta name="description" content="这个问题本来没什么值得关注，但是强转如果发生溢出，结果会有些奇怪。加上我是在写协议的校验和函数时遇到这个问题的，相关的概念很容易让人头大">
+<meta name="keywords" content="javase">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java NIO 学习之背景知识">
-<meta property="og:url" content="http://yoursite.com/2017/04/24/Java-NIO-学习之背景知识/index.html">
+<meta property="og:title" content="强制转换的一个问题">
+<meta property="og:url" content="http://yoursite.com/2017/06/03/强制转换的一个问题/index.html">
 <meta property="og:site_name" content="Gene's Home">
-<meta property="og:description" content="在学习《Java NIO》一书时，发现缺少了不少背景知识，因此在本文中记录下来，方便日后复习。">
-<meta property="og:image" content="http://yoursite.com/images/DMA.jpg">
-<meta property="og:image" content="http://yoursite.com/images/kernel-user-space.png">
-<meta property="og:image" content="http://yoursite.com/images/hardware-kernel-user-space.png">
-<meta property="og:updated_time" content="2017-05-05T11:42:07.193Z">
+<meta property="og:description" content="这个问题本来没什么值得关注，但是强转如果发生溢出，结果会有些奇怪。加上我是在写协议的校验和函数时遇到这个问题的，相关的概念很容易让人头大">
+<meta property="og:updated_time" content="2017-06-03T10:38:05.431Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java NIO 学习之背景知识">
-<meta name="twitter:description" content="在学习《Java NIO》一书时，发现缺少了不少背景知识，因此在本文中记录下来，方便日后复习。">
-<meta name="twitter:image" content="http://yoursite.com/images/DMA.jpg">
+<meta name="twitter:title" content="强制转换的一个问题">
+<meta name="twitter:description" content="这个问题本来没什么值得关注，但是强转如果发生溢出，结果会有些奇怪。加上我是在写协议的校验和函数时遇到这个问题的，相关的概念很容易让人头大">
 
 
 
@@ -129,13 +125,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/04/24/Java-NIO-学习之背景知识/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/06/03/强制转换的一个问题/"/>
 
 
 
 
 
-  <title> Java NIO 学习之背景知识 | Gene's Home </title>
+  <title> 强制转换的一个问题 | Gene's Home </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -274,7 +270,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/24/Java-NIO-学习之背景知识/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/03/强制转换的一个问题/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Gene">
@@ -295,7 +291,7 @@
             
             
               
-                Java NIO 学习之背景知识
+                强制转换的一个问题
               
             
           </h1>
@@ -310,8 +306,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-24T18:45:54+08:00">
-                2017-04-24
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-03T17:41:29+08:00">
+                2017-06-03
               </time>
             
 
@@ -350,7 +346,7 @@
 
           
           
-             <span id="/2017/04/24/Java-NIO-学习之背景知识/" class="leancloud_visitors" data-flag-title="Java NIO 学习之背景知识">
+             <span id="/2017/06/03/强制转换的一个问题/" class="leancloud_visitors" data-flag-title="强制转换的一个问题">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -379,25 +375,12 @@
       
 
       
-        <p>在学习《Java NIO》一书时，发现缺少了不少背景知识，因此在本文中记录下来，方便日后复习。<br><a id="more"></a></p>
-<h2 id="硬件直接存储器-DMA"><a href="#硬件直接存储器-DMA" class="headerlink" title="硬件直接存储器 (DMA)"></a>硬件直接存储器 (DMA)</h2><p>DMA允许不同速度的硬件装置沟通，而不需要依赖于 CPU 的大量中断负载。否则，CPU 需要从来源把每一片段的资料复制到暂存器，然后把它们再次写回到新的地方。在这个时间中，CPU 对于其他的工作来说就无法使用。DMA 传输将数据从一个地址空间复制到另外一个地址空间。当CPU 初始化这个传输动作，传输动作本身是由 DMA 控制器来实行和完成。典型的例子就是移动一个外部内存的区块到芯片内部更快的内存区。像是这样的操作并没有让处理器工作拖延，反而可以被重新排程去处理其他的工作。在实现DMA传输时，是由DMA控制器直接掌管总线，因此，存在着一个总线控制权转移问题。即DMA传输前，CPU要把总线控制权交给DMA控制器，而在结束DMA传输后，DMA控制器应立即把总线控制权再交回给CPU。<br><img src="/images/DMA.jpg" alt="DMA示意图"></p>
-<h2 id="用户空间与内核空间"><a href="#用户空间与内核空间" class="headerlink" title="用户空间与内核空间"></a>用户空间与内核空间</h2><p>我们知道现在操作系统都是采用虚拟存储器，那么对32位操作系统而言，它的寻址空间（虚拟存储空间）为4G（2的32次方）。操心系统的核心是内核，独立于普通的应用程序，可以访问受保护的内存空间，也有访问底层硬件设备的所有权限。为了保证用户进程不能直接操作内核，保证内核的安全，操心系统将虚拟空间划分为两部分，一部分为内核空间，一部分为用户空间。针对linux操作系统而言，将最高的1G字节（从虚拟地址0xC0000000到0xFFFFFFFF），供内核使用，称为内核空间，而将较低的3G字节（从虚拟地址0x00000000到0xBFFFFFFF），供各个进程使用，称为用户空间。每个进程可以通过系统调用进入内核，因此，Linux内核由系统内的所有进程共享。于是，从具体进程的角度来看，每个进程可以拥有4G字节的虚拟空间。空间分配如下图所示：<br><img src="/images/kernel-user-space.png" alt="linux内存空间分配"><br>有了用户空间和内核空间，整个linux内部结构可以分为三部分，从最底层到最上层依次是：硬件–&gt;内核空间–&gt;用户空间。如下图所示：<br><img src="/images/hardware-kernel-user-space.png" alt="linux分层内部结构"></p>
-<h2 id="虚拟内存的基本概念与分页技术"><a href="#虚拟内存的基本概念与分页技术" class="headerlink" title="虚拟内存的基本概念与分页技术"></a>虚拟内存的基本概念与分页技术</h2><p><a href="http://218.5.241.24:8018/C35/Course/ZCYL-HB/WLKJ/jy/Chap03/3.6.1.htm" target="_blank" rel="external">虚拟内存的基本概念</a><br><a href="http://218.5.241.24:8018/C35/Course/ZCYL-HB/WLKJ/jy/Chap03/3.6.2.htm" target="_blank" rel="external">页式虚拟存储器</a></p>
-<h2 id="多工IO-就绪性选择"><a href="#多工IO-就绪性选择" class="headerlink" title="多工IO(就绪性选择)"></a>多工IO(就绪性选择)</h2><p>挖坑待填</p>
-<h2 id="内存映射文件"><a href="#内存映射文件" class="headerlink" title="内存映射文件"></a>内存映射文件</h2><p>挖坑待填</p>
-<h2 id="文件锁"><a href="#文件锁" class="headerlink" title="文件锁"></a>文件锁</h2><p>在 Linux 中，不论进程是在使用<strong>劝告锁</strong>还是<strong>强制锁</strong>，它都可以同时使用<strong>共享锁</strong>和<strong>排他锁</strong>（又称为<strong>读锁</strong>和<strong>写锁</strong>）。多个共享锁之间不会相互干扰，多个进程在同一时刻可以对同一个文件加共享锁。但是，如果一个进程对该文件加了排他锁，那么其他进程则无权再对该文件加共享锁或者排他锁，直到该排他锁被释放。所以，对于同一个文件来说，可以同时有很多进程对其进行读操作，但是在某一特定时刻，只能有一个进程对其进行写操作，两种锁的兼容关系如下表所示。</p>
-<table border="0" cellpadding="0" cellspacing="0"><tr><th style="vertical-align:top"></th><th colspan="2" style="text-align:center; vertical-align:top"><strong>是否满足请求</strong></th></tr><tbody><tr><td style="text-align:center; vertical-align:top"><strong>当前加上的锁</strong></td><td style="text-align:center; vertical-align:top"><br>共享锁<br></td><td style="text-align:center; vertical-align:top"><br>排他锁<br></td></tr><tr><td style="text-align:center; vertical-align:top"><br>无<br></td><td style="text-align:center; vertical-align:top"><br>是<br></td><td style="text-align:center; vertical-align:top"><br>是<br></td></tr><tr><td style="text-align:center; vertical-align:top"><br>共享锁<br></td><td style="text-align:center; vertical-align:top"><br>是<br></td><td style="text-align:center; vertical-align:top"><br>否<br></td></tr><tr><td style="text-align:center; vertical-align:top"><br>排他锁<br></td><td style="text-align:center; vertical-align:top"><br>否<br></td><td style="text-align:center; vertical-align:top"><br>否<br></td></tr></tbody></table>
-
-<h3 id="劝告锁"><a href="#劝告锁" class="headerlink" title="劝告锁"></a>劝告锁</h3><p>劝告锁是一种协同工作的锁。对于这一种锁来说，内核只提供加锁以及检测文件是否已经加锁的手段，但是内核并不参与锁的控制和协调。也就是说，如果有进程不遵守“游戏规则”，不检查目标文件是否已经由别的进程加了锁就往其中写入数据，那么内核是不会加以阻拦的。因此，劝告锁并不能阻止进程对文件的访问，而只能依靠各个进程在访问文件之前检查该文件是否已经被其他进程加锁来实现并发控制。进程需要事先对锁的状态做一个约定，并根据锁的当前状态和相互关系来确定其他进程是否能对文件执行指定的操作。从这点上来说，劝告锁的工作方式与使用信号量保护临界区的方式非常类似。</p>
-<p>劝告锁可以对文件的任意一个部分进行加锁，也可以对整个文件进行加锁，甚至可以对文件将来增大的部分也进行加锁。由于进程可以选择对文件的某个部分进行加锁，所以一个进程可以获得关于某个文件不同部分的多个锁。</p>
-<h3 id="强制锁"><a href="#强制锁" class="headerlink" title="强制锁"></a>强制锁</h3><p>与劝告锁不同，强制锁是一种内核强制采用的文件锁，它是从 System V Release 3 开始引入的。每当有系统调用 open()、read() 以及write() 发生的时候，内核都要检查并确保这些系统调用不会违反在所访问文件上加的强制锁约束。也就是说，如果有进程不遵守游戏规则，硬要往加了锁的文件中写入内容，内核就会加以阻拦：</p>
-<p>如果一个文件已经被加上了读锁或者共享锁，那么其他进程再对这个文件进行写操作就会被内核阻止；</p>
-<p>如果一个文件已经被加上了写锁或者排他锁，那么其他进程再对这个文件进行读取或者写操作就会被内核阻止。</p>
-<p>如果其他进程试图访问一个已经加有强制锁的文件，进程行为取决于所执行的操作模式和文件锁的类型，归纳如下表所示：</p>
-<table border="0" cellpadding="0" cellspacing="0"><tr><th style="text-align:center; vertical-align:top"><br>当前锁类型<br></th><th style="text-align:center; vertical-align:top"><br>阻塞读<br></th><th style="text-align:center; vertical-align:top"><br>阻塞写<br></th><th style="text-align:center; vertical-align:top"><br>非阻塞读<br></th><th style="text-align:center; vertical-align:top"><br>非阻塞写<br></th></tr><tbody><tr><td style="text-align:center; vertical-align:top"><br>读锁<br></td><td style="text-align:center; vertical-align:top"><br>正常读取数据<br></td><td style="text-align:center; vertical-align:top"><br>阻塞<br></td><td style="text-align:center; vertical-align:top"><br>正常读取数据<br></td><td style="text-align:center; vertical-align:top"><br>EAGAIN<br></td></tr><tr><td style="text-align:center; vertical-align:top"><br>写锁<br></td><td style="text-align:center; vertical-align:top"><br>阻塞<br></td><td style="text-align:center; vertical-align:top"><br>阻塞<br></td><td style="text-align:center; vertical-align:top"><br>EAGAIN<br></td><td style="text-align:center; vertical-align:top"><br>EAGAIN<br></td></tr></tbody></table>
-
-<p>需要注意的是，如果要访问的文件的锁类型与要执行的操作存在冲突，那么采用阻塞读/写操作的进程会被阻塞，而采用非阻塞读/写操作的进程则不会阻塞，而是立即返回 EAGAIN。</p>
-<h2 id="select-poll-epoll-函数"><a href="#select-poll-epoll-函数" class="headerlink" title="select(), poll(), epoll()函数"></a>select(), poll(), epoll()函数</h2><p>挖坑待填</p>
+        <p>这个问题本来没什么值得关注，但是强转如果发生溢出，结果会有些奇怪。加上我是在写协议的校验和函数时遇到这个问题的，相关的概念很容易让人头大<a id="more"></a><br>先上结论：<br>1.源代码中所有数值均为其<code>真值</code>，例如可以看到有负号”-“<br>2.机器存储的只有<code>补码</code><br>3.强制转换结果是使用<code>补码</code>来截断得到的(不包括浮点型数)<br>4.打印出的是十进制的<code>真值</code><br>5.校验和使用的是无符号数<br>6.java中没有无符号数，可以使用高一级的类型表示低一级的无符号数(因为正数的补码与原码相同)</p>
+<p>下面看一下强制转换的例子<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">System.out.println((<span class="keyword">byte</span>)<span class="number">0x81</span>);</div><div class="line">System.out.println((<span class="keyword">byte</span>)-<span class="number">0x81</span>);<span class="comment">//注意有个负号</span></div></pre></td></tr></table></figure></p>
+<p>上面的两个语句分别会输出:<code>-127</code>和<code>127</code>，现在来解释一下：<br>在java中，整数数值默认是int类型，第3点提到要要用补码截断，int型数值0x81的补码是0x00000081，截断的结果是只保留其最后8位，即剩下0x81，即二进制的10000001，这是补码，对应的原码为11111111，其十进制的<code>真值</code>是<code>-127</code><br>-0x81的补码为0xFFFFFF7F，截断的结果是0x7F，即二进制的01111111，这是补码，而由于符号位是0，对应的原码就是其本身，故其十进制真值为<code>127</code></p>
+<p>再来看这两个函数：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 由byte数组得到其校验和</div><div class="line"> * <span class="doctag">@param</span> buf     数据</div><div class="line"> * <span class="doctag">@return</span>        校验和存储在long型返回值的低16位</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">getCheckSum</span><span class="params">(<span class="keyword">byte</span>[] buf)</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span> length = buf.length;</div><div class="line">    <span class="keyword">long</span> sum = <span class="number">0</span>;<span class="comment">//checksum只占sum的低16位</span></div><div class="line">    <span class="comment">//由于sum为long型，下面的加法运算都不会导致符号位改变，等价于无符号加法</span></div><div class="line">    <span class="keyword">while</span> (length &gt; <span class="number">0</span>) &#123;</div><div class="line">        sum += (buf[i++] &amp; <span class="number">0xff</span>) &lt;&lt; <span class="number">8</span>;<span class="comment">//与checksum的高8位相加</span></div><div class="line">        <span class="keyword">if</span> ((--length) == <span class="number">0</span>) <span class="keyword">break</span>;<span class="comment">// 如果buf的byte个数不为偶数</span></div><div class="line">        sum += (buf[i++] &amp; <span class="number">0xff</span>); <span class="comment">//与checksum的低8位相加</span></div><div class="line">        --length;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">//处理溢出，将sum的从右往左第二个16位与其第一个16位(最右的16位)相加并取反</span></div><div class="line">    <span class="keyword">return</span> (~((sum &amp; <span class="number">0xFFFF</span>) + (sum &gt;&gt; <span class="number">16</span>))) &amp; <span class="number">0xFFFF</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 取value的后几个字节放入byte[]中</div><div class="line"> * <span class="doctag">@param</span> value</div><div class="line"> * <span class="doctag">@param</span> len   指定value的后len个字节</div><div class="line"> * <span class="doctag">@return</span></div><div class="line"> */</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] toBytes(<span class="keyword">long</span> value, <span class="keyword">int</span> len) &#123;</div><div class="line">    <span class="keyword">byte</span>[] b = <span class="keyword">new</span> <span class="keyword">byte</span>[len];</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</div><div class="line">        b[len - i - <span class="number">1</span>] = (<span class="keyword">byte</span>) (value &gt;&gt; <span class="number">8</span> * i);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> b;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第一个函数的目的是得到byte[]数据的校验和，然而java没有无符号数据，所以变量sum用的是long类型，因此在加法运算时，byte数据都会被提升为long类型，所以函数中加法的效果与无符号数加法相同</p>
+<p>第二个函数来自<a href="http://blog.csdn.net/tang9140/article/details/43404385" target="_blank" rel="external">http://blog.csdn.net/tang9140/article/details/43404385</a>，其目的是得到一个整数型数据得到后len个字节，函数的关键是利用强制转换得到最后8位，然后右移8位，直到得到len个字节。这是可行的但是如果要从byte数组取出原来类型的数，也要对应的转化，详见原文的处理函数</p>
 
       
     </div>
@@ -429,8 +412,6 @@
           
             <a href="/tags/javase/" rel="tag"># javase</a>
           
-            <a href="/tags/NIO/" rel="tag"># NIO</a>
-          
         </div>
       
 
@@ -442,8 +423,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/04/26/Java-NIO-学习之Channel/" rel="next" title="Java NIO 学习之Channel">
-                <i class="fa fa-chevron-left"></i> Java NIO 学习之Channel
+              <a href="/2017/06/20/基于UDP的Ping程序-Java实现/" rel="next" title="基于UDP的Ping程序(Java实现)">
+                <i class="fa fa-chevron-left"></i> 基于UDP的Ping程序(Java实现)
               </a>
             
           </div>
@@ -452,8 +433,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/04/24/Storm的Window机制/" rel="prev" title="Storm的Window机制">
-                Storm的Window机制 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/05/19/数据结构与算法之路——栈/" rel="prev" title="数据结构与算法之路——栈">
+                数据结构与算法之路——栈 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -503,17 +484,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/gene.png"
@@ -613,22 +585,6 @@
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#硬件直接存储器-DMA"><span class="nav-number">1.</span> <span class="nav-text">硬件直接存储器 (DMA)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户空间与内核空间"><span class="nav-number">2.</span> <span class="nav-text">用户空间与内核空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟内存的基本概念与分页技术"><span class="nav-number">3.</span> <span class="nav-text">虚拟内存的基本概念与分页技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多工IO-就绪性选择"><span class="nav-number">4.</span> <span class="nav-text">多工IO(就绪性选择)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存映射文件"><span class="nav-number">5.</span> <span class="nav-text">内存映射文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件锁"><span class="nav-number">6.</span> <span class="nav-text">文件锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#劝告锁"><span class="nav-number">6.1.</span> <span class="nav-text">劝告锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#强制锁"><span class="nav-number">6.2.</span> <span class="nav-text">强制锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#select-poll-epoll-函数"><span class="nav-number">7.</span> <span class="nav-text">select(), poll(), epoll()函数</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
