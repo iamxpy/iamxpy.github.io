@@ -94,7 +94,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/04/24/Storm的Window机制/index.html">
 <meta property="og:site_name" content="Gene's Home">
 <meta property="og:description" content="2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉">
-<meta property="og:updated_time" content="2017-06-20T10:00:25.482Z">
+<meta property="og:updated_time" content="2017-06-20T10:02:18.810Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Storm的Window机制">
 <meta name="twitter:description" content="2017.04.09 更: 上星期在学习计算机网络的运输层时，发现TCP协议中有window机制，看完之后觉得概念有相通之处，如果懂了再去看storm中的window就可以很快理解。又想起各位前辈说过的计算机体系里面的很多设计理念是相通，所以要打好基础，现在深以为然。所以大学就该先打好基础，毕竟万变不离其宗，共勉">
@@ -412,7 +412,7 @@
 <p><strong>时间戳</strong>： 默认情况下tuple的时间戳是他们被bolt处理的时机（到达窗口的时机），窗口的触发（滑动或滚动）是建立在这些时间戳的基础上的。Storm支持把tuple的原生时间戳作为时间衡量的标准来触发窗口。可以用withTimestampField()设置时间戳字段，注意该字段对应的值应为long类型的时间</p>
 <p><strong>水印和延迟</strong>：水印和延迟是为了解决“迟到的tuple”的问题。<br>设置Bolt时有个withWatermarkInterval()方法，用来设置产生水印的时间间隔，默认是1秒（经过测试我发现调用这个方法并不能达到目的，即还是1s，可能是我哪里理解错了或者测试用例不科学，有待验证）。延迟Lag可以在设置Bolt是调用withLag()方法设置。水印的计算方法是最新的tuple的时间戳减去延迟。每个tuple到来时，如果它的时间戳比水印还早，这个tuple将被认为是“迟到的”，它将不会被处理，而只是在worker的日记中以INFO的级别打印一条消息。</p>
 <p>现在可以分析程序在这些机制下的运行过程了。<br>1.产生一个新的水印：用旧水印对前一秒进入bolt的tuple进行筛选，比旧水印还要早的tuple即为“迟到的tuple”，将不予处理，剩下的tuple是真正进入窗口的。在窗口的tuple中选取时间戳最晚的tuple，用他的时间戳减去设置好的延迟Lag，即为新的水印<br>2.产生窗口：有个大前提，每个窗口的终点都不能超过新的水印。第一个窗口的终点怎么确定呢？先在窗口的tuple中取时间戳最早的tuple，将这个时间向下取整，然后加上滑动间隔的时间段长度（对于滚动窗口，则是加上窗口长度），即为第一个窗口的终点，而它的起点则是终点减去窗口长度。有了第一个窗口，接下来的窗口只需在第一个窗口的基础上滑动或者翻滚即可产生。窗口产生的时候就是execute方法被调用的时候。要注意的是，必须满足大前提——窗口的终点不超过最新的水印，如果计算出第一个窗口的终点就已经超过了当前水印，那么一个窗口都不会产生，只能等待下一个水印产生了。</p>
-<h2 id="五-测试用例及其结果解释"><a href="#五-测试用例及其结果解释" class="headerlink" title="五. 测试用例及其结果解释"></a>五. 测试用例及其结果解释</h2><p><a href="https://github.com/iamxpy/stormWindowDemo" target="_blank" rel="external">源码链接</a><br>注意要使用1.0.0版本以后的storm，之前的版本可能还没有Window机制或者没有时间戳等机制</p>
+<h2 id="五-测试用例及其结果解释"><a href="#五-测试用例及其结果解释" class="headerlink" title="五. 测试用例及其结果解释"></a>五. 测试用例及其结果解释</h2><p><a href="https://iamxpy.github.io/2017/06/20/StormWindowDemo/" target="_blank" rel="external">源码链接</a><br>注意要使用1.0.0版本以后的storm，之前的版本可能还没有Window机制或者没有时间戳等机制</p>
 <ol>
 <li><p>BaseWindowTopology是用来测试两种窗口的基本用法和常用API的，不涉及时间戳、水印和延迟，主要用来理解滑动和滚动的含义<br>BaseWindowTopology运行结果解释：由于示例中滑动窗口长度是30 <strong>个</strong>，滑动间距是10 <strong>个</strong>，故每10个tuple到来就会触发一次滑动窗口的bolt中的execute方法，计算出sum，而滚动窗口长度是3 <strong>个</strong>，在滑动窗口的下游，所以每接收到3个来自滑动窗口的sum就会触发一次execute方法，计算avg</p>
 </li>
