@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="操作系统,计算机体系基础,java," />
+  <meta name="keywords" content="process,thread,pend,suspend,sleep,java," />
 
 
 
@@ -88,13 +88,13 @@
 
 
 <meta name="description" content="阻塞 VS 挂起阻塞与挂起都是进程的状态，但他们有一些相似之处，也有一些区别，下面先对他们进行概述，再进行比较">
-<meta name="keywords" content="操作系统,计算机体系基础,java">
+<meta name="keywords" content="process,thread,pend,suspend,sleep,java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OS中阻塞与挂起的区别&sleep()的实现原理">
 <meta property="og:url" content="http://yoursite.com/2017/09/20/OS中阻塞与挂起的区别-sleep()的实现原理/index.html">
-<meta property="og:site_name" content="icegene's Home">
+<meta property="og:site_name" content="icegene's Blog">
 <meta property="og:description" content="阻塞 VS 挂起阻塞与挂起都是进程的状态，但他们有一些相似之处，也有一些区别，下面先对他们进行概述，再进行比较">
-<meta property="og:updated_time" content="2017-09-22T08:50:43.820Z">
+<meta property="og:updated_time" content="2017-09-22T10:08:15.389Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OS中阻塞与挂起的区别&sleep()的实现原理">
 <meta name="twitter:description" content="阻塞 VS 挂起阻塞与挂起都是进程的状态，但他们有一些相似之处，也有一些区别，下面先对他们进行概述，再进行比较">
@@ -131,7 +131,7 @@
 
 
 
-  <title> OS中阻塞与挂起的区别&sleep()的实现原理 | icegene's Home </title>
+  <title> OS中阻塞与挂起的区别&sleep()的实现原理 | icegene's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -167,7 +167,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">icegene's Home</span>
+        <span class="site-title">icegene's Blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -279,7 +279,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="icegene's Home">
+      <meta itemprop="name" content="icegene's Blog">
     </span>
 
     
@@ -329,8 +329,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/programming/" itemprop="url" rel="index">
-                    <span itemprop="name">编程</span>
+                  <a href="/categories/os/" itemprop="url" rel="index">
+                    <span itemprop="name">操作系统</span>
                   </a>
                 </span>
 
@@ -441,9 +441,15 @@
       
         <div class="post-tags">
           
-            <a href="/tags/os/" rel="tag"># 操作系统</a>
+            <a href="/tags/process/" rel="tag"># process</a>
           
-            <a href="/tags/cs-basics/" rel="tag"># 计算机体系基础</a>
+            <a href="/tags/thread/" rel="tag"># thread</a>
+          
+            <a href="/tags/pend/" rel="tag"># pend</a>
+          
+            <a href="/tags/suspend/" rel="tag"># suspend</a>
+          
+            <a href="/tags/sleep/" rel="tag"># sleep</a>
           
             <a href="/tags/java/" rel="tag"># java</a>
           
@@ -551,7 +557,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -562,7 +568,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">19</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
