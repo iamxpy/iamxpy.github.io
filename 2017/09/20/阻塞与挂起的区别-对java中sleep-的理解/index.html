@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="数据结构与算法," />
+  <meta name="keywords" content="java,计算机体系基础,操作系统," />
 
 
 
@@ -87,17 +87,17 @@
 
 
 
-<meta name="description" content="数据结构与算法学习感想大二上学期学校就开了数据结构的课程，不过那时候没有认真对待，现在大二下，思考过后觉得内功还是要修好，以后可不能做个CRUD程序员吧？同时也是为了找实习时可以顺利点，于是就又开始复（yu）习数据结构和算法">
-<meta name="keywords" content="数据结构与算法">
+<meta name="description" content="阻塞 VS 挂起阻塞与挂起都是进程的状态，但他们有一些相似之处，也有一些区别，下面先对他们进行概述，再进行比较">
+<meta name="keywords" content="java,计算机体系基础,操作系统">
 <meta property="og:type" content="article">
-<meta property="og:title" content="数据结构与算法之路——前言">
-<meta property="og:url" content="http://yoursite.com/2017/05/19/数据结构与算法之路——前言/index.html">
+<meta property="og:title" content="OS中阻塞与挂起的区别&sleep()的实现原理">
+<meta property="og:url" content="http://yoursite.com/2017/09/20/阻塞与挂起的区别-对java中sleep-的理解/index.html">
 <meta property="og:site_name" content="Gene's Home">
-<meta property="og:description" content="数据结构与算法学习感想大二上学期学校就开了数据结构的课程，不过那时候没有认真对待，现在大二下，思考过后觉得内功还是要修好，以后可不能做个CRUD程序员吧？同时也是为了找实习时可以顺利点，于是就又开始复（yu）习数据结构和算法">
-<meta property="og:updated_time" content="2017-05-19T13:15:04.728Z">
+<meta property="og:description" content="阻塞 VS 挂起阻塞与挂起都是进程的状态，但他们有一些相似之处，也有一些区别，下面先对他们进行概述，再进行比较">
+<meta property="og:updated_time" content="2017-09-22T08:30:29.912Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="数据结构与算法之路——前言">
-<meta name="twitter:description" content="数据结构与算法学习感想大二上学期学校就开了数据结构的课程，不过那时候没有认真对待，现在大二下，思考过后觉得内功还是要修好，以后可不能做个CRUD程序员吧？同时也是为了找实习时可以顺利点，于是就又开始复（yu）习数据结构和算法">
+<meta name="twitter:title" content="OS中阻塞与挂起的区别&sleep()的实现原理">
+<meta name="twitter:description" content="阻塞 VS 挂起阻塞与挂起都是进程的状态，但他们有一些相似之处，也有一些区别，下面先对他们进行概述，再进行比较">
 
 
 
@@ -125,13 +125,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/05/19/数据结构与算法之路——前言/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/09/20/阻塞与挂起的区别-对java中sleep-的理解/"/>
 
 
 
 
 
-  <title> 数据结构与算法之路——前言 | Gene's Home </title>
+  <title> OS中阻塞与挂起的区别&sleep()的实现原理 | Gene's Home </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -270,7 +270,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/19/数据结构与算法之路——前言/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/20/阻塞与挂起的区别-对java中sleep-的理解/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Gene">
@@ -291,7 +291,7 @@
             
             
               
-                数据结构与算法之路——前言
+                OS中阻塞与挂起的区别&sleep()的实现原理
               
             
           </h1>
@@ -306,8 +306,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-19T21:36:33+08:00">
-                2017-05-19
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-20T21:47:06+08:00">
+                2017-09-20
               </time>
             
 
@@ -346,7 +346,7 @@
 
           
           
-             <span id="/2017/05/19/数据结构与算法之路——前言/" class="leancloud_visitors" data-flag-title="数据结构与算法之路——前言">
+             <span id="/2017/09/20/阻塞与挂起的区别-对java中sleep-的理解/" class="leancloud_visitors" data-flag-title="OS中阻塞与挂起的区别&sleep()的实现原理">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -375,13 +375,43 @@
       
 
       
-        <h1 id="数据结构与算法学习感想"><a href="#数据结构与算法学习感想" class="headerlink" title="数据结构与算法学习感想"></a>数据结构与算法学习感想</h1><p>大二上学期学校就开了数据结构的课程，不过那时候没有认真对待，现在大二下，思考过后觉得内功还是要修好，以后可不能做个CRUD程序员吧？同时也是为了找实习时可以顺利点，于是就又开始复（yu）习数据结构和算法<a id="more"></a><br>之前学的时候看的是《数据结构与算法 C语言描述》，现在看的是《数据结构与算法 Java语言描述》，然后还看了《算法》第四版，橙红色那本。<br>看的时候认真了很多，在书上做了不少笔记，但是还是有部分小节被我跳过了，有的是我觉得没必要细究的点（大概我还是有功利心。。），有的是真的看的一脸懵逼，结合实用性来考虑后我就不细究了，例如压缩算法我就不愿意细究，不是算法本身不重要，而是我不认为我以后要研究这些，我能认识每种压缩格式的特点，用好他们就好了，实在不愿意去探究各种压缩算法；然而，虽然也许图论算法会有一些现成的库（猜的），但是我还是愿意学习图论算法，一个是我觉得这个和很多应用紧密相关，很多时候需要自己抽象这种图的关系，很有研究的必要，另外，这个比压缩算法那些要有趣的多（可能主要还是这个原因。。）<br>就这样，我花了两三个星期再研究了一次数据结构和算法，没有敲很多他们的实现，而是选择看完理论之后去OJ刷一下题感受一下真实应用</p>
-<p>说了好多废话，总结一下我现在对数据结构和算法的态度与学习方法：</p>
-<p><strong>学习目的：</strong><br>1.能通过笔试面试<br>2.能在特定场景选用合适的数据结构<br>3.能利用合适的算法（结合数据结构）解决问题或优化程序</p>
-<p><strong>学习方法</strong><br>1.理解和记忆各个数据结构的相关概念和含义（for 1,2,3）<br>2.<strong>形象化</strong>并记忆其各个操作的算法<br>3.理解并记忆其各个操作的时间复杂度<br>4.学习《算法分析与设计基础》<br>5.刷题理解其应用</p>
-<p>第四点还没开始。。主要是最近看书觉得累了，想到OJ上写一下题，而且觉得算法的本质思想不是一时半会能搞清楚的，就先缓一下，去LeetCode找乐子了</p>
-<p>所以，接下来的这个系列的文章，主要是我用到了某些知识，我才会记录下来以体现他们的应用，并非完整的介绍或深究的文章，因此它们会有些乱，没有条理性，肯定不适合数据结构和算法比我还小白的同学看。说白了，这些就是做题笔记，不过以后我工作如果再遇到用这些知识的时候，我会再继续更新的。我会在文章里注重实用性，即具体这个数据结构或算法的实现，或现成的实现在哪里可以找到，怎样用好他们来解决实际问题等</p>
-<p>奔跑吧，中二少年！</p>
+        <h2 id="阻塞-VS-挂起"><a href="#阻塞-VS-挂起" class="headerlink" title="阻塞 VS 挂起"></a>阻塞 VS 挂起</h2><p>阻塞与挂起都是进程的状态，但他们有一些相似之处，也有一些区别，下面先对他们进行概述，再进行比较<br><a id="more"></a><br><strong>阻塞</strong>：正在执行的进程由于发生某时间（如I/O请求、申请缓冲区失败等）暂时无法继续执行。此时引起进程调度，OS把处理机分配给另一个就绪进程，而让受阻进程处于暂停状态，一般将这种状态称为阻塞状态。</p>
+<p><strong>挂起</strong>：由于系统和用户的需要引入了挂起的操作，进程被挂起意味着该进程处于静止状态。如果进程正在执行，它将暂停执行，若原本处于就绪状态，则该进程此时暂不接受调度。</p>
+<p><strong>共同点</strong>：</p>
+<ol>
+<li>进程都暂停执行</li>
+<li>进程都释放CPU，即两个过程都会涉及上下文切换</li>
+</ol>
+<p><strong>不同点</strong>：</p>
+<ol>
+<li>对系统资源占用不同：虽然都释放了CPU，但阻塞的进程仍处于内存中，而挂起的进程通过“对换”技术被换出到外存（磁盘）中。</li>
+<li>发生时机不同：阻塞一般在进程等待资源（IO资源、信号量等）时发生；而挂起是由于用户和系统的需要，例如，终端用户需要暂停程序研究其执行情况或对其进行修改、OS为了提高内存利用率需要将暂时不能运行的进程（处于就绪或阻塞队列的进程）调出到磁盘</li>
+<li>恢复时机不同：阻塞要在等待的资源得到满足（例如获得了锁）后，才会进入就绪状态，等待被调度而执行；被挂起的进程由将其挂起的对象（如用户、系统）在时机符合时（调试结束、被调度进程选中需要重新执行）将其主动激活</li>
+</ol>
+<h2 id="sleep"><a href="#sleep" class="headerlink" title="sleep()"></a>sleep()</h2><p>之所以将sleep一起讨论，是因为sleep是一个很常见的系统调用，在很多编程语言中，也有对应的函数，所以一起讨论可以明白sleep的过程与阻塞和挂起在底层的效果又有哪些区别。</p>
+<p><strong>sleep()</strong>：进程、线程或任务(Linux中不区分进程与线程，都称为task)可以sleep，这会导致它们暂停执行一段时间，直到等待的时间结束才恢复执行或在这段时间内被中断。</p>
+<h3 id="OS中sleep-的实现"><a href="#OS中sleep-的实现" class="headerlink" title="OS中sleep()的实现"></a>OS中sleep()的实现</h3><p>sleep()在OS中的实现的大概流程：</p>
+<ul>
+<li><strong>挂起</strong>进程（或线程）并修改其运行状态</li>
+<li>用sleep()提供的参数来设置一个定时器。可变定时器(variable timer)一般在硬件层面是通过一个固定的时钟和计数器来实现的，每经过一个时钟周期将计数器递减，当计数器的值为0时产生<strong>中断</strong>。内核注册一个定时器后可以在一段时间后收到中断。</li>
+<li>当时间结束，定时器会触发，内核收到中断后修改进程（或线程）的运行状态。例如线程会被标志为就绪而进入就绪队列等待调度。</li>
+</ul>
+<p>在Linux下，sleep()的实现流程大概如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="comment">///时钟编程 alarm()</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">wakeUp</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">      <span class="built_in">printf</span>(<span class="string">"please wakeup!!/n"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span></div><div class="line">&#123;</div><div class="line"></div><div class="line">      <span class="built_in">printf</span>(<span class="string">"you have 4 s sleep!/n"</span>);</div><div class="line"></div><div class="line">     signal(SIGALRM,wakeUp);</div><div class="line"></div><div class="line">     alarm(<span class="number">4</span>);</div><div class="line"></div><div class="line">     <span class="comment">//将进程挂起</span></div><div class="line">     pause();</div><div class="line"></div><div class="line">     <span class="built_in">printf</span>(<span class="string">"good morning!/n"</span>);</div><div class="line"> </div><div class="line">    <span class="keyword">return</span> EXIT_SUCCESS;</div><div class="line"></div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
+<p>综上所述，内核的sleep()函数是在挂起原语的基础上利用定时器实现的。</p>
+<h3 id="编程语言中sleep-的实现"><a href="#编程语言中sleep-的实现" class="headerlink" title="编程语言中sleep()的实现"></a>编程语言中sleep()的实现</h3><p>编程语言中的sleep()是利用内核提供的sleep()来实现的，没有内核的支持，线程只能忙等直到规定的时间结束。</p>
+<p>下面以Java为例，解释一下用户线程与内核线程的映射关系，不过多涉及实现细节。想要了解用户线程和内核线程的关系模型，见 (线程的三种实现模型)[<a href="http://www.cnblogs.com/yuuyuu/p/5139620.html" target="_blank" rel="external">http://www.cnblogs.com/yuuyuu/p/5139620.html</a>]</p>
+<p>Java线程API通常使用宿主系统的线程库来实现，也就是说，在Windows中，Java线程使用Win32 API来实现，而在Linux和Unix系统中使用Pthread。而且，JVM规范并没有指明Java线程如何被映射到底层的OS，而是让特定的JVM实现来决定。例如，在Window XP中采用一对一模型，而对于Solaris系统，刚开始采用多对一模型，从Solaris 9开始采用多对多模型。</p>
+<p>参考资料：</p>
+<ol>
+<li>《计算机操作系统（第四版）》，汤子瀛等著</li>
+<li>《操作系统概念（第七版）》，Silberschatz等著，郑扣根译</li>
+<li>(Quora 问答)[<a href="https://www.quora.com/How-do-programming-languages-implement-sleep-functions-What-exactly-happens-when-you-call-a-sleep-function-Is-it-a-different-implementation-in-different-languages-Is-the-kernel-involved" target="_blank" rel="external">https://www.quora.com/How-do-programming-languages-implement-sleep-functions-What-exactly-happens-when-you-call-a-sleep-function-Is-it-a-different-implementation-in-different-languages-Is-the-kernel-involved</a>]</li>
+<li><a href="http://blog.csdn.net/freezgw1985/article/details/5631922" target="_blank" rel="external">http://blog.csdn.net/freezgw1985/article/details/5631922</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Sleep_(system_call" target="_blank" rel="external">https://en.wikipedia.org/wiki/Sleep_(system_call</a>)</li>
+<li><a href="http://man7.org/linux/man-pages/man3/sleep.3.html" target="_blank" rel="external">http://man7.org/linux/man-pages/man3/sleep.3.html</a></li>
+<li><a href="http://man7.org/linux/man-pages/man2/nanosleep.2.html" target="_blank" rel="external">http://man7.org/linux/man-pages/man2/nanosleep.2.html</a></li>
+<li><a href="http://man7.org/linux/man-pages/man2/alarm.2.html" target="_blank" rel="external">http://man7.org/linux/man-pages/man2/alarm.2.html</a></li>
+</ol>
 
       
     </div>
@@ -411,7 +441,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/datastructure-algorithm/" rel="tag"># 数据结构与算法</a>
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/cs-basics/" rel="tag"># 计算机体系基础</a>
+          
+            <a href="/tags/os/" rel="tag"># 操作系统</a>
           
         </div>
       
@@ -424,18 +458,14 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/05/19/数据结构与算法之路——栈/" rel="next" title="数据结构与算法之路——栈">
-                <i class="fa fa-chevron-left"></i> 数据结构与算法之路——栈
-              </a>
-            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/05/08/测试ArrayList和LinkedList性能/" rel="prev" title="测试ArrayList和LinkedList性能">
-                测试ArrayList和LinkedList性能 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/09/15/《刻意练习》读书心得/" rel="prev" title="《刻意练习》读书心得">
+                《刻意练习》读书心得 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -605,7 +635,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据结构与算法学习感想"><span class="nav-number">1.</span> <span class="nav-text">数据结构与算法学习感想</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#阻塞-VS-挂起"><span class="nav-number">1.</span> <span class="nav-text">阻塞 VS 挂起</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sleep"><span class="nav-number">2.</span> <span class="nav-text">sleep()</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OS中sleep-的实现"><span class="nav-number">2.1.</span> <span class="nav-text">OS中sleep()的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编程语言中sleep-的实现"><span class="nav-number">2.2.</span> <span class="nav-text">编程语言中sleep()的实现</span></a></li></ol></li></ol></div>
             
 
           </div>
