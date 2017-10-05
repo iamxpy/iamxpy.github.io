@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="javase,集合," />
+  <meta name="keywords" content="database-management," />
 
 
 
@@ -87,17 +87,17 @@
 
 
 
-<meta name="description" content="测试ArrayList和LinkedList性能的案例">
-<meta name="keywords" content="javase,集合">
+<meta name="description" content="本着锻炼自己的意图，我在课余时间抽空完成了伯克利大学的数据库大作业——实现SimpleDB。这篇博文只是分享一下心得，将这门课程介绍并推荐给更多朋友。更多细节可以到课程主页查看 https://sites.google.com/site/cs186fall2013/homeworks 。">
+<meta name="keywords" content="database-management">
 <meta property="og:type" content="article">
-<meta property="og:title" content="测试ArrayList和LinkedList性能">
-<meta property="og:url" content="http://yoursite.com/2017/05/08/测试ArrayList和LinkedList性能/index.html">
+<meta property="og:title" content="伯克利大学数据库作业实现SimpleDB">
+<meta property="og:url" content="http://yoursite.com/2017/10/05/伯克利大学数据库作业实现SimpleDB/index.html">
 <meta property="og:site_name" content="icegene's Blog">
-<meta property="og:description" content="测试ArrayList和LinkedList性能的案例">
-<meta property="og:updated_time" content="2017-09-22T09:48:36.981Z">
+<meta property="og:description" content="本着锻炼自己的意图，我在课余时间抽空完成了伯克利大学的数据库大作业——实现SimpleDB。这篇博文只是分享一下心得，将这门课程介绍并推荐给更多朋友。更多细节可以到课程主页查看 https://sites.google.com/site/cs186fall2013/homeworks 。">
+<meta property="og:updated_time" content="2017-10-05T14:50:48.171Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="测试ArrayList和LinkedList性能">
-<meta name="twitter:description" content="测试ArrayList和LinkedList性能的案例">
+<meta name="twitter:title" content="伯克利大学数据库作业实现SimpleDB">
+<meta name="twitter:description" content="本着锻炼自己的意图，我在课余时间抽空完成了伯克利大学的数据库大作业——实现SimpleDB。这篇博文只是分享一下心得，将这门课程介绍并推荐给更多朋友。更多细节可以到课程主页查看 https://sites.google.com/site/cs186fall2013/homeworks 。">
 
 
 
@@ -125,13 +125,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/05/08/测试ArrayList和LinkedList性能/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/10/05/伯克利大学数据库作业实现SimpleDB/"/>
 
 
 
 
 
-  <title> 测试ArrayList和LinkedList性能 | icegene's Blog </title>
+  <title> 伯克利大学数据库作业实现SimpleDB | icegene's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -270,7 +270,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/08/测试ArrayList和LinkedList性能/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/05/伯克利大学数据库作业实现SimpleDB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="icegene">
@@ -291,7 +291,7 @@
             
             
               
-                测试ArrayList和LinkedList性能
+                伯克利大学数据库作业实现SimpleDB
               
             
           </h1>
@@ -306,8 +306,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-08T09:32:17+08:00">
-                2017-05-08
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-05T08:00:13+08:00">
+                2017-10-05
               </time>
             
 
@@ -329,8 +329,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index">
-                    <span itemprop="name">java</span>
+                  <a href="/categories/database/" itemprop="url" rel="index">
+                    <span itemprop="name">database</span>
                   </a>
                 </span>
 
@@ -346,7 +346,7 @@
 
           
           
-             <span id="/2017/05/08/测试ArrayList和LinkedList性能/" class="leancloud_visitors" data-flag-title="测试ArrayList和LinkedList性能">
+             <span id="/2017/10/05/伯克利大学数据库作业实现SimpleDB/" class="leancloud_visitors" data-flag-title="伯克利大学数据库作业实现SimpleDB">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -375,9 +375,46 @@
       
 
       
-        <p>测试ArrayList和LinkedList性能的案例</p>
-<a id="more"></a>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> java.util.ArrayList;</div><div class="line"><span class="keyword">import</span> java.util.LinkedHashMap;</div><div class="line"><span class="keyword">import</span> java.util.LinkedList;</div><div class="line"><span class="keyword">import</span> java.util.Random;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by gene on 2017/4/23.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line"></div><div class="line">        ArrayList arraylist = <span class="keyword">new</span> ArrayList();</div><div class="line">        ArrayList bigarraylist = <span class="keyword">new</span> ArrayList(<span class="number">5000000</span>);</div><div class="line">        LinkedList linkedlist = <span class="keyword">new</span> LinkedList();</div><div class="line">        Object obj = <span class="keyword">new</span> Object();</div><div class="line">        <span class="comment">/**</span></div><div class="line">         * 测试ArrayList和LinkedList在末尾插入的性能</div><div class="line">         */</div><div class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</div><div class="line"></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5000000</span>; i++) &#123;</div><div class="line">            arraylist.add(obj);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">long</span> end = System.currentTimeMillis();</div><div class="line">        System.out.println(<span class="string">"ArrayList插入用时："</span> + (end - start));</div><div class="line"></div><div class="line">        start=System.currentTimeMillis();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5000000</span>; i++) &#123;</div><div class="line">            linkedlist.add(obj);</div><div class="line">        &#125;</div><div class="line">        end = System.currentTimeMillis();</div><div class="line">        System.out.println(<span class="string">"LinkedList插入用时："</span> + (end - start));</div><div class="line"></div><div class="line">        start = System.currentTimeMillis();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5000000</span>; i++) &#123;</div><div class="line">            bigarraylist.add(obj);</div><div class="line">        &#125;</div><div class="line">        end = System.currentTimeMillis();</div><div class="line">        System.out.println(<span class="string">"调整初始容量的arrayList插入用时："</span> + (end - start));</div><div class="line"></div><div class="line"></div><div class="line">        <span class="comment">/**</span></div><div class="line">         * 测试ArrayList和LinkedList随机插入的性能</div><div class="line">         */</div><div class="line"></div><div class="line">        Random r1 = <span class="keyword">new</span> Random();</div><div class="line">        Random r2 = <span class="keyword">new</span> Random();</div><div class="line">        start = System.currentTimeMillis();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</div><div class="line">            arraylist.add(r1.nextInt(<span class="number">1000</span>), obj);</div><div class="line">        &#125;</div><div class="line">        end = System.currentTimeMillis();</div><div class="line">        System.out.println(<span class="string">"ArrayList随机插入用时："</span> + (end - start));</div><div class="line"></div><div class="line">        LinkedHashMap map = <span class="keyword">new</span> LinkedHashMap();</div><div class="line">        map.put(<span class="number">1</span>, <span class="number">1</span>);</div><div class="line">        map.put(<span class="number">2</span>, <span class="number">2</span>);</div><div class="line"></div><div class="line">        start = System.currentTimeMillis();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</div><div class="line">            linkedlist.add(r2.nextInt(<span class="number">1000</span>), obj);</div><div class="line">        &#125;</div><div class="line">        end = System.currentTimeMillis();</div><div class="line">        System.out.println(<span class="string">"LinkedList随机插入用时："</span> + (end - start));</div><div class="line"></div><div class="line"></div><div class="line">        <span class="comment">/**</span></div><div class="line">         * 测试ArrayList和LinkedList的删除性能</div><div class="line">         */</div><div class="line">        start = System.currentTimeMillis();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</div><div class="line">            arraylist.remove(<span class="number">250000</span>);</div><div class="line">        &#125;</div><div class="line">        end = System.currentTimeMillis();</div><div class="line">        System.out.println(<span class="string">"ArrayList删除用时："</span> + (end - start));</div><div class="line"></div><div class="line">        start = System.currentTimeMillis();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</div><div class="line">            linkedlist.remove(<span class="number">250000</span>);</div><div class="line">        &#125;</div><div class="line">        end = System.currentTimeMillis();</div><div class="line">        System.out.println(<span class="string">"LinkedList删除用时："</span> + (end - start));</div><div class="line"></div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        <p>本着锻炼自己的意图，我在课余时间抽空完成了伯克利大学的数据库大作业——实现SimpleDB。这篇博文只是分享一下心得，将这门课程介绍并推荐给更多朋友。更多细节可以到课程主页查看 <a href="https://sites.google.com/site/cs186fall2013/homeworks" target="_blank" rel="external">https://sites.google.com/site/cs186fall2013/homeworks</a> 。<br><a id="more"></a></p>
+<h2 id="课程内容"><a href="#课程内容" class="headerlink" title="课程内容"></a>课程内容</h2><p>课程分为四个部分，分别实现四个在数据库中比较核心的部分：</p>
+<p><strong>课题一：实现数据管理。</strong>这一部分主要是实现SimpleDB对数据的管理，当然，需要在指导下先搭建好开发环境并了解SimpleDB的整体框架。更具体来说，需要实现存储、访问与管理物理层面的数据（二进制文件），以及将其映射为逻辑层面的数据（关系表）。在这一课题的最后，还要求实现SimpleDB中最基本的操作——SeqScan，因此完成这一章后，就可以扫描全表了。</p>
+<p><strong>课题二：实现操作符。</strong>这一部分主要是实现一系列操作符，包括insert、delete、select、join、group by、order by等。其中，join的高效率实现是一个难点（学习一下常见的算法即可，文末有推荐文章），其他操作符都比较简单。而且group by与order by功能被简化了，也省去了一部分工作量。而在课题最后，则要实现课题一未完成的一个功能——缓存管理。在这里，将要学习并实现缓存机制，包括缓存替换策略（LRU等）。</p>
+<p><strong>课题三：实现查询优化。</strong>这一部分主要是实现基于代价的优化器，重难点是利用left-deep-tree和动态规划的思想实现Join操作的优化器。完成后，Filter（即select…where…）以及Join操作的性能将得到很大的优化。</p>
+<p><strong>课题四：实现事务。</strong>这一部分主要实现数据库对事务的支持，包括在Page粒度下利用2PL协议以及NO STEAL/FORCE缓存管理策略实现事务的ACID特性，以及基于超时法或事务等待图法的死锁检测和解除。由于采用NO STEAL/FORCE，基于日记的undo和redo功能被省略了。</p>
+<h2 id="课程优点"><a href="#课程优点" class="headerlink" title="课程优点"></a>课程优点</h2><ul>
+<li>整个项目的整体逻辑代码已经由伯克利大学和斯坦福大学的教授实现，我们只需要着眼于具体功能的实现</li>
+<li>知识的范围与难度掌握的非常合理，在现代数据库中重要的内容几乎都覆盖到了，而且难点虽然有挑战性，但经过仔细思考都可以解决，写完真的过瘾。经过这一番对数据库的探索，能让自己对数据库的理解有非常大的提高</li>
+<li>课程的讲解细致，还有不少实现方面的提示。这是课程门槛低的一个很大原因，简直就像教授手把手教你实现。</li>
+<li>课程配套了比较完整的单元测试。每个课题都配套了几乎所有功能的单元测试，在实现了操作符之后还提供了数据文件，可以用来测试数据库的整体性能。这些测试对我们能正确实现有非常大的帮助。</li>
+</ul>
+<h2 id="课程要求"><a href="#课程要求" class="headerlink" title="课程要求"></a>课程要求</h2><p>之所以想推荐给大家，是因为我觉得这门课不仅能学到不少东西，而且课程的门槛一点不高，下面我分几个方面说一下。</p>
+<ul>
+<li><strong>数据库理论：</strong>你一定想不到这门课对数据库理论的门槛有多低。我在开始写的时候，只了解SQL的基本使用（实现Join的时候不太清楚还要去查一下什么意思那种），而剩下的知识，包括缓存替换算法LRU，Join算法的优化，基于代价的优化器，以及2PL、锁的特性以及粒度、死锁检测等等知识，大部分都可以在写的过程中直接谷歌得到详细介绍，少部分，也就是事务那一课题，我觉得概念比较系统而且有难度，所以去看了一下书的相关内容。我在后面会说明我在整个过程参考了哪些文章以及看了什么书。</li>
+<li><strong>Java要求：</strong>课程需要使用Java代码完成， 因此需要有一些Java基础。而为了实现事务，Java的并发部分也需要了解，需要掌握线程的同步与通信，包括synchronize和volatile关键字等的使用。另外，需要知道Ant或Maven等Java生态下的构建工具的基本使用。课程带着我们操作的是Ant，出于习惯我改成Maven了。</li>
+<li><strong>时间要求：</strong>根据我的经历，只要有一定的java基础，不到两个月就可以实现整个课程（我写的时候中间隔了个暑假，去干别的了，所以算起来也就总共花了一个多月）。而课程要求的时间加起来是56天，也差不多。</li>
+</ul>
+<h2 id="参考的网址与书籍"><a href="#参考的网址与书籍" class="headerlink" title="参考的网址与书籍"></a>参考的网址与书籍</h2><ol>
+<li><p><a href="https://sites.google.com/site/cs186fall2013/homeworks" target="_blank" rel="external">https://sites.google.com/site/cs186fall2013/homeworks</a><br>这是课程的主页，几乎整个过程都是在其指导下完成</p>
+</li>
+<li><p><a href="http://coding-geek.com/how-databases-work/" target="_blank" rel="external">http://coding-geek.com/how-databases-work/</a><br>这是一篇简单介绍了关系数据库原理的文章，写的非常好，看完可以对数据库有个整体的了解，对相关的协议或算法的概念和术语不至于太陌生。也可以选择看国内的翻译版，见第8点</p>
+</li>
+<li><p><a href="http://blog.csdn.net/ghsau/article/details/43762027" target="_blank" rel="external">http://blog.csdn.net/ghsau/article/details/43762027</a><br>这是Join算法的优化，<strong>建议在第2个课题实现到join操作时看</strong></p>
+</li>
+<li><p><a href="http://blog.itpub.net/30206145/viewspace-1651583/" target="_blank" rel="external">http://blog.itpub.net/30206145/viewspace-1651583/</a><br>这是Join优化器的内容，<strong>建议在第3个课题看，可以了解到基于成本的优化(CBO)和left-deep-tree等概念</strong></p>
+</li>
+<li><p><a href="http://www.mathcs.emory.edu/~cheung/Courses/554/Syllabus/5-query-opt/left-deep-trees.html" target="_blank" rel="external">http://www.mathcs.emory.edu/~cheung/Courses/554/Syllabus/5-query-opt/left-deep-trees.html</a><br>介绍left-deep-tree的，<strong>第3课题看</strong></p>
+</li>
+<li><p><a href="http://www.mathcs.emory.edu/~cheung/Courses/554/Syllabus/5-query-opt/best-left-deep-tree.html" target="_blank" rel="external">http://www.mathcs.emory.edu/~cheung/Courses/554/Syllabus/5-query-opt/best-left-deep-tree.html</a><br>同上</p>
+</li>
+<li><p><a href="http://www.mathcs.emory.edu/~cheung/Courses/554/Syllabus/5-query-opt/dyn-prog-join3.html" target="_blank" rel="external">http://www.mathcs.emory.edu/~cheung/Courses/554/Syllabus/5-query-opt/dyn-prog-join3.html</a><br>介绍动态规划实现的优化器如何工作</p>
+</li>
+<li><p><a href="http://blog.csdn.net/ylforever/article/details/51048945" target="_blank" rel="external">http://blog.csdn.net/ylforever/article/details/51048945</a><br>这是对第2点中文章的事务部分的翻译，<strong>建议开始课程前看或在第4个课题看</strong></p>
+</li>
+<li><p>最后，建议找一本介绍数据库原理的书籍系统了解<strong>事务部分</strong>的概念，重点掌握<strong>事务的ACID特性，读写锁的优先级，2PL协议。</strong>我是直接拿我们学校发的课本《数据库系统概论 第5版  王珊等著》看了下第10、11章就直接去码代码了，加上在第8点的文章中了解到了不少概念，例如NO STEAL/FORCE，所以也没再遇到什么问题</p>
+</li>
+</ol>
+<p>最后，贴一下我完成之后放在github的地址： <a href="https://github.com/iamxpy/SimpleDB" target="_blank" rel="external">https://github.com/iamxpy/SimpleDB</a> ，欢迎大家一齐学习交流~~</p>
+
       
     </div>
 
@@ -406,9 +443,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/javase/" rel="tag"># javase</a>
-          
-            <a href="/tags/collection/" rel="tag"># 集合</a>
+            <a href="/tags/database-management/" rel="tag"># database-management</a>
           
         </div>
       
@@ -421,18 +456,14 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/05/19/数据结构与算法之路——前言/" rel="next" title="数据结构与算法之路——前言">
-                <i class="fa fa-chevron-left"></i> 数据结构与算法之路——前言
-              </a>
-            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/05/07/《Java-NIO》部分代码/" rel="prev" title="《Java NIO》部分代码">
-                《Java NIO》部分代码 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/09/20/OS中阻塞与挂起的区别-sleep()的实现原理/" rel="prev" title="OS中阻塞与挂起的区别&sleep()的实现原理">
+                OS中阻塞与挂起的区别&sleep()的实现原理 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -482,8 +513,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/gene.png"
@@ -583,6 +623,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#课程内容"><span class="nav-number">1.</span> <span class="nav-text">课程内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#课程优点"><span class="nav-number">2.</span> <span class="nav-text">课程优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#课程要求"><span class="nav-number">3.</span> <span class="nav-text">课程要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考的网址与书籍"><span class="nav-number">4.</span> <span class="nav-text">参考的网址与书籍</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
