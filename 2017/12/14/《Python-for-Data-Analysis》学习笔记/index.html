@@ -1,0 +1,1036 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Blog, Gene, github, hadoop, hbase, storm, spark, BigData" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="记下学习过程觉得值得记录的东西">
+<meta name="keywords">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Python for Data Analysis》学习笔记">
+<meta property="og:url" content="http://yoursite.com/2017/12/14/《Python-for-Data-Analysis》学习笔记/index.html">
+<meta property="og:site_name" content="icegene's Blog">
+<meta property="og:description" content="记下学习过程觉得值得记录的东西">
+<meta property="og:image" content="http://yoursite.com/images/numpy-data-types.png">
+<meta property="og:image" content="http://yoursite.com/images/numpy-broadcasting.pngs">
+<meta property="og:image" content="http://yoursite.com/images/numpy-unary-ufuncs.png">
+<meta property="og:image" content="http://yoursite.com/images/numpy-b-ufunc1.png">
+<meta property="og:image" content="http://yoursite.com/iamges/numpy-b-ufunc2.png">
+<meta property="og:image" content="http://yoursite.com/images/numpy-linalg-functions1.png">
+<meta property="og:image" content="http://yoursite.com/images/numpy-linalg-functions2.png">
+<meta property="og:image" content="http://yoursite.com/images/numpy-random-functions.png">
+<meta property="og:updated_time" content="2018-01-31T15:06:27.680Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《Python for Data Analysis》学习笔记">
+<meta name="twitter:description" content="记下学习过程觉得值得记录的东西">
+<meta name="twitter:image" content="http://yoursite.com/images/numpy-data-types.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/12/14/《Python-for-Data-Analysis》学习笔记/"/>
+
+
+
+
+
+  <title> 《Python for Data Analysis》学习笔记 | icegene's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">icegene's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">In me the tiger sniffs the rose</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/14/《Python-for-Data-Analysis》学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="icegene">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/gene.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="icegene's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                《Python for Data Analysis》学习笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-14T21:06:41+08:00">
+                2017-12-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/12/14/《Python-for-Data-Analysis》学习笔记/" class="leancloud_visitors" data-flag-title="《Python for Data Analysis》学习笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>记下学习过程觉得值得记录的东西<br><a id="more"></a></p>
+<h2 id="第二章"><a href="#第二章" class="headerlink" title="第二章"></a>第二章</h2><h3 id="各个包的约定导入写法"><a href="#各个包的约定导入写法" class="headerlink" title="各个包的约定导入写法"></a>各个包的约定导入写法</h3><p>import numpy as np</p>
+<p>import matplotlib.pyplot as plt</p>
+<p>import pandas as pd</p>
+<p>import seaborn as sns</p>
+<p>import statsmodels as sm</p>
+<h3 id="Magic命令"><a href="#Magic命令" class="headerlink" title="Magic命令"></a>Magic命令</h3><p><code>pwd</code>：显示当前路径</p>
+<p><code>%run</code>：用于运行py脚本，如果希望脚本能够使用当前命名空间中的变量等，可以使用<code>%run -i</code></p>
+<p><code>%load</code>：以文本形式导入指定文件的内容，例如导入py文本，txt文本等</p>
+<p><code>%magic</code>：查看所有magic命令的用法</p>
+<p><code>%hist</code>：打印输入命令的历史</p>
+<p><code>%debug</code>：在最新的异常跟踪的底部进入交互式调试器</p>
+<p><code>%pdb</code>：遇到任何异常自动进入调试器</p>
+<p><code>%reset</code>：删除所有在交互式的命名空间内定义的变量/名字</p>
+<p><code>%page OBJECT</code>：通过分页器打印输出某对象</p>
+<p><code>%time statement</code> ：计算单条语句的运行时间</p>
+<p><code>%timeit statement</code>：多次运行该语句并计算平均运行时间，适合运行时间很短的语句</p>
+<p><code>%who</code>：显示在交互式命名空间中定义的变量，如果传入参数，比如<code>str</code>，将会列出指定类型的所有变量</p>
+<p><code>%whos</code>：同上，但显示更加详细的信息</p>
+<p><code>%xdel variable</code>：删除某一变量并尝试清除IPython构件对该变量的引用</p>
+<p><code>%matplotlib</code>：将matplotlib集成到IPython或Jupyter notebook。注意在Jupyter notebook中改为使用<code>%matplotlib inline</code></p>
+<p><strong>下列目前只能在IPython中使用，Jupyter notebook无法使用</strong></p>
+<p><code>%paste</code>：执行剪切板中内容。</p>
+<p><code>%cpaste</code>：进入粘贴状态，可以任意粘贴剪切板中内容与编辑，输入<code>--</code>并回车以执行，或按<code>ctrl+C</code>退出而取消执行。</p>
+<p>另外，Tab键可以智能提示；变量或函数后加问号<code>?</code>可以查看信息，还可以结合通配符<code>*</code>来查找变量和函数；方法名后加<code>??</code>可以显示其源码；用前缀<code>!</code>可以执行shell/cmd命令</p>
+<h3 id="random模块"><a href="#random模块" class="headerlink" title="random模块"></a>random模块</h3><p>符合标准正态分布的元素生成：<br><code>np.random.randn(m, n)  #生成m行n列的二维数组</code><br>其他相关函数用法见 <a href="http://blog.csdn.net/m0_38061927/article/details/75335069" target="_blank" rel="external">http://blog.csdn.net/m0_38061927/article/details/75335069</a></p>
+<h2 id="多维数组ndarray"><a href="#多维数组ndarray" class="headerlink" title="多维数组ndarray"></a>多维数组ndarray</h2><h3 id="ndarray对象属性"><a href="#ndarray对象属性" class="headerlink" title="ndarray对象属性"></a>ndarray对象属性</h3><p>1、ndim表示维度</p>
+<p>2、shape属性表示形状</p>
+<p>二维数组的shape为有两个元素的tuple，一维数组的shape为只有一个元素的tuple（不过要加个逗号区别于整数外加括号）</p>
+<p>3、dtype表示数据类型</p>
+<h3 id="创建数组"><a href="#创建数组" class="headerlink" title="创建数组"></a>创建数组</h3><p>1、np.array(object)</p>
+<p>得到一个一维数组，object为序列等对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">object : array_like</div><div class="line">    An array, any object exposing the array interface, an object whose</div><div class="line">    __array__ method returns an array, or any (nested) sequence.</div></pre></td></tr></table></figure>
+<p>2、np.arange()</p>
+<p>相当于使用python的range()创建list后再转为ndarray类型的一维数组</p>
+<p>3、np.ones()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Signature: np.ones(shape, dtype=<span class="keyword">None</span>, order=<span class="string">'C'</span>)</div><div class="line">Docstring:</div><div class="line">Return a new array of given shape <span class="keyword">and</span> type, filled <span class="keyword">with</span> ones.</div><div class="line"></div><div class="line">Parameters</div><div class="line">shape : int <span class="keyword">or</span> sequence of ints</div><div class="line">    Shape of the new array, e.g., `(<span class="number">2</span>, <span class="number">3</span>)` <span class="keyword">or</span> `<span class="number">2</span>`.</div><div class="line">dtype : data-type, optional</div><div class="line">    The desired data-type <span class="keyword">for</span> the array, e.g., `numpy.int8`.  Default <span class="keyword">is</span></div><div class="line">    `numpy.float64`.</div><div class="line">order : &#123;<span class="string">'C'</span>, <span class="string">'F'</span>&#125;, optional</div><div class="line">    Whether to store multidimensional data <span class="keyword">in</span> C- <span class="keyword">or</span> Fortran-contiguous</div><div class="line">    (row- <span class="keyword">or</span> column-wise) order <span class="keyword">in</span> memory.</div></pre></td></tr></table></figure>
+<p><strong>例子：</strong></p>
+<p><code>np.ones(n)</code>：创建一个一维数组，其中具有n个float64类型的1</p>
+<p><code>np.ones((m,n))</code>：创建一个m行n列的二维数组，其中具有n个float64类型的1</p>
+<p>4、np.zeros()</p>
+<p>参数含义同上</p>
+<p><code>np.zeros(n)</code>：创建一个一维数组，其中具有n个float64类型的0</p>
+<p><code>np.zeros((m,n))</code>：创建一个m行n列的二维数组，其中具有n个float64类型的0</p>
+<p>5、np.empty()</p>
+<p>参数含义同上</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Returns</div><div class="line">-------</div><div class="line">out : ndarray</div><div class="line">    Array of uninitialized (arbitrary) data of the given shape, dtype, <span class="keyword">and</span></div><div class="line">    order.  Object arrays will be initialized to <span class="keyword">None</span>.</div></pre></td></tr></table></figure>
+<p>6、np.full()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">Signature: np.full(shape, fill_value, dtype=<span class="keyword">None</span>, order=<span class="string">'C'</span>)</div><div class="line">Docstring:</div><div class="line">Return a new array of given shape <span class="keyword">and</span> type, filled <span class="keyword">with</span> `fill_value`.</div><div class="line"></div><div class="line">Parameters</div><div class="line">----------</div><div class="line">shape : int <span class="keyword">or</span> sequence of ints</div><div class="line">    Shape of the new array, e.g., ``(<span class="number">2</span>, <span class="number">3</span>)`` <span class="keyword">or</span> ``<span class="number">2</span>``.</div><div class="line">fill_value : scalar</div><div class="line">    Fill value.</div></pre></td></tr></table></figure>
+<p>说白了就是使用指定shape和指定的值初始化ndarray</p>
+<p><code>ones()</code>, <code>zeros()</code>, <code>empty()</code>, <code>full()</code>这几个方法都有对应的xxx_like()方法，功能类似，但增加一个ndarray类型的参数，使用其shape和dtype</p>
+<p>7、np.eye()与np.identity()</p>
+<p><code>np.eye(n)</code>为创建n行n列的单位矩阵，其对角线元素为1，其余位置为0</p>
+<h3 id="数据类型与形状"><a href="#数据类型与形状" class="headerlink" title="数据类型与形状"></a>数据类型与形状</h3><p><img src="/images/numpy-data-types.png" alt="numpy-data-types.png"></p>
+<p>1、成员方法arr.astype()</p>
+<p>得到更改了dtype的arr，参数可以是dtype或者ndarray，即直接指定类型或使用其他数组的类型</p>
+<p>注意其返回一个新的ndarray</p>
+<p>dtype参数传入时可以使用简称，例如(dtype=’u4’)表示dtype为unit32</p>
+<p>要十分注意numpy.string_类型，这种类型的长度是固定的，所以可能会直接截取部分输入而不给警告。</p>
+<p>2、成员方法arr.reshape()</p>
+<p>得到更改了shape的arr，参数是tuple，注意这个方法也返回一个新的ndarray</p>
+<h3 id="Broadcasting"><a href="#Broadcasting" class="headerlink" title="Broadcasting"></a>Broadcasting</h3><p>Broadcasting就是在数组的运算遇到数组shape不匹配时，numpy自动转换数组形状然后运算。这个特点可以使得一些操作变得很简便，而不用编写复杂低效的循环。</p>
+<p>下面是三个例子：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">In [<span class="number">3</span>]: a = np.array([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>])</div><div class="line"></div><div class="line">In [<span class="number">4</span>]: a</div><div class="line">Out[<span class="number">4</span>]: array([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>])</div><div class="line"></div><div class="line">In [<span class="number">5</span>]: a+<span class="number">5</span></div><div class="line">Out[<span class="number">5</span>]: array([<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>])        <span class="comment"># 第一个例子</span></div><div class="line"></div><div class="line">In [<span class="number">6</span>]: M=np.ones((<span class="number">3</span>,<span class="number">3</span>))</div><div class="line"></div><div class="line">In [<span class="number">7</span>]: M</div><div class="line">Out[<span class="number">7</span>]:</div><div class="line">array([[ <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>],</div><div class="line">       [ <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>],</div><div class="line">       [ <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>]])</div><div class="line"></div><div class="line">In [<span class="number">8</span>]: M+a</div><div class="line">Out[<span class="number">8</span>]:</div><div class="line">array([[ <span class="number">1.</span>,  <span class="number">2.</span>,  <span class="number">3.</span>],</div><div class="line">       [ <span class="number">1.</span>,  <span class="number">2.</span>,  <span class="number">3.</span>],         <span class="comment">#第二个例子</span></div><div class="line">       [ <span class="number">1.</span>,  <span class="number">2.</span>,  <span class="number">3.</span>]])</div><div class="line"></div><div class="line"></div><div class="line">In [<span class="number">16</span>]: a                 </div><div class="line">Out[<span class="number">16</span>]: array([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>])  </div><div class="line">                           </div><div class="line">In [<span class="number">17</span>]: b                 </div><div class="line">Out[<span class="number">17</span>]:                   </div><div class="line">array([[<span class="number">0</span>],                </div><div class="line">       [<span class="number">1</span>],                </div><div class="line">       [<span class="number">2</span>]])               </div><div class="line">                           </div><div class="line">In [<span class="number">18</span>]: a+b                    <span class="comment">#第三个例子</span></div><div class="line">Out[<span class="number">18</span>]:                   </div><div class="line">array([[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>],          </div><div class="line">       [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],          </div><div class="line">       [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]])</div></pre></td></tr></table></figure></p>
+<p>下面是这三个例子的图解：（来自 <a href="https://jakevdp.github.io/PythonDataScienceHandbook/02.05-computation-on-arrays-broadcasting.html" target="_blank" rel="external">PythonDataScienceHandbook</a>）</p>
+<p><img src="/images/numpy-broadcasting.pngs" alt="numpy-broadcasting.png"></p>
+<p>broadcasting的三个规则：</p>
+<ul>
+<li><p>Rule 1: If the two arrays differ in their number of dimensions, the shape of the one with fewer dimensions is padded with ones on its leading (left) side.</p>
+</li>
+<li><p>Rule 2: If the shape of the two arrays does not match in any dimension, the array with shape equal to 1 in that dimension is stretched to match the other shape.</p>
+</li>
+<li><p>Rule 3: If in any dimension the sizes disagree and neither is equal to 1, an error is raised.</p>
+</li>
+</ul>
+<h3 id="索引与切片"><a href="#索引与切片" class="headerlink" title="索引与切片"></a>索引与切片</h3><p>基本与python的序列索引与切片相同，但有一些重要的区别：</p>
+<p>1、更简洁的索引</p>
+<p>例如，可以使用<code>arr[0, 2]</code>代替<code>arr[0][2]</code>，即用逗号分隔各个维度的索引值</p>
+<p>2、切片为视图</p>
+<p>array的切片后的结果只是一个views（视图），用来代表原有array对应的元素，而不是创建了一个新的array。但python中list的切片是产生了一个新的list。<br>因此，对切片的所有操作，都会反映在原始数组上</p>
+<p>3、数组的切片实际上是对最外层的list切片</p>
+<p>例如：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">In [<span class="number">130</span>]: a               </div><div class="line">Out[<span class="number">130</span>]:                 </div><div class="line">array([[ <span class="number">0</span>,  <span class="number">1</span>,  <span class="number">2</span>,  <span class="number">3</span>],  </div><div class="line">       [ <span class="number">4</span>,  <span class="number">5</span>,  <span class="number">6</span>,  <span class="number">7</span>],  </div><div class="line">       [ <span class="number">8</span>,  <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>],  </div><div class="line">       [<span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>]]) </div><div class="line">                          </div><div class="line">In [<span class="number">131</span>]: a[<span class="number">0</span>:<span class="number">2</span>]          </div><div class="line">Out[<span class="number">131</span>]:                 </div><div class="line">array([[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],      </div><div class="line">       [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]])</div></pre></td></tr></table></figure></p>
+<p>4、一些需要注意的使用</p>
+<p>可以给定多个索引对切片再进行切片例如对于二维数组a，<code>a[:2, 1:]</code>或<code>a[:2][1:]</code>表示取前两行，第二列之后的部分</p>
+<p>仅使用冒号<code>:</code>可以取出该索引对应维度的所有元素，例如对于a，<code>a[:,:2]</code>表示先选中a的<strong>所有</strong>行（第一个索引对应二维数组的”行”维度），再取每行的前两个元素，最后是一个n行2列的数组</p>
+<p>5、切片赋值</p>
+<p>例如arr为<code>array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])</code>，执行<code>arr[5:8] = 12</code>后，将得到<code>array([ 0,  1,  2,  3,  4, 12, 12, 12,  8,  9])</code>，并不会改变数组的元素个数，<br>因此，下面这种切片赋值无法使用：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">arr[5:8]=[2,3]</div><div class="line">---------------------------------------------------------------------------</div><div class="line">ValueError                                Traceback (most recent call last)</div><div class="line">&lt;ipython-input-111-471a476642f9&gt; in &lt;module&gt;()</div><div class="line">----&gt; 1 arr[5:8]=[2,3]</div><div class="line"></div><div class="line">ValueError: cannot copy sequence with size 2 to array axis with dimension 3</div></pre></td></tr></table></figure></p>
+<p>6、成员方法copy()<br>如上一点所述，切片只是视图，如果想在内存中复制一份，可以使用copy()方法，例如<code>arr[5:8].copy()</code></p>
+<h3 id="布尔索引"><a href="#布尔索引" class="headerlink" title="布尔索引"></a>布尔索引</h3><p>使用方法为data[bool_arr]，用于取出该布尔数组True元素在data中对应位置的元素</p>
+<p>看完书中例子，个人认为一般来说，bool_arr只需要一维的，因此只针对n维数组的最外层list操作</p>
+<p>因此书中说“布尔数组和data数组的长度要一样”。其实就是说作为索引的布尔数组的元素个数必须与执行操作的数组最外层list的元素个数相同</p>
+<p>例子：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">In [<span class="number">1</span>]: data                                </div><div class="line">Out[<span class="number">1</span>]:                                     </div><div class="line">array([[<span class="number">0</span>, <span class="number">1</span>],                                </div><div class="line">       [<span class="number">2</span>, <span class="number">3</span>],                                </div><div class="line">       [<span class="number">4</span>, <span class="number">5</span>],                                </div><div class="line">       [<span class="number">6</span>, <span class="number">7</span>]])  <span class="comment">#data的最外层有四个元素，因此bool_arr必须有四个元素                             </span></div><div class="line">                                              </div><div class="line">In [<span class="number">2</span>]: bool_arr=[<span class="keyword">True</span>,<span class="keyword">False</span>,<span class="keyword">False</span>,<span class="keyword">True</span>]    </div><div class="line">                                              </div><div class="line">In [<span class="number">3</span>]: data[bool_arr]                      </div><div class="line">Out[<span class="number">3</span>]:                                     </div><div class="line">array([[<span class="number">0</span>, <span class="number">1</span>],                                </div><div class="line">       [<span class="number">6</span>, <span class="number">7</span>]])</div></pre></td></tr></table></figure></p>
+<p>有几点要注意：</p>
+<p>1、用布尔索引取出的数组<strong>维度</strong>与原数组保持一致，这与用一般索引不同</p>
+<p>例如上面例子将<code>bool_arr</code>改为<code>[True,False,False,False]</code>，取出的将是<code>array([[0, 1]])</code>，要注意区别于用<code>data[0]</code>取出的<code>array([0, 0])</code>，它们维度不同，一般的索引会导致降维，布尔索引不会。</p>
+<p>2、使用布尔索引取数组作为右值时，会返回新创建的数据，而作为左值时，是直接修改原数组</p>
+<p>例如执行<code>d=data[bool_arr]</code>后，d与data不共享内存；<code>data[data&gt;0]=0</code>会将data中大于0的元素全部赋值为0，而不是先复制一份然后在其上赋值。</p>
+<p>3、布尔数组可以结合布尔运算符一起使用，但不能使用python中的<code>not</code>、<code>or</code>、<code>and</code>，而要用<code>~</code>、<code>|</code>、<code>&amp;</code></p>
+<p>例如和<code>~</code>一起使用，<code>~bool_arr</code>可以得到对应元素相反的布尔数组</p>
+<p>题外话：经过我的测试，其实bool_arr也可以不是一维的，但是那样用法就更加复杂了，也没必要在这里列例子和解释，个人觉得没必要理会这些（连书都没说，我自己发现的而已）。</p>
+<h3 id="花式索引"><a href="#花式索引" class="headerlink" title="花式索引"></a>花式索引</h3><p>使用整数数组或整数list来作为索引。从书中例子看来，这个整数数组/整数list只需要用一维的，和布尔索引效果差不多，用于选取数组的最外层list的元素。下面是一些例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">In [<span class="number">317</span>]: arr</div><div class="line">Out[<span class="number">317</span>]:</div><div class="line">array([[ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>],</div><div class="line">       [ <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>],</div><div class="line">       [ <span class="number">2.</span>,  <span class="number">2.</span>,  <span class="number">2.</span>,  <span class="number">2.</span>],</div><div class="line">       [ <span class="number">3.</span>,  <span class="number">3.</span>,  <span class="number">3.</span>,  <span class="number">3.</span>],</div><div class="line">       [ <span class="number">4.</span>,  <span class="number">4.</span>,  <span class="number">4.</span>,  <span class="number">4.</span>],</div><div class="line">       [ <span class="number">5.</span>,  <span class="number">5.</span>,  <span class="number">5.</span>,  <span class="number">5.</span>],</div><div class="line">       [ <span class="number">6.</span>,  <span class="number">6.</span>,  <span class="number">6.</span>,  <span class="number">6.</span>],</div><div class="line">       [ <span class="number">7.</span>,  <span class="number">7.</span>,  <span class="number">7.</span>,  <span class="number">7.</span>]])</div><div class="line"></div><div class="line">In [<span class="number">318</span>]: arr[[<span class="number">4</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">6</span>]]</div><div class="line">Out[<span class="number">318</span>]:</div><div class="line">array([[ <span class="number">4.</span>,  <span class="number">4.</span>,  <span class="number">4.</span>,  <span class="number">4.</span>],</div><div class="line">       [ <span class="number">3.</span>,  <span class="number">3.</span>,  <span class="number">3.</span>,  <span class="number">3.</span>],</div><div class="line">       [ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>],</div><div class="line">       [ <span class="number">6.</span>,  <span class="number">6.</span>,  <span class="number">6.</span>,  <span class="number">6.</span>]])</div><div class="line"></div><div class="line">In [<span class="number">319</span>]: arr[[<span class="number">-3</span>, <span class="number">-5</span>, <span class="number">-7</span>]]</div><div class="line">Out[<span class="number">319</span>]:</div><div class="line">array([[ <span class="number">5.</span>,  <span class="number">5.</span>,  <span class="number">5.</span>,  <span class="number">5.</span>],</div><div class="line">       [ <span class="number">3.</span>,  <span class="number">3.</span>,  <span class="number">3.</span>,  <span class="number">3.</span>],</div><div class="line">       [ <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>]])</div></pre></td></tr></table></figure>
+<h3 id="索引小结"><a href="#索引小结" class="headerlink" title="索引小结"></a>索引小结</h3><p>（1）<code>arr[][]...</code>这种形式可以把中括号一个一个解读</p>
+<p>（2）同一个中括号内的整数索引、布尔索引、花式索引会先broadcast，结果数组的形状由broadcast得到的数组决定。如果这几个部分无法broadcast（详见broadcast的规则），会报错。</p>
+<p>（3）如果（2）中的几种索引与切片在同一中括号中使用，如果作用对象是二维数组，可以简单理解为“选中xx行/列”</p>
+<p>（4）如果中括号中含有（2）中的几种索引之一，得到的结果就会是新的数据</p>
+<h3 id="数组转置和轴交换"><a href="#数组转置和轴交换" class="headerlink" title="数组转置和轴交换"></a>数组转置和轴交换</h3><p>转置也是返回一个view，而不是新建一个数组。有两种方式，一个是transpose方法，一个是T属性：</p>
+<p><code>arr.T</code>返回数组转置</p>
+<p><code>arr.transpose(数字元组)</code>用元组中的数字指定轴。例如<code>arr.transpose((1, 0, 2))</code>表示交换一个三维数组的0维和1维</p>
+<p><code>arr.swapaxes(a, b)</code>可以指定只交换哪两个轴</p>
+<h2 id="通用函数"><a href="#通用函数" class="headerlink" title="通用函数"></a>通用函数</h2><p>universal function, 或 ufunc, 是用来在ndarray中实现element-wise操作的。</p>
+<h3 id="一元函数举例"><a href="#一元函数举例" class="headerlink" title="一元函数举例"></a>一元函数举例</h3><p><code>np.sqrt(arr)</code>，求开方</p>
+<p><code>np.exp(arr)</code>，求自然底数e的n次方，指数为数组中的元素</p>
+<p><code>np.modf(arr)</code>，返回一个二元元组，分别为整数部分和小数部分。例如可以<code>np.modf(arr1/arr2)</code></p>
+<h3 id="二元函数举例"><a href="#二元函数举例" class="headerlink" title="二元函数举例"></a>二元函数举例</h3><p><code>np.add(arr1, arr2)</code>，数组加法</p>
+<p><code>np.maximum(arr1, arr2)</code>，取arr1和arr2中相同位置的较大值</p>
+<h3 id="可选输出"><a href="#可选输出" class="headerlink" title="可选输出"></a>可选输出</h3><p>一元或二元函数都有一个可选的参数out表示应该将结果输出的位置。例如，<code>np.sqrt(arr,arr)</code>会对arr求开方后放回原数组，即达到了计算后改变原数组数值的效果。</p>
+<h3 id="常用一元与二元函数"><a href="#常用一元与二元函数" class="headerlink" title="常用一元与二元函数"></a>常用一元与二元函数</h3><p><img src="/images/numpy-unary-ufuncs.png" alt="numpy-unary-ufuncs"></p>
+<p><img src="/images/numpy-b-ufunc1.png" alt="numpy-b-ufunc1"></p>
+<p><img src="/iamges/numpy-b-ufunc2.png" alt="numpy-b-ufunc2"></p>
+<h2 id="面向数组编程"><a href="#面向数组编程" class="headerlink" title="面向数组编程"></a>面向数组编程</h2><h3 id="meshgrid"><a href="#meshgrid" class="headerlink" title="meshgrid()"></a>meshgrid()</h3><p>[X,Y] = meshgrid(x,y) 将向量x和y定义的区域转换成矩阵X和Y,其中矩阵X的行向量是向量x的简单复制，而矩阵Y的列向量是向量y的简单复制。</p>
+<p>假设x是长度为m的向量，y是长度为n的向量，则最终生成的矩阵X和Y的维度都是 nm （注意不是mn）。</p>
+<h3 id="np-linspace"><a href="#np-linspace" class="headerlink" title="np.linspace()"></a>np.linspace()</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">Signature: np.linspace(start, stop, num=<span class="number">50</span>, endpoint=<span class="keyword">True</span>, retstep=<span class="keyword">False</span>, dtype=<span class="keyword">None</span>)</div><div class="line">Docstring:                                                                          </div><div class="line">Return evenly spaced numbers over a specified interval.                             </div><div class="line">                                                                                    </div><div class="line">Returns `num` evenly spaced samples, calculated over the                            </div><div class="line">interval [`start`, `stop`].                                                         </div><div class="line">                                                                                    </div><div class="line">The endpoint of the interval can optionally be excluded.                            </div><div class="line"></div><div class="line">Examples                                                                            </div><div class="line">--------                                                                            </div><div class="line"><span class="meta">&gt;&gt;&gt; </span>np.linspace(<span class="number">2.0</span>, <span class="number">3.0</span>, num=<span class="number">5</span>)                                                    </div><div class="line">array([ <span class="number">2.</span>  ,  <span class="number">2.25</span>,  <span class="number">2.5</span> ,  <span class="number">2.75</span>,  <span class="number">3.</span>  ])                                          </div><div class="line"><span class="meta">&gt;&gt;&gt; </span>np.linspace(<span class="number">2.0</span>, <span class="number">3.0</span>, num=<span class="number">5</span>, endpoint=<span class="keyword">False</span>)                                    </div><div class="line">array([ <span class="number">2.</span> ,  <span class="number">2.2</span>,  <span class="number">2.4</span>,  <span class="number">2.6</span>,  <span class="number">2.8</span>])                                               </div><div class="line"><span class="meta">&gt;&gt;&gt; </span>np.linspace(<span class="number">2.0</span>, <span class="number">3.0</span>, num=<span class="number">5</span>, retstep=<span class="keyword">True</span>)                                      </div><div class="line">(array([ <span class="number">2.</span>  ,  <span class="number">2.25</span>,  <span class="number">2.5</span> ,  <span class="number">2.75</span>,  <span class="number">3.</span>  ]), <span class="number">0.25</span>)</div></pre></td></tr></table></figure>
+<p>详情可用<code>np.linspace?</code>查看</p>
+<h3 id="np-arange"><a href="#np-arange" class="headerlink" title="np.arange()"></a>np.arange()</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">Docstring:</div><div class="line">arange([start,] stop[, step,], dtype=<span class="keyword">None</span>)</div><div class="line"></div><div class="line">Return evenly spaced values within a given interval.</div><div class="line"></div><div class="line">Values are generated within the half-open interval ``[start, stop)``</div><div class="line">(<span class="keyword">in</span> other words, the interval including `start` but excluding `stop`).</div><div class="line">For integer arguments the function <span class="keyword">is</span> equivalent to the Python built-<span class="keyword">in</span></div><div class="line">``range`` function,</div><div class="line">but returns an ndarray rather than a list.</div><div class="line"></div><div class="line">When using a non-integer step, such <span class="keyword">as</span> <span class="number">0.1</span>, the results will often <span class="keyword">not</span></div><div class="line">be consistent.  It <span class="keyword">is</span> better to use ``linspace`` <span class="keyword">for</span> these cases.</div><div class="line"></div><div class="line">Examples</div><div class="line">--------</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>np.arange(<span class="number">3</span>)</div><div class="line">array([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>np.arange(<span class="number">3.0</span>)</div><div class="line">array([ <span class="number">0.</span>,  <span class="number">1.</span>,  <span class="number">2.</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>np.arange(<span class="number">3</span>,<span class="number">7</span>)</div><div class="line">array([<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>np.arange(<span class="number">3</span>,<span class="number">7</span>,<span class="number">2</span>)</div><div class="line">array([<span class="number">3</span>, <span class="number">5</span>])</div></pre></td></tr></table></figure>
+<p>详情可用<code>np.arange?</code>查看</p>
+<h3 id="np-where"><a href="#np-where" class="headerlink" title="np.where()"></a>np.where()</h3><p>numpy.where(cond, x, y)函数是一个向量版的三相表达式，x if condition else y。</p>
+<p>cond为布尔数组，x和y为标量或数组。事实上这三个参数需要能够broadcast。如果cond中为true，取x中对应的值，否则就取y中的值。</p>
+<p>where在数据分析中一个典型的用法是基于一个数组，产生一个新的数组值。假设我们有一个随机数字生成的矩阵，我们想要把所有的正数变为2，所有的负数变为-2。用where的话会非常简单：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">In [<span class="number">76</span>]: arr = np.random.randn(<span class="number">4</span>, <span class="number">4</span>)</div><div class="line"></div><div class="line">In [<span class="number">77</span>]: arr</div><div class="line">Out[<span class="number">77</span>]:</div><div class="line">array([[ <span class="number">1.81344764</span>,  <span class="number">0.00551985</span>,  <span class="number">1.02451608</span>, <span class="number">-0.58796332</span>],</div><div class="line">       [<span class="number">-0.99800451</span>,  <span class="number">0.48495948</span>,  <span class="number">0.37480632</span>,  <span class="number">0.45985018</span>],</div><div class="line">       [ <span class="number">0.5072934</span> , <span class="number">-0.21091032</span>, <span class="number">-0.49415424</span>,  <span class="number">1.46581188</span>],</div><div class="line">       [<span class="number">-1.10224442</span>,  <span class="number">2.4132539</span> ,  <span class="number">0.24173534</span>,  <span class="number">0.84431125</span>]])</div><div class="line"></div><div class="line">In [<span class="number">78</span>]: arr&gt;<span class="number">0</span></div><div class="line">Out[<span class="number">78</span>]:</div><div class="line">array([[ <span class="keyword">True</span>,  <span class="keyword">True</span>,  <span class="keyword">True</span>, <span class="keyword">False</span>],</div><div class="line">       [<span class="keyword">False</span>,  <span class="keyword">True</span>,  <span class="keyword">True</span>,  <span class="keyword">True</span>],</div><div class="line">       [ <span class="keyword">True</span>, <span class="keyword">False</span>, <span class="keyword">False</span>,  <span class="keyword">True</span>],</div><div class="line">       [<span class="keyword">False</span>,  <span class="keyword">True</span>,  <span class="keyword">True</span>,  <span class="keyword">True</span>]], dtype=bool)</div><div class="line"></div><div class="line">In [<span class="number">79</span>]: np.where(arr&gt;<span class="number">0</span>,<span class="number">2</span>,<span class="number">-2</span>)  <span class="comment">#将正数换为2，负数换为-2</span></div><div class="line">Out[<span class="number">79</span>]:</div><div class="line">array([[ <span class="number">2</span>,  <span class="number">2</span>,  <span class="number">2</span>, <span class="number">-2</span>],</div><div class="line">       [<span class="number">-2</span>,  <span class="number">2</span>,  <span class="number">2</span>,  <span class="number">2</span>],</div><div class="line">       [ <span class="number">2</span>, <span class="number">-2</span>, <span class="number">-2</span>,  <span class="number">2</span>],</div><div class="line">       [<span class="number">-2</span>,  <span class="number">2</span>,  <span class="number">2</span>,  <span class="number">2</span>]])</div><div class="line"></div><div class="line">In [<span class="number">80</span>]: np.where(arr&gt;<span class="number">0</span>,<span class="number">2</span>,arr) <span class="comment">#将正数换为2，不改变原来的负数</span></div><div class="line">Out[<span class="number">80</span>]:</div><div class="line">array([[ <span class="number">2.</span>        ,  <span class="number">2.</span>        ,  <span class="number">2.</span>        , <span class="number">-0.58796332</span>],</div><div class="line">       [<span class="number">-0.99800451</span>,  <span class="number">2.</span>        ,  <span class="number">2.</span>        ,  <span class="number">2.</span>        ],</div><div class="line">       [ <span class="number">2.</span>        , <span class="number">-0.21091032</span>, <span class="number">-0.49415424</span>,  <span class="number">2.</span>        ],</div><div class="line">       [<span class="number">-1.10224442</span>,  <span class="number">2.</span>        ,  <span class="number">2.</span>        ,  <span class="number">2.</span>        ]])</div></pre></td></tr></table></figure>
+<h3 id="数学和统计方法"><a href="#数学和统计方法" class="headerlink" title="数学和统计方法"></a>数学和统计方法</h3><p>一些能计算统计值的数学函数能基于整个数组，或者沿着一个axis（轴）。</p>
+<p>可以使用aggregations聚合(常称为reductions降维)，比如sum, mean, and std(标准差).例如<code>arr.mean()</code>对整个数组求平均值</p>
+<p>mean, sum这样的函数能接受axis作为参数来计算统计数字，例如<code>arr.mean(axis=1)</code>，沿着轴1（对于二维数组就是列轴，横的方向）进行聚合。</p>
+<p>还可以用np.sum(arr)/np.mean(arr)等来调用</p>
+<h3 id="布尔数组的方法"><a href="#布尔数组的方法" class="headerlink" title="布尔数组的方法"></a>布尔数组的方法</h3><p>布尔数组可以用上述的sum来统计<code>True</code>的个数。还有两个其他方法，any和all。any检测数组中只要有一个ture返回就是true，而all检测数组中都是true才会返回true。</p>
+<h3 id="arr-sort"><a href="#arr-sort" class="headerlink" title="arr.sort()"></a>arr.sort()</h3><p>可以直接调用数组的sort方法，不过这会改变原有数组的顺序。如果使用np.sort()函数的话，会生成一个新的排序后的结果。</p>
+<p>一个计算分位数的快捷方法是先给数组排序，然后选择某个排名的值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">In [<span class="number">110</span>]: arr=np.random.randn(<span class="number">1000</span>)</div><div class="line"></div><div class="line">In [<span class="number">111</span>]: arr.sort()</div><div class="line"></div><div class="line">In [<span class="number">112</span>]: arr[int(<span class="number">0.05</span> * len(arr))]  <span class="comment">#5% quantile</span></div><div class="line">Out[<span class="number">112</span>]: <span class="number">-1.7822519810039026</span></div></pre></td></tr></table></figure>
+<h2 id="通过文件读取或保存数组"><a href="#通过文件读取或保存数组" class="headerlink" title="通过文件读取或保存数组"></a>通过文件读取或保存数组</h2><h3 id="np-save-和np-load"><a href="#np-save-和np-load" class="headerlink" title="np.save()和np.load()"></a>np.save()和np.load()</h3><p>例如，<code>np.save(&#39;../examples/some_array&#39;, arr)</code>。数组会以未压缩的原始二进制模式被保存，后缀为.npy。即使保存的时候没有加后缀，也会被自动加上。</p>
+<p>可以用np.load来加载数组：<code>arr = np.load(&#39;../examples/some_array.npy&#39;)</code></p>
+<p>用np.savez能保存多个数组，保存为npz格式，加载npz文件会得到一个dict。</p>
+<h2 id="线性代数"><a href="#线性代数" class="headerlink" title="线性代数"></a>线性代数</h2><h3 id="矩阵乘法"><a href="#矩阵乘法" class="headerlink" title="矩阵乘法"></a>矩阵乘法</h3><p>在MATLAB里，<em> 代表矩阵乘法。但是在numpy里，</em>表示element-wise prodct。要想做到矩阵乘法，要用函数dot，<code>x.dot(y)</code>等同于<code>np.dot(x, y)</code>。</p>
+<p>@符号也能实现矩阵乘法，即<code>arr1 @ arr2</code>。</p>
+<h3 id="np-linalg模块"><a href="#np-linalg模块" class="headerlink" title="np.linalg模块"></a>np.linalg模块</h3><p>np.linalg中的函数，可以完成转置、求秩、SVD、QR分解之类的事情</p>
+<p><img src="/images/numpy-linalg-functions1.png" alt="numpy-linalg-functions1"></p>
+<p><img src="/images/numpy-linalg-functions2.png" alt="numpy-linalg-functions2"></p>
+<h2 id="伪随机数的生成"><a href="#伪随机数的生成" class="headerlink" title="伪随机数的生成"></a>伪随机数的生成</h2><p>比如我们可以用normal()得到一个4 x 4的，符合标准正态分布的数组：</p>
+<p><code>samples = np.random.normal(size=(4, 4))</code></p>
+<p>之所以称之为伪随机数，是因为随机数生成算法是根据seed来生成的。也就是说，只要seed设置一样，每次生成的随机数是相同的：</p>
+<p><code>np.random.seed(1234)</code></p>
+<p>当然，这个seed是全局的，如果想要避免全局状态，可以用numpy.random.RandomState来创建一个独立的生成器：</p>
+<p><code>rng = np.random.RandomState(1234)</code></p>
+<p>下面是一些random模块的函数：</p>
+<p><img src="/images/numpy-random-functions.png" alt="numpy-random-functions"></p>
+<h2 id="pandas的数据结构"><a href="#pandas的数据结构" class="headerlink" title="pandas的数据结构"></a>pandas的数据结构</h2><p><strong>从此处开始，不再做记录型的笔记，只记录一些看后觉得觉得需要注意的地方</strong></p>
+<p>1.Series和DataFrame的index/columns是不可变的，但可以直接替换，例如<code>se.index=[...]</code></p>
+<p>2.直接替换Series和DataFrame的index相当于给行或列改名字，而reindex()相当于重排各行或各列。注意，不会修改原来的对象，而是得到新的Series或DataFrame</p>
+<p>3.<code>se.drop()</code>与<code>df.drop()</code>用于删除数据，但并不会修改原对象中的数据，而是在复制后的对象上删除后返回；如果需要删除原数据，可以指定参数inplace=True</p>
+<p>4.Series用中括号索引时，可以用单个label、label的list、label表示的切片,而且在label不是整数时，前面几种方法的label也可以改为使用<strong>整数</strong>代替。还可以使用布尔索引，因此可以用布尔表达式筛选所需数据，例如<code>se[se &lt; 2]</code></p>
+<p>5.DataFrame的单个列可以用df.label取</p>
+<p>6.DataFrame用中括号索引时，可以用单个label、label的list来<strong>索引列</strong>；可以用整数值表示的切片<strong>取行</strong>，也可以用一维布尔索引来取行，因此可以用布尔表达式构造SQL中的行选择，例如<code>df[df[&#39;col0&#39;] &gt; 5]</code>（此处df[‘col0’]可用df.col0代替）；还可以用多维布尔索引来选中符合条件的值，不符合的位置为NaN，由此可以实现整个表格的数据处理，例如<code>df[df &lt; 0] = 0</code>可以将所有小于0的值替换为0。</p>
+<p>7.df.loc[x,y]和df.iloc[x,y]语法中，x表示选择行，y表示选择列。Series也可以用loc和iloc，在label为整数时，这两个方法可以避免索引值歧义。</p>
+<p>8.Series和DataFrame进行运算也遵从broadcast规则，但默认情况下是匹配列的，即Series的shape为<code>(n,)</code>，在与<code>(m, n)</code>的DataFrame运算时，Series往行的方向（往下）拓展，拓展成<code>(m, n)</code>再运算；在使用算术相关方法例如<code>add(), sub(), mul(), div()</code>等时，可以指定axis参数的值为”index”来匹配行，而使Series拓展时往列的方向（往右）拓展，即Series的shape为<code>(n, 1)</code>，与<code>(n, m)</code>的DataFrame运算时broadcast为<code>(n, m)</code>。这两种情况本质上是对Series的shape的理解不同</p>
+<p>9.要理解几个概念，“行轴”是往下的，“列轴”是往右的，“在行上聚集”是指在行的方向上（即垂直方向）使用聚集函数，简单点说就是对每一列使用聚集函数；聚集函数df.mean()等有一个axis参数，就是用来指定在什么方向（哪个轴上）聚集的。而axis参数的作用可以推广到其它函数，例如DataFrame的apply()，传入一个函数并指定axis=’columns’时，效果是将该函数运用到每一行。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/17/《线性代数及其应用》学习笔记/" rel="prev" title="《线性代数及其应用》学习笔记">
+                《线性代数及其应用》学习笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODI2OC80ODQw"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/gene.png"
+               alt="icegene" />
+          <p class="site-author-name" itemprop="name">icegene</p>
+           
+              <p class="site-description motion-element" itemprop="description">A student majoring in Software Engineering</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/iamxpy" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/luo-mu-xue-lan" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-cube"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://blog.csdn.net/xpy870663266" target="_blank" title="CSDN">
+                  
+                    <i class="fa fa-fw fa-coffee"></i>
+                  
+                  CSDN
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/1631634e1130/timeline" target="_blank" title="简书">
+                  
+                    <i class="fa fa-fw fa-book"></i>
+                  
+                  简书
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第二章"><span class="nav-number">1.</span> <span class="nav-text">第二章</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#各个包的约定导入写法"><span class="nav-number">1.1.</span> <span class="nav-text">各个包的约定导入写法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Magic命令"><span class="nav-number">1.2.</span> <span class="nav-text">Magic命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#random模块"><span class="nav-number">1.3.</span> <span class="nav-text">random模块</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多维数组ndarray"><span class="nav-number">2.</span> <span class="nav-text">多维数组ndarray</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ndarray对象属性"><span class="nav-number">2.1.</span> <span class="nav-text">ndarray对象属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建数组"><span class="nav-number">2.2.</span> <span class="nav-text">创建数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据类型与形状"><span class="nav-number">2.3.</span> <span class="nav-text">数据类型与形状</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Broadcasting"><span class="nav-number">2.4.</span> <span class="nav-text">Broadcasting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引与切片"><span class="nav-number">2.5.</span> <span class="nav-text">索引与切片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#布尔索引"><span class="nav-number">2.6.</span> <span class="nav-text">布尔索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#花式索引"><span class="nav-number">2.7.</span> <span class="nav-text">花式索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引小结"><span class="nav-number">2.8.</span> <span class="nav-text">索引小结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数组转置和轴交换"><span class="nav-number">2.9.</span> <span class="nav-text">数组转置和轴交换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通用函数"><span class="nav-number">3.</span> <span class="nav-text">通用函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一元函数举例"><span class="nav-number">3.1.</span> <span class="nav-text">一元函数举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二元函数举例"><span class="nav-number">3.2.</span> <span class="nav-text">二元函数举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可选输出"><span class="nav-number">3.3.</span> <span class="nav-text">可选输出</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用一元与二元函数"><span class="nav-number">3.4.</span> <span class="nav-text">常用一元与二元函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面向数组编程"><span class="nav-number">4.</span> <span class="nav-text">面向数组编程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#meshgrid"><span class="nav-number">4.1.</span> <span class="nav-text">meshgrid()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#np-linspace"><span class="nav-number">4.2.</span> <span class="nav-text">np.linspace()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#np-arange"><span class="nav-number">4.3.</span> <span class="nav-text">np.arange()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#np-where"><span class="nav-number">4.4.</span> <span class="nav-text">np.where()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数学和统计方法"><span class="nav-number">4.5.</span> <span class="nav-text">数学和统计方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#布尔数组的方法"><span class="nav-number">4.6.</span> <span class="nav-text">布尔数组的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#arr-sort"><span class="nav-number">4.7.</span> <span class="nav-text">arr.sort()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过文件读取或保存数组"><span class="nav-number">5.</span> <span class="nav-text">通过文件读取或保存数组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#np-save-和np-load"><span class="nav-number">5.1.</span> <span class="nav-text">np.save()和np.load()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线性代数"><span class="nav-number">6.</span> <span class="nav-text">线性代数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#矩阵乘法"><span class="nav-number">6.1.</span> <span class="nav-text">矩阵乘法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#np-linalg模块"><span class="nav-number">6.2.</span> <span class="nav-text">np.linalg模块</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#伪随机数的生成"><span class="nav-number">7.</span> <span class="nav-text">伪随机数的生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pandas的数据结构"><span class="nav-number">8.</span> <span class="nav-text">pandas的数据结构</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">icegene</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("kqHYy2W6o1QD5K0EKWE0zdPy-gzGzoHsz", "lLFeuDQsMSkp011HnWxTfaH1");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

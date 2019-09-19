@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+	<title>Gumbel Softmax Demo</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.3.0/echarts.min.js" integrity="sha256-iD9Ih0W2BOZqGT6/0OvowPNCQW0lLz+tBKd16Oa7bHc=" crossorigin="anonymous"></script>
+</head>
+<body style="padding:0px 300px" onload="plot()">
+
+<script type="text/javascript">
+var dis=new Array();
+function randomNum(minNum,maxNum){ 
+    switch(arguments.length){ 
+        case 1: 
+            return parseInt(Math.random()*minNum+1,10); 
+        break; 
+        case 2: 
+            return parseInt(Math.random()*(maxNum-minNum+1)+minNum,10); 
+        break; 
+            default: 
+                return 0; 
+            break; 
+    } 
+} 
+function normalization(list){
+var list_bak=list.concat();
+var sum=0;
+for(var i=0;i<list.length;i++){
+sum+=list[i];
+}
+for(var i=0;i<list.length;i++){
+list_bak[i]/=sum;
+}
+return list_bak;
+}
+
+
+
+function getDistribution(k){
+	var list=new Array();
+	for(var i=0;i<k;i++){
+	list[i]=randomNum(1,k);
+}
+dis=normalization(list);
+}
+
+function argmax(arr){
+var max_index=-1;
+var max_value=-1.7976931348623157E+10308;
+for(var i=0;i<arr.length;i++){
+if(arr[i]>max_value){
+max_index=i;
+max_value=arr[i];
+}
+}
+return max_index;
+}
+
+function gumbel_max(){
+var dis_bak=dis.concat();
+for(var i=0;i<dis_bak.length;i++){
+dis_bak[i]=Math.log(dis_bak[i])-Math.log(-Math.log(Math.random()));
+}
+
+return argmax(dis_bak);
+}
+
+function cal_KL(dis2){
+var kl=0;
+var epsilon=0.00001;
+for(var i=0;i<dis.length;i++){
+	if(dis2[i]==0){
+		kl+=dis[i]*Math.log(dis[i]/(dis2[i]+epsilon));
+	}else{
+		kl+=dis[i]*Math.log(dis[i]/(dis2[i]));
+	}
+}
+return kl;
+}
+
+
+function sample(){
+        var pmf2 = echarts.init(document.getElementById('pmf2'));
+		var times=parseInt(document.getElementById("sample_times").value);
+		var class2times=new Array();
+		for(var i=0;i<dis.length;i++){
+		class2times[i]=0;
+		}
+		for(var j=0;j<times;j++){
+		index=gumbel_max();
+		class2times[index]+=1;	
+		}
+		var dis2=normalization(class2times);
+		var option2 = {
+	xAxis: {
+        type: 'category',
+    },
+    yAxis: {
+        type: 'value'
+    },
+	 series : [
+        {
+            type:'bar',
+            barWidth: '60%',
+            data:dis2,
+            itemStyle:{
+                normal:{
+                    color:function(params){
+                        if(params.value >=0.5){
+                            return "#006030";
+                        }
+						else if(params.value >=0.4){
+                            return "#01814A";
+                        }
+						else if(params.value >=0.3){
+                            return "#01814A";
+                        }
+						else if(params.value >=0.2){
+                            return "#019858";
+                        }
+						else if(params.value >=0.1){
+                            return "#01B468";
+                        }
+                        return "#02C874";
+                    }
+                }
+            }
+        }
+
+    ]
+
+};
+    pmf2.setOption(option2);
+	var	KL=cal_KL(dis2);
+	document.getElementById("KL").innerHTML=KL;
+
+}
+
+function plot(){
+        var pmf1 = echarts.init(document.getElementById('pmf1'));
+		var class_num=document.getElementById("class_num").value;
+		var k=parseInt(class_num);
+		getDistribution(k);
+		var option1 = {
+	xAxis: {
+        type: 'category',
+    },
+    yAxis: {
+        type: 'value'
+    },
+
+	 series : [
+        {
+            type:'bar',
+            barWidth: '60%',
+            data:dis,
+            itemStyle:{
+                normal:{
+                    color:function(params){
+                        if(params.value >=0.5){
+                            return "#006030";
+                        }
+						else if(params.value >=0.4){
+                            return "#01814A";
+                        }
+						else if(params.value >=0.3){
+                            return "#01814A";
+                        }
+						else if(params.value >=0.2){
+                            return "#019858";
+                        }
+						else if(params.value >=0.1){
+                            return "#01B468";
+                        }
+                        return "#02C874";
+                    }
+                }
+            }
+        }
+
+    ]
+};
+
+        pmf1.setOption(option1);
+}
+    </script>
+
+<table>
+<tr>
+<td><div id="pmf1" style="float:left;width: 600px;height:400px;"></div></td>
+<td><div id="pmf2" style="float:left;width: 600px;height:400px;"></div></td>
+</tr>
+<tr>
+<td align="center">Number of Class k: &emsp;<input id="class_num" value="7" type="text" style="width:40px;border-top:0;border-left:0;border-right:0;border-bottom:1 solid black;background:;" name="num"></td>
+<td align="center">Sample <input id="sample_times" type="text" value="100" style="width:60px;border-top:0;border-left:0;border-right:0;border-bottom:1 solid black;background:;" name="num"> times using gumbel max: <button  onclick="sample()">Sample!</button></td>
+</tr>
+<tr>
+<td align="center">Click to generate a discrete distribution: <button onclick="plot()">Generate!</button></td>
+<td align="center"><strong>KL divergence:&emsp;</strong> <label id="KL"></label></td>
+</tr>
+</table>
+<br><br><br>
+&emsp; &emsp; <strong>References:</strong><br>
+&emsp; &emsp; [1] <a href="https://spaces.ac.cn/archives/6705">漫谈重参数：从正态分布到Gumbel Softmax</a><br>
+&emsp; &emsp; [2] <a href="https://gabrielhuang.gitbooks.io/machine-learning/reparametrization-trick.html">Reparametrization Trick</a><br>
+&emsp; &emsp; [3] <a href="https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence">Wikipedia: Kullback–Leibler divergence</a><br>
+
+</body>
+
+
+</html>
